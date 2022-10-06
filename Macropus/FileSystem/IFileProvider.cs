@@ -1,8 +1,8 @@
 ﻿namespace Macropus.FileSystem;
 
-internal interface IFileProvider : IDisposable, IAsyncDisposable
+public interface IFileProvider : IDisposable, IAsyncDisposable
 {
-    string Name { get; }
+    string? Name { get; }
     Guid Id { get; }
 
     FileMode Mode { get; }

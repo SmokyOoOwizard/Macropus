@@ -6,7 +6,7 @@ internal class FileProvider : IFileProvider
 
     private readonly FileStream fileStream;
 
-    public string Name { get; }
+    public string? Name { get; }
 
     public Guid Id { get; }
 
@@ -18,7 +18,7 @@ internal class FileProvider : IFileProvider
 
     public Stream AsStream => fileStream;
 
-    public FileProvider(string path, string name, Guid id, FileMode fileMode, FileAccess fileAccess,
+    public FileProvider(string path, string? name, Guid id, FileMode fileMode, FileAccess fileAccess,
         FileShare fileShare, FileStream fileStream)
     {
         this.path = path;
@@ -45,10 +45,10 @@ internal class FileProvider : IFileProvider
         return Create(path, string.Empty, Guid.Empty, fileMode, fileAccess, fileShare);
     }
 
-    public static FileProvider Create(string path, string name, Guid id, FileMode fileMode, FileAccess fileAccess,
+    public static FileProvider Create(string path, string? name, Guid id, FileMode fileMode, FileAccess fileAccess,
         FileShare fileShare)
     {
-        if (path == null) throw new ArgumentNullException("path");
+        if (path == null) throw new ArgumentNullException(nameof(path));
 
         if (name == null)
             name = string.Empty;

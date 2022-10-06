@@ -7,7 +7,7 @@ public class FileDbModel
 {
     public Guid Id { get; set; }
 
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     public string ObjectName { get; set; }
 }

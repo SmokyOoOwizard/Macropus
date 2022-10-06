@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Macropus.FileSystem.Impl;
 
-internal class FileSystemProvider : IFileSystemProvider
+public class FileSystemProvider : IFileSystemProvider
 {
     private readonly string path;
     private readonly LockFile lockFile;
@@ -17,7 +17,7 @@ internal class FileSystemProvider : IFileSystemProvider
 
     private bool disposed;
 
-    public FileSystemProvider(string path, LockFile lockFile, FileSystemDbContext dbContext)
+    private FileSystemProvider(string path, LockFile lockFile, FileSystemDbContext dbContext)
     {
         this.path = path;
         this.lockFile = lockFile;
@@ -43,7 +43,7 @@ internal class FileSystemProvider : IFileSystemProvider
 
     public async Task<Guid> CreateFileAsync(string name, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentNullException("name");
+        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentNullException(nameof(name));
 
         var fileDb = new FileDbModel
         {
