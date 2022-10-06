@@ -4,7 +4,7 @@ using Xunit.Abstractions;
 
 namespace Tests;
 
-public class LocalStorageTests : TestsWithFiles
+public class LocalStorageTests : TestsWithProjectsStorage
 {
     private const string PROJECT_NAME = "CreateTest";
 
@@ -15,9 +15,7 @@ public class LocalStorageTests : TestsWithFiles
     [Fact]
     public async void CreateByNameTest()
     {
-        using var localStorage = new ProjectsStorageLocal(ExecutePath);
-
-        var projectId = await localStorage
+        var projectId = await ProjectStorage
             .CreateProjectAsync(new ProjectCreationInfo { Name = PROJECT_NAME })
             .ConfigureAwait(false);
 
@@ -29,11 +27,9 @@ public class LocalStorageTests : TestsWithFiles
     {
         const string ADDITIONAL_PATH = "Additional";
 
-        using var localStorage = new ProjectsStorageLocal(ExecutePath);
-
         var path = Path.Combine(ExecutePath, ADDITIONAL_PATH);
 
-        var projectId = await localStorage
+        var projectId = await ProjectStorage
             .CreateProjectByPathAsync(path, new ProjectCreationInfo { Name = PROJECT_NAME })
             .ConfigureAwait(false);
 
@@ -45,13 +41,11 @@ public class LocalStorageTests : TestsWithFiles
     {
         const string ADDITIONAL_PATH = "Additional";
 
-        using var localStorage = new ProjectsStorageLocal(ExecutePath);
-
         var path = Path.Combine(ExecutePath, ADDITIONAL_PATH);
 
         Directory.CreateDirectory(path);
 
-        var projectId = await localStorage
+        var projectId = await ProjectStorage
             .CreateProjectByPathAsync(path, new ProjectCreationInfo { Name = PROJECT_NAME })
             .ConfigureAwait(false);
 

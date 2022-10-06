@@ -17,7 +17,7 @@ public abstract class TestsWithFiles
 
         ExecutePath = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory, "TestArtifacts", testPrefix,
-            test.DisplayName, test.TestCase.UniqueID);
+            test.DisplayName, Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(ExecutePath);
     }
 }
