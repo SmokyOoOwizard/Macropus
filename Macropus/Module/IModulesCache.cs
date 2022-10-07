@@ -5,6 +5,6 @@ namespace Macropus.Module;
 
 internal interface IModulesCache : IDisposable
 {
-    Task<ICacheRef<IModuleContainer, string>> GetOrLoadModuleAsync(IFileProvider file,
-        CancellationToken cancellationToken);
+	Task<ICacheRef<IRawModuleContainer, string>> GetOrLoadModuleAsync(IFileProvider file,
+		CancellationToken cancellationToken);
 }

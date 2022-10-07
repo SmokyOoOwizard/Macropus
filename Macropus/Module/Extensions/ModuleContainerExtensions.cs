@@ -5,8 +5,8 @@ namespace Macropus.Module.Extensions;
 
 internal static class ModuleContainerExtensions
 {
-    public static IModuleContainer ToSharedModule(this ICacheRef<IModuleContainer> cacheRef)
-    {
-        return new ModuleContainerShared(cacheRef);
-    }
+	public static IRawModuleContainer ToSharedModule(this ICacheRef<IRawModuleContainer> cacheRef)
+	{
+		return new RawModuleContainerShared(cacheRef);
+	}
 }

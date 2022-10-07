@@ -1,9 +1,6 @@
 ﻿namespace Macropus.Interfaces.Module;
 
-public interface IModuleBase
+public interface IModuleBase : IInitializable<IModuleAllowedPermissions>, IDisposable
 {
-    Task StartAsync(IModuleAllowedPermissions allowedPermissions, CancellationToken cancellationToken = default);
-    Task StopAsync(CancellationToken cancellationToken = default);
-
-    void GetModuleContainer(IContainerBuilder builder);
+	void BindModule(IModuleBuilder builder);
 }

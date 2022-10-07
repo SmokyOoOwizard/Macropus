@@ -1,62 +1,93 @@
 ﻿using System.Reactive.Disposables;
+using Autofac;
 using Macropus.Module.Extensions;
 
 namespace Macropus.Module;
 
 internal sealed class ModulesInstance : IDisposable
 {
-    private readonly List<IModuleContainer> modules;
+	private readonly List<LoadedModule> modules;
+	private readonly ContainerBuilder modulesBuilder;
+	private readonly IContainer modulesContainer;
 
-    private bool disposed;
+	private bool disposed;
 
-    private ModulesInstance(List<IModuleContainer> containers)
-    {
-        modules = containers;
-    }
+	private ModulesInstance(List<LoadedModule> modules, ContainerBuilder modulesBuilder)
+	{
+		this.modules = modules;
+		this.modulesBuilder = modulesBuilder;
 
-    public void Dispose()
-    {
-        if (disposed) return;
-        disposed = true;
+		modulesContainer = modulesBuilder.Build();
+	}
 
-        for (var i = 0; i < modules.Count; i++) modules[i].Dispose();
+	public void Dispose()
+	{
+		if (disposed) return;
+		disposed = true;
 
-        modules.Clear();
-    }
+		modulesContainer.Dispose();
+		for (var i = 0; i < modules.Count; i++) modules[i].Dispose();
 
-    public static async Task<ModulesInstance> Create(IModulesProvider modulesProvider, IModulesCache modulesCache,
-        CancellationToken cancellationToken = default)
-    {
-        var disposable = new CompositeDisposable(Disposable.Empty);
+		modules.Clear();
+	}
 
-        try
-        {
-            var modules = await modulesProvider.GetModulesInfoAsync(cancellationToken).ConfigureAwait(false);
-            modules = modules.Where(m => m.Enable).ToArray();
+	public static async Task<ModulesInstance> Create(IModulesProvider modulesProvider, IModulesCache modulesCache,
+		CancellationToken cancellationToken = default)
+	{
+		var disposable = new CompositeDisposable(Disposable.Empty);
 
-            var loadedModules = new List<IModuleContainer>();
-            foreach (var moduleInfo in modules)
-            {
-                using var fileProvider = await modulesProvider.GetModuleAsync(moduleInfo, cancellationToken)
-                    .ConfigureAwait(false);
+		try
+		{
+			var modules = await modulesProvider.GetModulesInfoAsync(cancellationToken).ConfigureAwait(false);
+			modules = modules.Where(m => m.Enable).ToArray();
 
-                var loadedModuleRef = await modulesCache.GetOrLoadModuleAsync(fileProvider, cancellationToken)
-                    .ConfigureAwait(false);
+			var loadedModules = new List<LoadedModule>();
+			foreach (var moduleInfo in modules)
+			{
+				var module = new LoadedModule();
+				disposable.Add(module);
+				loadedModules.Add(module);
 
-                var module = loadedModuleRef.ToSharedModule();
-                disposable.Add(module);
-                loadedModules.Add(module);
-            }
+				var rawModule = await LoadRawModule(modulesProvider, modulesCache, moduleInfo, cancellationToken)
+					.ConfigureAwait(false);
+				module.RawModuleContainer = rawModule;
 
-            // TODO....
+				var moduleEntryPoint = rawModule.CreateEntryPoint();
+				module.Module = moduleEntryPoint;
 
+				// TODO get allowed permissions for module
+				// TODO remove unrequested permissions
 
-            return new ModulesInstance(loadedModules);
-        }
-        catch
-        {
-            disposable.Dispose();
-            throw;
-        }
-    }
+				await moduleEntryPoint.Initialize(null, cancellationToken).ConfigureAwait(false);
+
+				var moduleBuilder = new ModuleBuilder();
+				moduleEntryPoint.BindModule(moduleBuilder);
+				module.Bindings = moduleBuilder;
+			}
+
+			var mergeBuilder = ModuleBuilder.Merge(loadedModules.Select(m => m.Bindings));
+
+			return new ModulesInstance(loadedModules, mergeBuilder);
+		}
+		catch
+		{
+			disposable.Dispose();
+			throw;
+		}
+	}
+
+	private static async Task<IRawModuleContainer> LoadRawModule(
+		IModulesProvider modulesProvider,
+		IModulesCache modulesCache,
+		IModuleInfo moduleInfo,
+		CancellationToken cancellationToken)
+	{
+		using var fileProvider = await modulesProvider.GetModuleAsync(moduleInfo, cancellationToken)
+			.ConfigureAwait(false);
+
+		var loadedModuleRef = await modulesCache.GetOrLoadModuleAsync(fileProvider, cancellationToken)
+			.ConfigureAwait(false);
+
+		return loadedModuleRef.ToSharedModule();
+	}
 }
