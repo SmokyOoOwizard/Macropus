@@ -1,4 +1,4 @@
-﻿namespace Macropus.ECS.Exceptions;
+﻿namespace Macropus.ECS.Component.Exceptions;
 
 public class TypeNameNotSupportedException : Exception
 {
