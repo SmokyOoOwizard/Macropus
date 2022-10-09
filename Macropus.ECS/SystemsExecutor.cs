@@ -8,7 +8,7 @@ namespace Macropus.ECS;
 public sealed class SystemsExecutor
 {
 	private readonly Dictionary<ASystem, ISystemFilter?> systems;
-	private readonly MergedComponentsStorage mergedComponentsStorage = new();
+	private readonly MergedComponentsStorage tryTriggerSystemEvents = new();
 
 	public SystemsExecutor(ASystem[] systems)
 	{
@@ -16,15 +16,15 @@ public sealed class SystemsExecutor
 	}
 
 	public void Execute(
-		IComponentsStorage componentsStorage,
-		IReadOnlyComponentsStorage changes,
-		IComponentsStorage futureChanges
+		IComponentsStorage alreadyExistsComponents,
+		IReadOnlyComponentsStorage newComponents,
+		IComponentsStorage changedComponents
 	)
 	{
-		if (changes.EntitiesCount == 0)
+		if (newComponents.EntitiesCount == 0)
 			return;
 
-		mergedComponentsStorage.SetStorages(futureChanges, changes);
+		tryTriggerSystemEvents.SetStorages(changedComponents, newComponents);
 
 		foreach (var system in systems)
 		{
@@ -32,11 +32,11 @@ public sealed class SystemsExecutor
 
 			IEnumerable<IEntity> filteredEntities;
 			if (filter != null)
-				filteredEntities = EntityWrapper.Wrap(filter.Filter(mergedComponentsStorage),
-					componentsStorage, futureChanges);
+				filteredEntities = EntityWrapper.Wrap(filter.Filter(tryTriggerSystemEvents),
+					alreadyExistsComponents, changedComponents);
 			else
-				filteredEntities = EntityWrapper.Wrap(mergedComponentsStorage.GetEntities(),
-					componentsStorage, futureChanges);
+				filteredEntities = EntityWrapper.Wrap(tryTriggerSystemEvents.GetEntities(),
+					alreadyExistsComponents, changedComponents);
 
 			system.Key.Execute(filteredEntities);
 		}
