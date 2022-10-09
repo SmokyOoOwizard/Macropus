@@ -20,7 +20,20 @@ public class ComponentsStorage : IComponentsStorage
 		if (!storage.TryGetValue(componentName, out var entities))
 			return false;
 
-		var component = (entities as IComponentStorage<T>)!.GetComponent(entityId);
+		var component = (entities as IComponentStorage<T>)!.GetGenericComponent(entityId);
+
+		return component != null;
+	}
+
+	public bool HasComponent(Guid entityId, string name)
+	{
+		if (string.IsNullOrWhiteSpace(name))
+			return false;
+
+		if (!storage.TryGetValue(name, out var entities))
+			return false;
+
+		var component = entities.GetComponent(entityId);
 
 		return component != null;
 	}
@@ -34,13 +47,30 @@ public class ComponentsStorage : IComponentsStorage
 		if (!storage.TryGetValue(componentName, out var entities))
 			throw new ComponentNotFoundException();
 
-		var component = (entities as IComponentStorage<T>)!.GetComponent(entityId);
+		var component = (entities as IComponentStorage<T>)!.GetGenericComponent(entityId);
 
 		if (component == null)
 			throw new ComponentNotFoundException();
 
 		return (T)component;
 	}
+
+	public IComponent GetComponent(Guid entityId, string name)
+	{
+		if (string.IsNullOrWhiteSpace(name))
+			throw new TypeNameNotSupportedException();
+
+		if (!storage.TryGetValue(name, out var entities))
+			throw new ComponentNotFoundException();
+
+		var component = entities.GetComponent(entityId);
+
+		if (component == null)
+			throw new ComponentNotFoundException();
+
+		return component;
+	}
+
 
 	public void ReplaceComponent<T>(Guid entityId, T component) where T : struct, IComponent
 	{

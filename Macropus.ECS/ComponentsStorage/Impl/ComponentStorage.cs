@@ -22,7 +22,12 @@ public class ComponentStorage<T> : IComponentStorage<T> where T : struct, ICompo
 		return components.ContainsKey(entity);
 	}
 
-	public T? GetComponent(Guid entity)
+	public IComponent? GetComponent(Guid entity)
+	{
+		return components.TryGetValue(entity, out var component) ? component : null;
+	}
+
+	public T? GetGenericComponent(Guid entity)
 	{
 		return components.TryGetValue(entity, out var component) ? component : null;
 	}

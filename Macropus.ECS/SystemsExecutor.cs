@@ -33,8 +33,8 @@ public sealed class SystemsExecutor
 			var filter = system.Value;
 
 			IEnumerable<IEntity> filteredEntities;
-			if (filter != null)
-				filteredEntities = EntityWrapper.Wrap(filter.Filter(changesComponents),
+			if (filter.HasValue)
+				filteredEntities = EntityWrapper.Wrap(filter.Value.Filter(changesComponents),
 					componentsStorage, changedComponents);
 			else
 				filteredEntities = EntityWrapper.Wrap(changesComponents.GetEntities(),

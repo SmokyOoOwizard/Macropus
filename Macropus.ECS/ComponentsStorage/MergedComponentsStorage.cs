@@ -21,12 +21,25 @@ public class MergedComponentsStorage : IReadOnlyComponentsStorage
 		return mainStorage.HasComponent<T>(entityId) || additionalStorage.HasComponent<T>(entityId);
 	}
 
+	public bool HasComponent(Guid entityId, string name)
+	{
+		return mainStorage.HasComponent(entityId, name) || additionalStorage.HasComponent(entityId, name);
+	}
+
 	public T GetComponent<T>(Guid entityId) where T : struct, IComponent
 	{
 		if (mainStorage.HasComponent<T>(entityId))
 			return mainStorage.GetComponent<T>(entityId);
 
 		return additionalStorage.GetComponent<T>(entityId);
+	}
+
+	public IComponent GetComponent(Guid entityId, string name)
+	{
+		if (mainStorage.HasComponent(entityId, name))
+			return mainStorage.GetComponent(entityId, name);
+
+		return additionalStorage.GetComponent(entityId, name);
 	}
 
 	public IEnumerable<Guid> GetEntities()

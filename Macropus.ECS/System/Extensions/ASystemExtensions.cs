@@ -17,7 +17,7 @@ public static class ASystemExtensions
 				// TODO internal error
 				throw new Exception();
 
-			return method.Invoke(null, null) as ComponentsFilter;
+			return (ComponentsFilter)method.Invoke(null, null)!;
 		}
 		catch (Exception e)
 		{
