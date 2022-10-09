@@ -8,6 +8,7 @@ public class RemoveReadOnlyComponentSystem : ASystem
 {
 	public override void Execute(IEnumerable<IEntity> entities)
 	{
-		foreach (var entity in entities) entity.RemoveComponent<ReadOnlyComponent>();
+		foreach (var entity in entities)
+			entity.RemoveComponent<ReadOnlyComponent>();
 	}
 }

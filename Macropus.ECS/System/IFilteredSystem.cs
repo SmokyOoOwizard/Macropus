@@ -2,5 +2,5 @@
 
 public interface IFilteredSystem
 {
-	static abstract ISystemFilter Filter();
+	static abstract ComponentsFilter Filter();
 }

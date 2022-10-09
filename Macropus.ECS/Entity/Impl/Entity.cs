@@ -5,12 +5,12 @@ namespace Macropus.ECS.Entity.Impl;
 
 public readonly struct Entity : IEntity
 {
-	private readonly IComponentsStorage componentsStorage;
+	private readonly IReadOnlyComponentsStorage componentsStorage;
 	private readonly IComponentsStorage futureChanges;
 
 	public Guid Id { get; }
 
-	public Entity(Guid id, IComponentsStorage componentsStorage, IComponentsStorage futureChanges)
+	public Entity(Guid id, IReadOnlyComponentsStorage componentsStorage, IComponentsStorage futureChanges)
 	{
 		Id = id;
 
