@@ -8,6 +8,7 @@ namespace Macropus.ECS;
 public sealed class SystemsExecutor
 {
 	private readonly Dictionary<ASystem, ISystemFilter?> systems;
+	private readonly MergedComponentsStorage mergedComponentsStorage = new();
 
 	public SystemsExecutor(ASystem[] systems)
 	{
@@ -16,12 +17,14 @@ public sealed class SystemsExecutor
 
 	public void Execute(
 		IComponentsStorage componentsStorage,
-		IEnumerationComponents changes,
+		IReadOnlyComponentsStorage changes,
 		IComponentsStorage futureChanges
 	)
 	{
-		if (changes.Count == 0)
+		if (changes.EntitiesCount == 0)
 			return;
+
+		mergedComponentsStorage.SetStorages(futureChanges, changes);
 
 		foreach (var system in systems)
 		{
@@ -29,9 +32,11 @@ public sealed class SystemsExecutor
 
 			IEnumerable<IEntity> filteredEntities;
 			if (filter != null)
-				filteredEntities = EntityWrapper.Wrap(filter.Filter(changes), componentsStorage, futureChanges);
+				filteredEntities = EntityWrapper.Wrap(filter.Filter(mergedComponentsStorage),
+					componentsStorage, futureChanges);
 			else
-				filteredEntities = EntityWrapper.Wrap(changes.GetEntities(), componentsStorage, futureChanges);
+				filteredEntities = EntityWrapper.Wrap(mergedComponentsStorage.GetEntities(),
+					componentsStorage, futureChanges);
 
 			system.Key.Execute(filteredEntities);
 		}

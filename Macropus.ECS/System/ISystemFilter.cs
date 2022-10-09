@@ -4,5 +4,5 @@ namespace Macropus.ECS.System;
 
 public interface ISystemFilter
 {
-	IEnumerable<Guid> Filter(IEnumerationComponents components);
+	IEnumerable<Guid> Filter(IReadOnlyComponentsStorage components);
 }

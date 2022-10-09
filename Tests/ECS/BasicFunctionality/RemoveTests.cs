@@ -19,14 +19,14 @@ public class RemoveTests : TestsWithSystems
 	public void RemoveExistsComponentFromEntityTest()
 	{
 		var entityId = Guid.NewGuid();
-		ComponentsStorage.ReplaceComponent(entityId, new TestComponent());
+		NewComponents.ReplaceComponent(entityId, new TestComponent());
 
-		Assert.True(ComponentsStorage.HasComponent<TestComponent>(entityId));
+		Assert.True(NewComponents.HasComponent<TestComponent>(entityId));
 
 		ExecuteSystems();
 
 		Assert.False(ChangesComponents.HasComponent<TestComponent>(entityId));
-		Assert.True(ComponentsStorage.HasComponent<TestComponent>(entityId));
+		Assert.True(NewComponents.HasComponent<TestComponent>(entityId));
 	}
 
 	[Fact]
@@ -34,11 +34,11 @@ public class RemoveTests : TestsWithSystems
 	{
 		var entityId = Guid.NewGuid();
 
-		Assert.False(ComponentsStorage.HasComponent<TestComponent>(entityId));
+		Assert.False(NewComponents.HasComponent<TestComponent>(entityId));
 
 		ExecuteSystems();
 
 		Assert.False(ChangesComponents.HasComponent<TestComponent>(entityId));
-		Assert.False(ComponentsStorage.HasComponent<TestComponent>(entityId));
+		Assert.False(NewComponents.HasComponent<TestComponent>(entityId));
 	}
 }

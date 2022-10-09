@@ -10,12 +10,14 @@ public abstract class TestsWithSystems : TestsWrapper
 {
 	private readonly SystemsExecutor executor;
 
-	public readonly IClearableComponentsStorage ComponentsStorage;
-	public readonly IClearableComponentsStorage ChangesComponents;
+	public readonly IComponentsStorage AllreadyExistsComponents;
+	public readonly IComponentsStorage NewComponents;
+	public readonly IComponentsStorage ChangesComponents;
 
 	public TestsWithSystems(ITestOutputHelper output) : base(output)
 	{
-		ComponentsStorage = new ComponentsStorage();
+		AllreadyExistsComponents = new ComponentsStorage();
+		NewComponents = new ComponentsStorage();
 		ChangesComponents = new ComponentsStorage();
 
 		// ReSharper disable once VirtualMemberCallInConstructor
@@ -28,11 +30,10 @@ public abstract class TestsWithSystems : TestsWrapper
 	public void ExecuteSystems()
 	{
 		executor.Execute(
-			ComponentsStorage,
-			ComponentsStorage.GetEnumerationComponents(true),
+			AllreadyExistsComponents,
+			NewComponents,
 			ChangesComponents);
 	}
-
 
 	[Fact]
 	public void EmptyExecuteTest()

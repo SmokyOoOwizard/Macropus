@@ -3,13 +3,13 @@ using Macropus.ECS.Component.Exceptions;
 
 namespace Macropus.ECS.ComponentsStorage.Impl;
 
-public class ComponentsStorage : IClearableComponentsStorage
+public class ComponentsStorage : IComponentsStorage
 {
-	private readonly Dictionary<string, Dictionary<Guid, IComponent?>> storage = new();
+	private readonly Dictionary<string, IComponentStorage> storage = new();
 	private readonly HashSet<Guid> existsEntities = new();
 
-	public bool Empty => existsEntities.Count == 0;
-
+	public uint ComponentsCount => (uint)storage.Count;
+	public uint EntitiesCount => (uint)existsEntities.Count;
 
 	public bool HasComponent<T>(Guid entityId) where T : struct, IComponent
 	{
@@ -20,8 +20,7 @@ public class ComponentsStorage : IClearableComponentsStorage
 		if (!storage.TryGetValue(componentName, out var entities))
 			return false;
 
-		if (!entities.TryGetValue(entityId, out var component))
-			return false;
+		var component = (entities as IComponentStorage<T>)!.GetComponent(entityId);
 
 		return component != null;
 	}
@@ -35,8 +34,7 @@ public class ComponentsStorage : IClearableComponentsStorage
 		if (!storage.TryGetValue(componentName, out var entities))
 			throw new ComponentNotFoundException();
 
-		if (!entities.TryGetValue(entityId, out var component))
-			throw new ComponentNotFoundException();
+		var component = (entities as IComponentStorage<T>)!.GetComponent(entityId);
 
 		if (component == null)
 			throw new ComponentNotFoundException();
@@ -50,13 +48,18 @@ public class ComponentsStorage : IClearableComponentsStorage
 		if (string.IsNullOrWhiteSpace(componentName))
 			throw new TypeNameNotSupportedException();
 
-		if (!storage.TryGetValue(componentName, out var entities))
+		IComponentStorage<T> entities;
+		if (storage.TryGetValue(componentName, out var en))
 		{
-			entities = new Dictionary<Guid, IComponent?>();
+			entities = (en as IComponentStorage<T>)!;
+		}
+		else
+		{
+			entities = new ComponentStorage<T>();
 			storage.Add(componentName, entities);
 		}
 
-		entities[entityId] = component;
+		entities.ReplaceComponent(entityId, component);
 
 		existsEntities.Add(entityId);
 	}
@@ -69,19 +72,18 @@ public class ComponentsStorage : IClearableComponentsStorage
 
 		if (!storage.TryGetValue(componentName, out var entities))
 		{
-			entities = new Dictionary<Guid, IComponent?>();
+			entities = new ComponentStorage<T>();
 			storage.Add(componentName, entities);
 		}
 
-		entities[entityId] = null;
+		entities.RemoveComponent(entityId);
+
 		existsEntities.Add(entityId);
 	}
 
-	public IEnumerationComponents GetEnumerationComponents(bool copy)
+	public IEnumerable<Guid> GetEntities()
 	{
-		if (copy)
-			return new EnumerationComponentsCopyComponentsStorage(storage);
-		return new EnumerationComponentsRefComponentsStorage(storage);
+		return existsEntities;
 	}
 
 	public void Clear()
