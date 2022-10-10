@@ -1,8 +1,8 @@
 ﻿using Macropus.Interfaces.Project;
 
-namespace Macropus.Project.Instance;
+namespace Macropus.Project;
 
 internal interface IProjectInformationInternal : IProjectInformation
 {
-    string Path { get; }
+	string Path { get; }
 }
