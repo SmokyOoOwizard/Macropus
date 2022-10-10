@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.Db", "Macropus.Db\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{0DE04E8A-8941-4279-933C-4EC3D560F8CE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.ECS", "Macropus.ECS\Macropus.ECS.csproj", "{545ED6BE-038F-408A-B12E-5EAC21405A52}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{0DE04E8A-8941-4279-933C-4EC3D560F8CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DE04E8A-8941-4279-933C-4EC3D560F8CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DE04E8A-8941-4279-933C-4EC3D560F8CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{545ED6BE-038F-408A-B12E-5EAC21405A52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{545ED6BE-038F-408A-B12E-5EAC21405A52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{545ED6BE-038F-408A-B12E-5EAC21405A52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{545ED6BE-038F-408A-B12E-5EAC21405A52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
