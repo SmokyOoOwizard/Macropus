@@ -5,19 +5,27 @@ namespace Macropus.ECS.ComponentsStorage.Impl;
 
 public class ComponentsStorage : IComponentsStorage
 {
-	private readonly Dictionary<string, IComponentStorage> storage = new();
+	private readonly Dictionary<uint, IComponentStorage> storage = new();
 	private readonly HashSet<Guid> existsEntities = new();
+
+	private readonly IComponentTypesStorage typesStorage;
 
 	public uint ComponentsCount => (uint)storage.Count;
 	public uint EntitiesCount => (uint)existsEntities.Count;
 
+	public ComponentsStorage()
+	{
+		typesStorage = new ComponentTypesStorage();
+	}
+
+	public ComponentsStorage(IComponentTypesStorage typesStorage)
+	{
+		this.typesStorage = typesStorage;
+	}
+
 	public bool HasComponent<T>(Guid entityId) where T : struct, IComponent
 	{
-		var componentName = typeof(T).FullName;
-		if (string.IsNullOrWhiteSpace(componentName))
-			return false;
-
-		if (!storage.TryGetValue(componentName, out var entities))
+		if (!storage.TryGetValue(typesStorage.GetComponentTypeId<T>(), out var entities))
 			return false;
 
 		var component = (entities as IComponentStorage<T>)!.GetGenericComponent(entityId);
@@ -30,7 +38,7 @@ public class ComponentsStorage : IComponentsStorage
 		if (string.IsNullOrWhiteSpace(name))
 			return false;
 
-		if (!storage.TryGetValue(name, out var entities))
+		if (!storage.TryGetValue(typesStorage.GetComponentTypeId(name), out var entities))
 			return false;
 
 		var component = entities.GetComponent(entityId);
@@ -40,11 +48,7 @@ public class ComponentsStorage : IComponentsStorage
 
 	public T GetComponent<T>(Guid entityId) where T : struct, IComponent
 	{
-		var componentName = typeof(T).FullName;
-		if (string.IsNullOrWhiteSpace(componentName))
-			throw new TypeNameNotSupportedException();
-
-		if (!storage.TryGetValue(componentName, out var entities))
+		if (!storage.TryGetValue(typesStorage.GetComponentTypeId<T>(), out var entities))
 			throw new ComponentNotFoundException();
 
 		var component = (entities as IComponentStorage<T>)!.GetGenericComponent(entityId);
@@ -58,9 +62,9 @@ public class ComponentsStorage : IComponentsStorage
 	public IComponent GetComponent(Guid entityId, string name)
 	{
 		if (string.IsNullOrWhiteSpace(name))
-			throw new TypeNameNotSupportedException();
+			throw new ArgumentNullException(nameof(name));
 
-		if (!storage.TryGetValue(name, out var entities))
+		if (!storage.TryGetValue(typesStorage.GetComponentTypeId(name), out var entities))
 			throw new ComponentNotFoundException();
 
 		var component = entities.GetComponent(entityId);
@@ -74,19 +78,17 @@ public class ComponentsStorage : IComponentsStorage
 
 	public void ReplaceComponent<T>(Guid entityId, T component) where T : struct, IComponent
 	{
-		var componentName = typeof(T).FullName;
-		if (string.IsNullOrWhiteSpace(componentName))
-			throw new TypeNameNotSupportedException();
+		var typeId = typesStorage.GetComponentTypeId<T>();
 
 		IComponentStorage<T> entities;
-		if (storage.TryGetValue(componentName, out var en))
+		if (storage.TryGetValue(typeId, out var en))
 		{
 			entities = (en as IComponentStorage<T>)!;
 		}
 		else
 		{
 			entities = new ComponentStorage<T>();
-			storage.Add(componentName, entities);
+			storage.Add(typeId, entities);
 		}
 
 		entities.ReplaceComponent(entityId, component);
@@ -96,14 +98,12 @@ public class ComponentsStorage : IComponentsStorage
 
 	public void RemoveComponent<T>(Guid entityId) where T : struct, IComponent
 	{
-		var componentName = typeof(T).FullName;
-		if (string.IsNullOrWhiteSpace(componentName))
-			throw new TypeNameNotSupportedException();
+		var typeId = typesStorage.GetComponentTypeId<T>();
 
-		if (!storage.TryGetValue(componentName, out var entities))
+		if (!storage.TryGetValue(typeId, out var entities))
 		{
 			entities = new ComponentStorage<T>();
-			storage.Add(componentName, entities);
+			storage.Add(typeId, entities);
 		}
 
 		entities.RemoveComponent(entityId);
