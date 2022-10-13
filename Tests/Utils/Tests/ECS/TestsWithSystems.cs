@@ -4,7 +4,7 @@ using Macropus.ECS.ComponentsStorage.Impl;
 using Macropus.ECS.System;
 using Xunit.Abstractions;
 
-namespace Tests.Utils.ECS;
+namespace Tests.Utils.Tests.ECS;
 
 public abstract class TestsWithSystems : TestsWrapper
 {

@@ -1,7 +1,7 @@
 ﻿using Macropus.Project.Storage.Impl;
 using Xunit.Abstractions;
 
-namespace Tests.Utils;
+namespace Tests.Utils.Tests;
 
 public abstract class TestsWithProjectsStorage : TestsWithFiles
 {

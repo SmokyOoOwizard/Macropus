@@ -1,6 +1,6 @@
 ﻿using Xunit.Abstractions;
 
-namespace Tests.Utils;
+namespace Tests.Utils.Tests;
 
 public abstract class TestsWrapper
 {

@@ -1,5 +1,6 @@
 ﻿using Macropus.FileSystem.Impl;
 using Tests.Utils;
+using Tests.Utils.Tests;
 using Xunit.Abstractions;
 
 namespace Tests.FileSystem;

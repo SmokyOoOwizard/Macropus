@@ -4,7 +4,7 @@ using Macropus.Project.Storage;
 using Macropus.Project.Storage.Impl;
 using Xunit.Abstractions;
 
-namespace Tests.Utils;
+namespace Tests.Utils.Tests;
 
 public abstract class TestsWithProject : TestsWithProjectsStorage, IAsyncLifetime
 {
