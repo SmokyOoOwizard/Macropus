@@ -18,16 +18,28 @@ public class MergedComponentsStorage : IReadOnlyComponentsStorage
 
 	public bool HasComponent<T>(Guid entityId) where T : struct, IComponent
 	{
+		if ((mainStorage == null) || (additionalStorage == null))
+			// TODO
+			throw new Exception();
+
 		return mainStorage.HasComponent<T>(entityId) || additionalStorage.HasComponent<T>(entityId);
 	}
 
 	public bool HasComponent(Guid entityId, string name)
 	{
+		if ((mainStorage == null) || (additionalStorage == null))
+			// TODO
+			throw new Exception();
+
 		return mainStorage.HasComponent(entityId, name) || additionalStorage.HasComponent(entityId, name);
 	}
 
 	public T GetComponent<T>(Guid entityId) where T : struct, IComponent
 	{
+		if ((mainStorage == null) || (additionalStorage == null))
+			// TODO
+			throw new Exception();
+
 		if (mainStorage.HasComponent<T>(entityId))
 			return mainStorage.GetComponent<T>(entityId);
 
@@ -36,6 +48,10 @@ public class MergedComponentsStorage : IReadOnlyComponentsStorage
 
 	public IComponent GetComponent(Guid entityId, string name)
 	{
+		if ((mainStorage == null) || (additionalStorage == null))
+			// TODO
+			throw new Exception();
+
 		if (mainStorage.HasComponent(entityId, name))
 			return mainStorage.GetComponent(entityId, name);
 
@@ -44,6 +60,10 @@ public class MergedComponentsStorage : IReadOnlyComponentsStorage
 
 	public IEnumerable<Guid> GetEntities()
 	{
+		if ((mainStorage == null) || (additionalStorage == null))
+			// TODO
+			throw new Exception();
+
 		var mainEntities = mainStorage.GetEntities();
 		var additionalEntities = additionalStorage.GetEntities();
 
