@@ -1,13 +1,13 @@
-﻿using Macropus.Database.Migration;
+﻿using Macropus.Database.Db.Migrations;
+using Macropus.Database.Migration;
 using Macropus.Database.Migration.Impl;
-using Macropus.FileSystem.Db.Migrations;
 
-namespace Macropus.FileSystem.Db;
+namespace Macropus.Database.Db;
 
-internal class FileSystemDbMigrationsProvider : IMigrationsProvider
+internal class DatabasesProviderDbMigrationsProvider : IMigrationsProvider
 {
 	private static readonly MigrationCollection migrations = new(
-		new m1_BaseFileSystemDbMigration()
+		new m1_BaseDatabasesProviderDbMigration()
 	);
 
 	public static uint LastVersion => migrations.LastVersion;
