@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Macropus.Db.Migration.Impl;
+namespace Macropus.Database.Migration.Impl;
 
 public sealed class MigrationCollection : IMigrationCollection
 {

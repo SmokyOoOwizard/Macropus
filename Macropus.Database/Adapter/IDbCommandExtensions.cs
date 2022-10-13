@@ -4,7 +4,7 @@ using System.Data.Common;
 
 // ReSharper disable InconsistentNaming
 
-namespace Macropus.Db.Adapter;
+namespace Macropus.Database.Adapter;
 
 public static class IDbCommandExtensions
 {

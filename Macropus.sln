@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Macropus", "Macropus\Macrop
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Macropus.Interfaces", "Macropus.Interfaces\Macropus.Interfaces.csproj", "{4E0FE93B-F960-4766-811E-2DB42E1D2F51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.Db", "Macropus.Db\Macropus.Db.csproj", "{E39F32E4-4A7B-43AE-9A8C-8A60D096B492}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.Database", "Macropus.Database\Macropus.Database.csproj", "{E39F32E4-4A7B-43AE-9A8C-8A60D096B492}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{0DE04E8A-8941-4279-933C-4EC3D560F8CE}"
 EndProject

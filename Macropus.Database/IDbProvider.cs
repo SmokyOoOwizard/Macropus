@@ -1,6 +1,6 @@
 ﻿using System.Data.Common;
 
-namespace Macropus.Db;
+namespace Macropus.Database;
 
 public interface IDbProvider
 {

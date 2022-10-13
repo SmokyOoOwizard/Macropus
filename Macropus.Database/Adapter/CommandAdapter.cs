@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Reflection;
 
-namespace Macropus.Db.Adapter;
+namespace Macropus.Database.Adapter;
 
 internal class CommandAdapter
 {

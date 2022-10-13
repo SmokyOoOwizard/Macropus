@@ -1,7 +1,7 @@
 ﻿using System.Data;
-using Macropus.Db.Migration;
+using Macropus.Database.Migration;
 
-namespace Macropus.Db;
+namespace Macropus.Database;
 
 public static class DbUtils
 {

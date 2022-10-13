@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Macropus.Db.Migration;
+namespace Macropus.Database.Migration;
 
 public interface IMigrationCollection : IReadOnlyCollection<IMigration>, IEnumerable
 {

@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Reflection;
 
-namespace Macropus.Db.Adapter;
+namespace Macropus.Database.Adapter;
 
 internal class ConnectionAdapter
 {
@@ -10,7 +10,7 @@ internal class ConnectionAdapter
 
     internal ConnectionAdapter(Type type)
     {
-        if (type.GetRuntimeMethod("OpenAsync", new Type[0]) != null)
+        if (type.GetRuntimeMethod("OpenAsync", Type.EmptyTypes) != null)
             OpenAsync = async connection =>
             {
                 dynamic cmd = connection;
@@ -26,6 +26,6 @@ internal class ConnectionAdapter
                 await cmd.OpenAsync(token);
             };
         else
-            OpenAsyncToken = async (connection, token) => await Task.Run(() => { connection.Open(); });
+            OpenAsyncToken = async (connection, _) => await Task.Run(() => { connection.Open(); });
     }
 }

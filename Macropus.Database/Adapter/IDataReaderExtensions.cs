@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.Common;
 
-namespace Macropus.Db.Adapter;
+namespace Macropus.Database.Adapter;
 
 public static class IDataReaderExtensions
 {

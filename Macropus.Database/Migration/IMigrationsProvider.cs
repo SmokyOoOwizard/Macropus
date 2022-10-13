@@ -1,4 +1,4 @@
-﻿namespace Macropus.Db.Migration;
+﻿namespace Macropus.Database.Migration;
 
 public interface IMigrationsProvider
 {
