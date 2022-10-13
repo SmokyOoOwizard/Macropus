@@ -1,7 +1,7 @@
 ﻿using Macropus.ECS.System;
 using Tests.ECS.BasicFunctionality.Components;
 using Tests.ECS.BasicFunctionality.Systems;
-using Tests.Utils.ECS;
+using Tests.Utils.Tests.ECS;
 using Xunit.Abstractions;
 
 namespace Tests.ECS.BasicFunctionality;

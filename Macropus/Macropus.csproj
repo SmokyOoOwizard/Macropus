@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Macropus.Db\Macropus.Db.csproj" />
+    <ProjectReference Include="..\Macropus.Database\Macropus.Database.csproj" />
     <ProjectReference Include="..\Macropus.ECS\Macropus.ECS.csproj" />
     <ProjectReference Include="..\Macropus.Interfaces\Macropus.Interfaces.csproj" />
   </ItemGroup>

@@ -1,5 +1,5 @@
-﻿using Macropus.Db.Adapter;
-using Macropus.Db.Migration;
+﻿using Macropus.Database.Adapter;
+using Macropus.Database.Migration;
 using System.Data;
 
 namespace Macropus.FileSystem.Db.Migrations

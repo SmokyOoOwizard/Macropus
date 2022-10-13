@@ -2,6 +2,7 @@
 using Macropus.ECS.System.Exceptions;
 using Tests.ECS.BasicFunctionality.Systems;
 using Tests.Utils;
+using Tests.Utils.Tests;
 using Xunit.Abstractions;
 
 namespace Tests.ECS.BasicFunctionality;
