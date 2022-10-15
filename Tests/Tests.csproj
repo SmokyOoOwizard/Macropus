@@ -24,7 +24,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Macropus\Macropus.csproj" />
+        <ProjectReference Include="..\Macropus.Schema\Macropus.Schema.csproj"/>
+        <ProjectReference Include="..\Macropus\Macropus.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Schema"/>
     </ItemGroup>
 
 </Project>
