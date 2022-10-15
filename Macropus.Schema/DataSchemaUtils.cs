@@ -6,12 +6,31 @@ namespace Macropus.Schema;
 
 public static class DataSchemaUtils
 {
-	public static DataSchema CreateSchema(Type type, List<DataSchema> subSchemas)
+	public static DataSchema CreateSchema<T>(List<DataSchema> subSchemas)
+	{
+		var type = typeof(T);
+		var schemaName = type.Name;
+
+		var fields = type.GetFields()
+			.Where(t => t.IsPublic && t.FieldType.FilterDataSchemaElement())
+			.ToArray();
+
+		var elements = new List<DataSchemaElement>();
+		var schemas = new Dictionary<Type, DataSchema>();
+		foreach (var field in fields)
+			elements.Add(CreateElement(field, schemas));
+
+		subSchemas.AddRange(schemas.Values);
+
+		return new DataSchema(Guid.NewGuid(), schemaName, elements);
+	}
+
+	private static DataSchema CreateSchema(Type type, Dictionary<Type, DataSchema> subSchemas)
 	{
 		var schemaName = type.Name;
 
 		var fields = type.GetFields()
-			.Where(t => t.IsPublic && !t.FieldType.GetSchemaType().IsSimpleType())
+			.Where(t => t.IsPublic && t.FieldType.FilterDataSchemaElement())
 			.ToArray();
 
 		var elements = new List<DataSchemaElement>();
@@ -21,22 +40,24 @@ public static class DataSchemaUtils
 		return new DataSchema(Guid.NewGuid(), schemaName, elements);
 	}
 
-	public static DataSchemaElement CreateElement(FieldInfo field, List<DataSchema> subSchemas)
+	private static DataSchemaElement CreateElement(FieldInfo field, Dictionary<Type, DataSchema> subSchemas)
 	{
 		var element = new DataSchemaElement();
 
 		var fieldType = field.FieldType;
-		ESchemaElementType schemaType;
 		if (fieldType.IsArray)
 		{
-			schemaType = fieldType.GetElementType()!.GetSchemaType();
+			fieldType = fieldType.GetElementType();
 			element.CollectionType = ECollectionType.Array;
 		}
-		else
+
+		if (fieldType!.IsGenericType && (fieldType.GetGenericTypeDefinition() == typeof(Nullable<>)))
 		{
-			schemaType = fieldType.GetSchemaType();
+			fieldType = Nullable.GetUnderlyingType(fieldType);
+			element.Nullable = true;
 		}
 
+		var schemaType = fieldType!.GetSchemaType();
 		if (schemaType == ESchemaElementType.INVALID)
 			// TODO
 			throw new Exception();
@@ -53,8 +74,12 @@ public static class DataSchemaUtils
 
 		if (schemaType == ESchemaElementType.ComplexType)
 		{
-			var schema = CreateSchema(fieldType, subSchemas);
-			subSchemas.Add(schema);
+			if (!subSchemas.TryGetValue(fieldType!, out var schema))
+			{
+				schema = CreateSchema(fieldType!, subSchemas);
+				subSchemas.Add(fieldType!, schema);
+			}
+
 			element.SubSchemaId = schema.Id;
 		}
 

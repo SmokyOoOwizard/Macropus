@@ -4,8 +4,40 @@ namespace Macropus.Schema.Extensions;
 
 public static class TypeExtensions
 {
-	public static ESchemaElementType GetSchemaType(this Type type)
+	public static bool FilterDataSchemaElement(this Type type)
 	{
+		if (type.GetSchemaType() != ESchemaElementType.INVALID)
+			return true;
+
+		if (type.IsArray) // Array
+		{
+			var elementType = type.GetElementType();
+			if (elementType.GetSchemaType() != ESchemaElementType.INVALID)
+				return true;
+		}
+
+		if (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Nullable<>))) // Nullable
+		{
+			var nullableType = Nullable.GetUnderlyingType(type);
+
+			if (nullableType != null)
+				return FilterDataSchemaElement(nullableType);
+		}
+
+		return false;
+	}
+
+	public static ESchemaElementType GetSchemaType(this Type? type)
+	{
+		if (type == null)
+			return ESchemaElementType.INVALID;
+
+		if (type.IsArray)
+			type = type.GetElementType();
+
+		if (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Nullable<>)))
+			type = Nullable.GetUnderlyingType(type);
+
 		switch (type)
 		{
 			case var x when x == typeof(byte):
