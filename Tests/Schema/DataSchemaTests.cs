@@ -40,4 +40,15 @@ public class DataSchemaTests : TestsWrapper
 		Assert.True(schema.IsCorrectType<DataSchemaTestTypeComponent>());
 		Assert.False(schema.IsCorrectType<DataSchemaSubSchemaComponent2>());
 	}
+
+	[Fact]
+	public void CreateCachedSchemaTest()
+	{
+		var schemasStorage = new DataSchemasMemoryStorage();
+		var schema = CachedDataSchema.Create<DataSchemaTestTypeComponent>(schemasStorage);
+		Assert.NotNull(schema);
+
+		Assert.True(schema.Type == typeof(DataSchemaTestTypeComponent));
+		Assert.Equal(schema.Schema.Elements.Count, schema.CachedFields.Count);
+	}
 }

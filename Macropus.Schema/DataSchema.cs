@@ -3,7 +3,7 @@ using Macropus.Schema.Extensions;
 
 namespace Macropus.Schema;
 
-public class DataSchema
+public sealed class DataSchema
 {
 	public readonly Guid Id;
 	public readonly string Name;
@@ -41,7 +41,6 @@ public class DataSchema
 		{
 			var targetFields = type.GetFields()
 				.Where(f => f.IsPublic && f.FieldType.FilterDataSchemaElement())
-				.Select(f => new { Type = f.FieldType.GetSchemaType(), FieldInfo = f })
 				.ToHashSet();
 
 			var skipComplexTypes = subSchemasStorage == null;
@@ -50,22 +49,25 @@ public class DataSchema
 				if (skipComplexTypes && (schemaElement.Type == ESchemaElementType.ComplexType))
 					continue;
 
-				var targetField = targetFields.FirstOrDefault(f => f.FieldInfo.Name == schemaElement.FieldName);
+				var targetField = targetFields.FirstOrDefault(f => f.Name == schemaElement.FieldName);
 				if (targetField == null)
 					return false;
 
-				if (targetField.Type != schemaElement.Type)
+				var targetFieldType = targetField.FieldType.GetSchemaType();
+				if (targetFieldType != schemaElement.Type)
 					return false;
 
 				DataSchemaElement targetSchemaElement;
 				if (skipComplexTypes)
-					targetSchemaElement = DataSchemaElement.Create(targetField.FieldInfo);
+					targetSchemaElement = DataSchemaElement.Create(targetField);
 				else
 					targetSchemaElement =
-						DataSchemaElement.Create(targetField.FieldInfo, subSchemasStorage!.GetSchemaId);
+						DataSchemaElement.Create(targetField, subSchemasStorage!.GetSchemaId);
 
 				if (!schemaElement.Equals(targetSchemaElement))
 					return false;
+
+				targetFields.Remove(targetField);
 			}
 
 			return true;
