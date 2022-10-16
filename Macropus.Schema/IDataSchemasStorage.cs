@@ -1,6 +1,4 @@
-﻿using Macropus.Schema;
-
-namespace Macropus.ECS;
+﻿namespace Macropus.Schema;
 
 public interface IDataSchemasStorage
 {
@@ -15,4 +13,7 @@ public interface IDataSchemasStorage
 	DataSchema GetSchema(Guid id);
 	DataSchema GetSchema<T>();
 	DataSchema GetSchema(Type type);
+
+	Guid GetSchemaId<T>();
+	Guid GetSchemaId(Type type);
 }

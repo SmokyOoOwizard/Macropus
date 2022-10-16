@@ -32,8 +32,4 @@
     <ProjectReference Include="..\Macropus.Schema\Macropus.Schema.csproj"/>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Linq"/>
-  </ItemGroup>
-
 </Project>

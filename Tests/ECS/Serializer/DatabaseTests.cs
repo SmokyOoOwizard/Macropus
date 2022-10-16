@@ -1,5 +1,6 @@
 ﻿using Macropus.ECS;
 using Macropus.Schema;
+using Macropus.Schema.Impl;
 using Tests.Schema;
 using Tests.Utils.Tests;
 using Xunit.Abstractions;
@@ -15,12 +16,7 @@ public class DatabaseTests : TestsWithDatabase
 	{
 		var schemasStorage = new DataSchemasMemoryStorage();
 
-		var subSchemas = new List<DataSchema>();
-		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>(subSchemas);
-
-		schemasStorage.AddSchema(schema);
-		foreach (var subSchema in subSchemas)
-			schemasStorage.AddSchema(subSchema);
+		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>(schemasStorage);
 
 		using var serializer = new ComponentSerializer(DbConnection, schemasStorage);
 
@@ -32,12 +28,7 @@ public class DatabaseTests : TestsWithDatabase
 	{
 		var schemasStorage = new DataSchemasMemoryStorage();
 
-		var subSchemas = new List<DataSchema>();
-		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>(subSchemas);
-
-		schemasStorage.AddSchema(schema);
-		foreach (var subSchema in subSchemas)
-			schemasStorage.AddSchema(subSchema);
+		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>(schemasStorage);
 
 		using var serializer = new ComponentSerializer(DbConnection, schemasStorage);
 

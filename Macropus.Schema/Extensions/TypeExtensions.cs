@@ -35,8 +35,14 @@ public static class TypeExtensions
 		if (type.IsArray)
 			type = type.GetElementType();
 
+		if (type == null)
+			return ESchemaElementType.INVALID;
+
 		if (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Nullable<>)))
 			type = Nullable.GetUnderlyingType(type);
+
+		if (type == null)
+			return ESchemaElementType.INVALID;
 
 		switch (type)
 		{
