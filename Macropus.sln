@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.Extensions", "Macr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.Linq", "Macropus.Linq\Macropus.Linq.csproj", "{2FF93311-60A0-4D7C-9A1C-64351E0729FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.CoolStuff", "Macropus.CoolStuff\Macropus.CoolStuff.csproj", "{DAE55C8B-B10F-4DA3-AD9C-533A211E1E55}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{2FF93311-60A0-4D7C-9A1C-64351E0729FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FF93311-60A0-4D7C-9A1C-64351E0729FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FF93311-60A0-4D7C-9A1C-64351E0729FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAE55C8B-B10F-4DA3-AD9C-533A211E1E55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAE55C8B-B10F-4DA3-AD9C-533A211E1E55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAE55C8B-B10F-4DA3-AD9C-533A211E1E55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAE55C8B-B10F-4DA3-AD9C-533A211E1E55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

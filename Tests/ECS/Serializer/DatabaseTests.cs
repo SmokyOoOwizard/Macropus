@@ -1,6 +1,5 @@
 ﻿using Macropus.ECS;
 using Macropus.Schema;
-using Macropus.Schema.Impl;
 using Tests.Schema;
 using Tests.Utils.Tests;
 using Xunit.Abstractions;
@@ -14,25 +13,20 @@ public class DatabaseTests : TestsWithDatabase
 	[Fact]
 	public async Task CreateTableByDataSchemaTest()
 	{
-		var schemasStorage = new DataSchemasMemoryStorage();
+		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>();
 
-		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>(schemasStorage);
-
-		using var serializer = new ComponentSerializer(DbConnection, schemasStorage);
-
-		await serializer.CreateTablesBySchema(schema.Id);
+		using var serializer = new ComponentSerializer(DbConnection);
+		await serializer.CreateTablesBySchema(schema);
 	}
 
 	[Fact]
 	public async Task TryCreateTableByDataSchemaWithAlreadyExistsSameTableTest()
 	{
-		var schemasStorage = new DataSchemasMemoryStorage();
+		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>();
 
-		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>(schemasStorage);
+		using var serializer = new ComponentSerializer(DbConnection);
 
-		using var serializer = new ComponentSerializer(DbConnection, schemasStorage);
-
-		await serializer.CreateTablesBySchema(schema.Id);
-		await serializer.CreateTablesBySchema(schema.Id);
+		await serializer.CreateTablesBySchema(schema);
+		await serializer.CreateTablesBySchema(schema);
 	}
 }

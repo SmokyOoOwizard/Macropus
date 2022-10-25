@@ -12,7 +12,7 @@ public struct DataSchemaElement
 	public string FieldName;
 	public ECollectionType? CollectionType;
 
-	public Guid? SubSchemaId;
+	public uint? SubSchemaId;
 
 
 	public override string ToString()
@@ -28,7 +28,7 @@ public struct DataSchemaElement
 			+ "}";
 	}
 
-	public static DataSchemaElement Create(FieldInfo field, Func<Type, Guid>? schemaIdFactory = null)
+	public static DataSchemaElement Create(FieldInfo field, Func<Type, uint>? schemaIdFactory = null)
 	{
 		var element = new DataSchemaElement();
 

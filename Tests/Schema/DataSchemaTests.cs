@@ -1,5 +1,4 @@
 ﻿using Macropus.Schema;
-using Macropus.Schema.Impl;
 using Tests.Utils.Tests;
 using Xunit.Abstractions;
 
@@ -12,43 +11,20 @@ public class DataSchemaTests : TestsWrapper
 	[Fact]
 	public void CreateSchemaTest()
 	{
-		var schemasStorage = new DataSchemasMemoryStorage();
-		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>(schemasStorage);
+		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>();
 
 		Assert.NotNull(schema);
-		Assert.NotEmpty(schemasStorage);
-	}
 
-	[Fact]
-	public void SchemaFullCorrectTypeTest()
-	{
-		var schemasStorage = new DataSchemasMemoryStorage();
-		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>(schemasStorage);
-		Assert.NotNull(schema);
-
-		Assert.True(schema.IsFullCorrectType<DataSchemaTestTypeComponent>(schemasStorage));
-		Assert.False(schema.IsFullCorrectType<DataSchemaSubSchemaComponent2>(schemasStorage));
+		Assert.Equal(schema.SubSchemas.Values.Count(), schema.SubSchemas.Values.Distinct().Count());
 	}
 
 	[Fact]
 	public void SchemaCorrectTypeTest()
 	{
-		var schemasStorage = new DataSchemasMemoryStorage();
-		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>(schemasStorage);
+		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>();
 		Assert.NotNull(schema);
 
 		Assert.True(schema.IsCorrectType<DataSchemaTestTypeComponent>());
 		Assert.False(schema.IsCorrectType<DataSchemaSubSchemaComponent2>());
-	}
-
-	[Fact]
-	public void CreateCachedSchemaTest()
-	{
-		var schemasStorage = new DataSchemasMemoryStorage();
-		var schema = CachedDataSchema.Create<DataSchemaTestTypeComponent>(schemasStorage);
-		Assert.NotNull(schema);
-
-		Assert.True(schema.Type == typeof(DataSchemaTestTypeComponent));
-		Assert.Equal(schema.Schema.Elements.Count, schema.CachedFields.Count);
 	}
 }

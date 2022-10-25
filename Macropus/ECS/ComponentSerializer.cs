@@ -9,13 +9,11 @@ namespace Macropus.ECS;
 
 public class ComponentSerializer : IDisposable
 {
-	private readonly IDataSchemasStorage componentSchemas;
 	private readonly IDbConnection dbConnection;
 
-	public ComponentSerializer(IDbConnection dbConnection, IDataSchemasStorage componentSchemas)
+	public ComponentSerializer(IDbConnection dbConnection)
 	{
 		this.dbConnection = dbConnection;
-		this.componentSchemas = componentSchemas;
 	}
 
 	public async Task<bool> SerializeAsync<T>(
@@ -34,16 +32,14 @@ public class ComponentSerializer : IDisposable
 		throw new NotImplementedException();
 	}
 
-	public async Task CreateTablesBySchema(Guid schemaId)
+	public async Task CreateTablesBySchema(DataSchema schema)
 	{
-		var mainSchema = componentSchemas.GetSchema(schemaId);
-
-		var subSchemas = mainSchema.GetSubSchemas(componentSchemas);
+		var subSchemas = schema.SubSchemas.Select(kv => kv.Value).Where(s => s != schema);
 
 		using var transaction = dbConnection.BeginTransaction();
 		try
 		{
-			await CreateTableBySchema(mainSchema);
+			await CreateTableBySchema(schema);
 			foreach (var subSchema in subSchemas)
 				await CreateTableBySchema(subSchema);
 
@@ -58,10 +54,11 @@ public class ComponentSerializer : IDisposable
 
 	private async Task CreateTableBySchema(DataSchema schema)
 	{
-		if (string.IsNullOrWhiteSpace(schema.Name))
-			throw new ArgumentNullException(nameof(schema.Name));
+		var tableName = schema.SchemaOf.FullName;
 
-		var tableName = schema.Name;
+		if (string.IsNullOrWhiteSpace(tableName))
+			throw new ArgumentNullException(nameof(schema.SchemaOf));
+
 		if (await dbConnection.TableAlreadyExists(tableName))
 			// TODO check table
 			return;

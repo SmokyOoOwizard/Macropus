@@ -1,41 +1,32 @@
-﻿using Macropus.Linq;
-using Macropus.Schema.Extensions;
+﻿using Macropus.Schema.Extensions;
 
 namespace Macropus.Schema;
 
 public sealed class DataSchema
 {
-	public readonly Guid Id;
-	public readonly string Name;
+	public readonly Type SchemaOf;
 
 	public readonly IReadOnlyCollection<DataSchemaElement> Elements;
-	public readonly IReadOnlyCollection<Guid> SubSchemas;
+	public readonly IReadOnlyDictionary<uint, DataSchema> SubSchemas;
 
-	public DataSchema(Guid id, string name, IReadOnlyCollection<DataSchemaElement> elements)
+	public DataSchema(
+		Type type,
+		IReadOnlyCollection<DataSchemaElement> elements,
+		IReadOnlyDictionary<uint, DataSchema> subSchemas
+	)
 	{
-		Id = id;
-		Name = name;
+		SchemaOf = type;
 		Elements = elements;
-		SubSchemas = elements.Select(e => e.SubSchemaId).NotNull().ToArray();
+		SubSchemas = subSchemas;
 	}
 
 
 	public bool IsCorrectType<T>()
 	{
-		return IsFullCorrectType(typeof(T), null);
+		return IsCorrectType(typeof(T));
 	}
 
 	public bool IsCorrectType(Type type)
-	{
-		return IsFullCorrectType(type, null);
-	}
-
-	public bool IsFullCorrectType<T>(IDataSchemasStorage? subSchemasStorage)
-	{
-		return IsFullCorrectType(typeof(T), subSchemasStorage);
-	}
-
-	public bool IsFullCorrectType(Type type, IDataSchemasStorage? subSchemasStorage)
 	{
 		try
 		{
@@ -43,12 +34,8 @@ public sealed class DataSchema
 				.Where(f => f.IsPublic && f.FieldType.FilterDataSchemaElement())
 				.ToHashSet();
 
-			var skipComplexTypes = subSchemasStorage == null;
 			foreach (var schemaElement in Elements)
 			{
-				if (skipComplexTypes && (schemaElement.Type == ESchemaElementType.ComplexType))
-					continue;
-
 				var targetField = targetFields.FirstOrDefault(f => f.Name == schemaElement.FieldName);
 				if (targetField == null)
 					return false;
@@ -57,15 +44,16 @@ public sealed class DataSchema
 				if (targetFieldType != schemaElement.Type)
 					return false;
 
-				DataSchemaElement targetSchemaElement;
-				if (skipComplexTypes)
-					targetSchemaElement = DataSchemaElement.Create(targetField);
-				else
-					targetSchemaElement =
-						DataSchemaElement.Create(targetField, subSchemasStorage!.GetSchemaId);
+				var targetSchemaElement = DataSchemaElement.Create(targetField,
+					t => SubSchemas.FirstOrDefault(q => q.Value.SchemaOf == t).Key);
 
 				if (!schemaElement.Equals(targetSchemaElement))
 					return false;
+
+				if ((schemaElement.Type == ESchemaElementType.ComplexType) && schemaElement.SubSchemaId.HasValue)
+				{
+					// TODO check sub schema
+				}
 
 				targetFields.Remove(targetField);
 			}
