@@ -11,7 +11,8 @@ public class DataSchemaTests : TestsWrapper
 	[Fact]
 	public void CreateSchemaTest()
 	{
-		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>();
+		var builder = new DataSchemaBuilder();
+		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
 
 		Assert.NotNull(schema);
 
@@ -21,7 +22,9 @@ public class DataSchemaTests : TestsWrapper
 	[Fact]
 	public void SchemaCorrectTypeTest()
 	{
-		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>();
+		var builder = new DataSchemaBuilder();
+		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
+
 		Assert.NotNull(schema);
 
 		Assert.True(schema.IsCorrectType<DataSchemaTestTypeComponent>());

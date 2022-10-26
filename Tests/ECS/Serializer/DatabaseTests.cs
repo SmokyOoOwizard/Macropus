@@ -13,7 +13,8 @@ public class DatabaseTests : TestsWithDatabase
 	[Fact]
 	public async Task CreateTableByDataSchemaTest()
 	{
-		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>();
+		var builder = new DataSchemaBuilder();
+		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
 
 		using var serializer = new ComponentSerializer(DbConnection);
 		await serializer.CreateTablesBySchema(schema);
@@ -22,7 +23,8 @@ public class DatabaseTests : TestsWithDatabase
 	[Fact]
 	public async Task TryCreateTableByDataSchemaWithAlreadyExistsSameTableTest()
 	{
-		var schema = DataSchemaUtils.CreateSchema<DataSchemaTestTypeComponent>();
+		var builder = new DataSchemaBuilder();
+		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
 
 		using var serializer = new ComponentSerializer(DbConnection);
 
