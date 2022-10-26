@@ -7,65 +7,61 @@ namespace Macropus.Schema;
 
 public struct DataSchemaElement
 {
-	public ESchemaElementType Type;
-	public bool Nullable;
-	public string Name;
-	public string FieldName;
-	public ECollectionType? CollectionType;
+	public ColdDataSchemaElement Info;
 
-	public uint? SubSchemaId;
-
+	public FieldInfo FieldInfo;
 
 	public override string ToString()
 	{
 		return
 			"{\n"
-			+ $"\t Type: {Type}\n "
-			+ $"\t Name: {Name}\n"
-			+ $"\t FieldName: {FieldName}\n"
-			+ $"\t Nullable: {Nullable}\n"
-			+ $"\t Collection: {CollectionType}\n"
-			+ $"\t Sub schema {SubSchemaId}\n"
+			+ $"\t Type: {Info.Type}\n "
+			+ $"\t Name: {Info.Name}\n"
+			+ $"\t FieldName: {Info.FieldName}\n"
+			+ $"\t Nullable: {Info.Nullable}\n"
+			+ $"\t Collection: {Info.CollectionType}\n"
+			+ $"\t Sub schema {Info.SubSchemaId}\n"
 			+ "}";
 	}
 
 	public static DataSchemaElement Create(FieldInfo field, Func<Type, uint>? schemaIdFactory = null)
 	{
 		var element = new DataSchemaElement();
+		element.FieldInfo = field;
 
 		var fieldType = field.FieldType;
 		if (fieldType.IsArray)
 		{
 			fieldType = fieldType.GetElementType();
-			element.CollectionType = ECollectionType.Array;
+			element.Info.CollectionType = ECollectionType.Array;
 		}
 
 		if (fieldType!.IsGenericType && (fieldType.GetGenericTypeDefinition() == typeof(Nullable<>)))
 		{
-			fieldType = System.Nullable.GetUnderlyingType(fieldType);
-			element.Nullable = true;
+			fieldType = Nullable.GetUnderlyingType(fieldType);
+			element.Info.Nullable = true;
 		}
 
 		var schemaType = fieldType!.GetSchemaType();
 		if (schemaType == ESchemaElementType.INVALID)
 			throw new UnableCreateSchemaForTypeException(fieldType!);
 
-		element.Type = schemaType;
+		element.Info.Type = schemaType;
 
-		element.FieldName = field.Name;
+		element.Info.FieldName = field.Name;
 
 		var fieldCustomName = field.GetCustomAttribute<NameAttribute>();
 		if (fieldCustomName != null)
-			element.Name = fieldCustomName.Name;
+			element.Info.Name = fieldCustomName.Name;
 		else
-			element.Name = field.Name;
+			element.Info.Name = field.Name;
 
 		if (schemaType == ESchemaElementType.ComplexType)
 		{
 			if (schemaIdFactory == null)
 				throw new UnableCreateDataSchemaElementWithoutIdFactoryException();
 
-			element.SubSchemaId = schemaIdFactory(fieldType!);
+			element.Info.SubSchemaId = schemaIdFactory(fieldType!);
 		}
 
 		return element;

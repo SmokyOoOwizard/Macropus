@@ -54,24 +54,26 @@ public static class DataSchemaElementExtensions
 		var stringBuilder = new StringBuilder();
 		foreach (var element in elements)
 		{
-			// TODO replace reserved names (like Id)
-			if (element.Type == ESchemaElementType.ComplexType)
-				stringBuilder.Append($"{element.Name}Id ");
-			else
-				stringBuilder.Append($"{element.Name} ");
+			var info = element.Info;
 
-			if (element.CollectionType is ECollectionType.Array)
+			// TODO replace reserved names (like Id)
+			if (info.Type == ESchemaElementType.ComplexType)
+				stringBuilder.Append($"{info.Name}Id ");
+			else
+				stringBuilder.Append($"{info.Name} ");
+
+			if (info.CollectionType is ECollectionType.Array)
 			{
 				stringBuilder.Append("ARRAY[");
-				stringBuilder.Append($"{element.Type.ToSqlType()} ");
-				if (!element.Nullable)
+				stringBuilder.Append($"{info.Type.ToSqlType()} ");
+				if (!info.Nullable)
 					stringBuilder.Append("NOT NULL ");
 				stringBuilder.Append("] ");
 			}
 			else
 			{
-				stringBuilder.Append($"{element.Type.ToSqlType()} ");
-				if (!element.Nullable)
+				stringBuilder.Append($"{info.Type.ToSqlType()} ");
+				if (!info.Nullable)
 					stringBuilder.Append("NOT NULL ");
 			}
 

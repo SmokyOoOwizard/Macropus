@@ -104,10 +104,10 @@ public sealed class DataSchemaBuilder
 			schemas[schemaRaw.Key] = schema;
 			foreach (var element in schemaRaw.Value)
 			{
-				if (!element.SubSchemaId.HasValue)
+				if (!element.Info.SubSchemaId.HasValue)
 					continue;
 
-				var subId = element.SubSchemaId.Value;
+				var subId = element.Info.SubSchemaId.Value;
 				var subSchemasType = alreadyExistsSchemas.Reverse[subId];
 
 				if (!schemas.TryGetValue(subSchemasType, out var subSchema))

@@ -1,5 +1,4 @@
 ﻿using Macropus.Schema;
-using Macropus.Schema.Extensions;
 using Tests.Utils.Tests;
 using Xunit.Abstractions;
 
@@ -18,17 +17,5 @@ public class DataSchemaTests : TestsWrapper
 		Assert.NotNull(schema);
 
 		Assert.Equal(schema.SubSchemas.Values.Count(), schema.SubSchemas.Values.Distinct().Count());
-	}
-
-	[Fact]
-	public void SchemaCorrectTypeTest()
-	{
-		var builder = new DataSchemaBuilder();
-		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
-
-		Assert.NotNull(schema);
-
-		Assert.True(schema.IsCorrectType<DataSchemaTestTypeComponent>());
-		Assert.False(schema.IsCorrectType<DataSchemaSubSchemaComponent2>());
 	}
 }
