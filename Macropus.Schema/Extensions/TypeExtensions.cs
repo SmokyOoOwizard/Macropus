@@ -27,6 +27,23 @@ public static class TypeExtensions
 		return false;
 	}
 
+	public static Type? GetSchemaRealType(this Type? type)
+	{
+		if (type == null)
+			return null;
+
+		if (type.IsArray)
+			type = type.GetElementType();
+
+		if (type == null)
+			return null;
+
+		if (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Nullable<>)))
+			return Nullable.GetUnderlyingType(type);
+
+		return type;
+	}
+
 	public static ESchemaElementType GetSchemaType(this Type? type)
 	{
 		if (type == null)
