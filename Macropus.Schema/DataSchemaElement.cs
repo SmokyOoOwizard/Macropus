@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Macropus.Schema.Attributes;
+using Macropus.Schema.Exceptions;
 using Macropus.Schema.Extensions;
 
 namespace Macropus.Schema;
@@ -47,8 +48,7 @@ public struct DataSchemaElement
 
 		var schemaType = fieldType!.GetSchemaType();
 		if (schemaType == ESchemaElementType.INVALID)
-			// TODO
-			throw new Exception();
+			throw new UnableCreateSchemaForTypeException(fieldType!);
 
 		element.Type = schemaType;
 
@@ -63,8 +63,7 @@ public struct DataSchemaElement
 		if (schemaType == ESchemaElementType.ComplexType)
 		{
 			if (schemaIdFactory == null)
-				// TODO it's complex type
-				throw new Exception();
+				throw new UnableCreateDataSchemaElementWithoutIdFactoryException();
 
 			element.SubSchemaId = schemaIdFactory(fieldType!);
 		}
