@@ -13,7 +13,7 @@ public static partial class RandomUtils
 		const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 		var stringChars = new char[lenght];
-		var random = new System.Random();
+		var random = System.Random.Shared;
 
 		for (var i = 0; i < stringChars.Length; i++)
 			stringChars[i] = CHARS[random.Next(CHARS.Length)];
@@ -24,7 +24,7 @@ public static partial class RandomUtils
 	public static string GetRandomString(int lenght, string availableChars)
 	{
 		var stringChars = new char[lenght];
-		var random = new System.Random();
+		var random = System.Random.Shared;
 
 		for (var i = 0; i < stringChars.Length; i++)
 			stringChars[i] = availableChars[random.Next(availableChars.Length)];
