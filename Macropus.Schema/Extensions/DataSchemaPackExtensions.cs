@@ -113,7 +113,6 @@ public static class DataSchemaPackExtensions
 
 					if (!processedTypes.ContainsKey(fieldType))
 					{
-						// TODO how to get sub schemas id? we can get only first layer of schemas
 						schemasQueue.Enqueue(
 							new KeyValuePair<Type, (uint, ColdDataSchemaElement[])>(fieldType,
 								(coldElement.SubSchemaId.Value, subSchema.ToArray())));
