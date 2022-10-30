@@ -10,4 +10,10 @@ public class UnableCreateSchemaForTypeException : Exception
 	{
 		this.type = type;
 	}
+
+	public UnableCreateSchemaForTypeException(Type type, Exception interException)
+		: base("Unable create schema", interException)
+	{
+		this.type = type;
+	}
 }

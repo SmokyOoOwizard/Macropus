@@ -26,8 +26,10 @@ public struct DataSchemaElement
 
 	public static DataSchemaElement Create(FieldInfo field, Func<Type, uint>? schemaIdFactory = null)
 	{
-		var element = new DataSchemaElement();
-		element.FieldInfo = field;
+		var element = new DataSchemaElement
+		{
+			FieldInfo = field
+		};
 
 		var fieldType = field.FieldType;
 		if (fieldType.IsArray)
@@ -59,7 +61,7 @@ public struct DataSchemaElement
 		if (schemaType == ESchemaElementType.ComplexType)
 		{
 			if (schemaIdFactory == null)
-				throw new UnableCreateDataSchemaElementWithoutIdFactoryException();
+				throw new NullIdFactoryException();
 
 			element.Info.SubSchemaId = schemaIdFactory(fieldType!);
 		}
