@@ -7,9 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Macropus.CoolStuff\Macropus.CoolStuff.csproj"/>
-        <ProjectReference Include="..\Macropus.Extensions\Macropus.Extensions.csproj"/>
-        <ProjectReference Include="..\Macropus.Linq\Macropus.Linq.csproj"/>
+        <ProjectReference Include="..\Macropus.CoolStuff\Macropus.CoolStuff.csproj" />
+        <ProjectReference Include="..\Macropus.Extensions\Macropus.Extensions.csproj" />
+        <ProjectReference Include="..\Macropus.Linq\Macropus.Linq.csproj" />
     </ItemGroup>
 
 </Project>

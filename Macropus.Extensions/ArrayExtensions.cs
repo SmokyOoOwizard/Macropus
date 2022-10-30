@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
 
-namespace Macropus.Linq;
+namespace Macropus.Extensions;
 
 public static class ArrayExtensions
 {

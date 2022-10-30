@@ -1,6 +1,6 @@
 ﻿namespace Macropus.Linq;
 
-public static class LinqRecursiveHelper
+public static class TraverseExtensions
 {
 	/// <summary>
 	///     Return item and all children recursively.

@@ -1,4 +1,5 @@
-﻿using Macropus.Linq;
+﻿using Macropus.Extensions;
+using Macropus.Linq;
 
 namespace Macropus.Schema.Extensions;
 
