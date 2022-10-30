@@ -2,7 +2,7 @@
 
 namespace Macropus.Linq;
 
-public static class LinqExtensions
+public static class EnumerableExtensions
 {
 	[Pure]
 	public static IEnumerable<T> NotNull<T>(this IEnumerable<T?> enumerable) where T : class

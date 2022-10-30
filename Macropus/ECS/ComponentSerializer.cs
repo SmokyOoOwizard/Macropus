@@ -45,7 +45,7 @@ public class ComponentSerializer : IDisposable
 
 			transaction.Commit();
 		}
-		catch (Exception e)
+		catch
 		{
 			transaction.Rollback();
 			throw;
@@ -66,7 +66,6 @@ public class ComponentSerializer : IDisposable
 		var simpleFields = schema.Elements;
 		if (!simpleFields.Any())
 		{
-			return;
 			// TODO schema must have fields
 			throw new Exception();
 		}

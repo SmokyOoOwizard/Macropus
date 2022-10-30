@@ -1,35 +1,7 @@
-﻿using Macropus.Linq;
-
-namespace Macropus.Schema.Extensions;
+﻿namespace Macropus.Schema.Extensions;
 
 public static class DataSchemaExtensions
 {
-	public static ColdDataSchema Pack(this DataSchema schema)
-	{
-		var elements = schema.Elements.Select(e => e.Info).ToArray();
-		var subSchemas = schema.SubSchemas
-			.ToDictionary(kv => kv.Key, kv => kv.Value.Elements
-				.Select(e => e.Info)
-				.ToArray()
-				.AsReadOnlyCollection());
-
-		return new ColdDataSchema(elements, subSchemas);
-	}
-
-	public static DataSchema Unpack<T>(this ColdDataSchema schema)
-	{
-		return Unpack(schema, typeof(T));
-	}
-
-	public static DataSchema Unpack(this ColdDataSchema schema, Type type)
-	{
-		if (!schema.IsCorrectType(type))
-			// TODO
-			throw new Exception();
-
-		return null;
-	}
-
 	public static bool IsCorrectType<T>(this ColdDataSchema schema)
 	{
 		return IsCorrectType(schema, typeof(T));
@@ -42,6 +14,8 @@ public static class DataSchemaExtensions
 
 		try
 		{
+			var checkedTypes = new HashSet<Type>();
+
 			var schemasQueue = new Queue<KeyValuePair<Type, IReadOnlyCollection<ColdDataSchemaElement>>>();
 			schemasQueue.Enqueue(
 				new KeyValuePair<Type, IReadOnlyCollection<ColdDataSchemaElement>>(type, schema.Elements));
@@ -81,10 +55,15 @@ public static class DataSchemaExtensions
 						if (fieldType == null)
 							return false;
 
-						schemasQueue.Enqueue(
-							new KeyValuePair<Type, IReadOnlyCollection<ColdDataSchemaElement>>(fieldType, subSchema));
+						if (!checkedTypes.Contains(fieldType))
+						{
+							schemasQueue.Enqueue(
+								new KeyValuePair<Type, IReadOnlyCollection<ColdDataSchemaElement>>(fieldType,
+									subSchema));
+						}
 					}
 
+					checkedTypes.Add(targetType);
 					targetFields.Remove(targetField);
 				}
 			} while (schemasQueue.Count > 0);

@@ -46,7 +46,6 @@ public class ColdDataSchemaTests : TestsWrapper
 		schema.AssertEquals(unpackedSchema);
 	}
 
-
 	[Fact]
 	public void SchemaCorrectTypeTest()
 	{
