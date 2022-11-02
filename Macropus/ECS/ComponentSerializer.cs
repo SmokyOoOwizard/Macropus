@@ -1,13 +1,13 @@
-﻿using System.Data;
+﻿using System.Collections;
+using System.Data;
 using System.Text;
 using Macropus.Database.Adapter;
-using Macropus.Database.Extensions;
 using Macropus.ECS.Component;
 using Macropus.Schema;
 
 namespace Macropus.ECS;
 
-public class ComponentSerializer : IDisposable
+public partial class ComponentSerializer : IDisposable
 {
 	private readonly IDbConnection dbConnection;
 
@@ -16,32 +16,53 @@ public class ComponentSerializer : IDisposable
 		this.dbConnection = dbConnection;
 	}
 
-	public async Task<bool> SerializeAsync<T>(
-		IDbConnection connection,
-		IDictionary<Guid, DataSchema> subSchemas,
-		T component
-	)
-		where T : struct, IComponent
+	public async Task SerializeAsync<T>(DataSchema schema, Guid entityId, T component) where T : struct, IComponent
 	{
-		throw new NotImplementedException();
-	}
-
-	public Task<T?> DeserializeAsync<T>(IDbConnection connection, IDictionary<Guid, DataSchema> subSchemas)
-		where T : struct, IComponent
-	{
-		throw new NotImplementedException();
-	}
-
-	public async Task CreateTablesBySchema(DataSchema schema)
-	{
-		var subSchemas = schema.SubSchemas.Select(kv => kv.Value).Where(s => s != schema);
-
 		using var transaction = dbConnection.BeginTransaction();
 		try
 		{
-			await CreateTableBySchema(schema);
-			foreach (var subSchema in subSchemas)
-				await CreateTableBySchema(subSchema);
+			var componentName = schema.SchemaOf.FullName;
+
+			var stack = new Stack<SerializeState>();
+			stack.Push(new SerializeState(schema, component));
+
+			var componentId = 0;
+			do
+			{
+				var target = stack.Peek();
+
+				if (target.Value == null)
+				{
+					stack.Pop();
+					if (target.TargetCollection != null)
+						target.TargetCollection.Add(null);
+					else
+						ReturnInParent(stack, null);
+
+					continue;
+				}
+
+				if (target.Unprocessed.Count > 0)
+				{
+					target.ProcessUnprocessed(stack);
+					continue;
+				}
+
+				componentId = await InsertComponentPart(target);
+
+				stack.Pop();
+
+				if (target.TargetCollection != null)
+				{
+					target.TargetCollection.Add(componentId);
+					continue;
+				}
+
+				ReturnInParent(stack, componentId);
+			} while (stack.Count > 0);
+
+
+			await AddEntityComponent(componentId, componentName!, entityId);
 
 			transaction.Commit();
 		}
@@ -52,28 +73,97 @@ public class ComponentSerializer : IDisposable
 		}
 	}
 
-	private async Task CreateTableBySchema(DataSchema schema)
+	private static void ReturnInParent(Stack<SerializeState> stack, object? componentId)
 	{
-		var tableName = schema.SchemaOf.FullName;
-
-		if (string.IsNullOrWhiteSpace(tableName))
-			throw new ArgumentNullException(nameof(schema.SchemaOf));
-
-		if (await dbConnection.TableAlreadyExists(tableName))
-			// TODO check table
-			return;
-
-		var simpleFields = schema.Elements;
-		if (!simpleFields.Any())
+		if (stack.Count > 0)
 		{
-			// TODO schema must have fields
-			throw new Exception();
+			var parent = stack.Peek();
+
+			parent.Unprocessed.RemoveAt(parent.Unprocessed.Count - 1);
+			parent.Processed.Push(componentId);
 		}
+	}
+
+	private async Task<int> InsertComponentPart(SerializeState data)
+	{
+		var fields = data.Schema.Elements.ToArray();
+		if (fields.Length == 0)
+			// TODO
+			return -1;
+
+		var tableName = data.Schema.SchemaOf.FullName;
 
 		var sqlBuilder = new StringBuilder();
-		sqlBuilder.Append($"CREATE TABLE '{tableName}' (");
-		sqlBuilder.Append("Id TEXT NOT NULL COLLATE NOCASE, ");
-		sqlBuilder.Append(string.Join(',', simpleFields.ToSql()));
+		sqlBuilder.Append($"INSERT INTO '{tableName}' (");
+		sqlBuilder.Append(string.Join(',', fields.Select(e => e.Info.ToSqlName())));
+		sqlBuilder.Append(") VALUES (");
+
+		foreach (var element in fields)
+		{
+			var value = element.FieldInfo.GetValue(data.Value);
+			if (element.Info.CollectionType is ECollectionType.Array)
+			{
+				IEnumerable enumerable;
+				if (element.Info.Type is ESchemaElementType.ComplexType)
+				{
+					var ids = data.Processed.Pop();
+					enumerable = (ids as IEnumerable)!;
+				}
+				else
+				{
+					enumerable = (value as IEnumerable)!;
+				}
+
+				if (enumerable == null)
+					// TODO
+					throw new Exception();
+
+				sqlBuilder.Append("'{");
+
+				foreach (var collectionValue in enumerable)
+					sqlBuilder.Append(element.ToSqlInsert(collectionValue));
+
+				sqlBuilder.Remove(sqlBuilder.Length - 2, 2);
+				sqlBuilder.Append("}', ");
+				continue;
+			}
+
+			if (element.Info.Type is ESchemaElementType.ComplexType)
+				sqlBuilder.Append(element.ToSqlInsert(data.Processed.Pop()));
+			else
+				sqlBuilder.Append(element.ToSqlInsert(value));
+		}
+
+		sqlBuilder.Remove(sqlBuilder.Length - 2, 2);
+
+		sqlBuilder.Append("); select last_insert_rowid();");
+
+		var cmd = dbConnection.CreateCommand();
+		cmd.CommandText = sqlBuilder.ToString();
+
+		Console.WriteLine("SQL:\n" + cmd.CommandText);
+
+		var reader = await cmd.ExecuteReaderAsync();
+
+		await reader.ReadAsync();
+
+		return reader.GetInt32(0);
+	}
+
+	public Task<T?> DeserializeAsync<T>(DataSchema schema, Guid entityId)
+		where T : struct, IComponent
+	{
+		throw new NotImplementedException();
+	}
+
+	private async Task AddEntityComponent(int componentId, string componentName, Guid entityId)
+	{
+		var sqlBuilder = new StringBuilder();
+		sqlBuilder.Append(
+			$"INSERT INTO '{ENTITIES_COMPONENTS_TABLE_NAME}' (ComponentId, ComponentName, EntityId) VALUES(");
+		sqlBuilder.Append($"{componentId}, ");
+		sqlBuilder.Append($"'{componentName}', ");
+		sqlBuilder.Append($"\'{entityId.ToString("N")}\'");
 		sqlBuilder.Append(");");
 
 		var cmd = dbConnection.CreateCommand();
