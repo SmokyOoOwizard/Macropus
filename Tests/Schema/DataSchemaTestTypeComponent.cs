@@ -28,7 +28,6 @@ public struct DataSchemaTestTypeComponent : IComponent
 	public ulong UInt64Field;
 	public long Int64Field;
 
-
 	public UInt128 UInt128Field;
 	public Int128 Int128Field;
 
@@ -50,10 +49,4 @@ public struct DataSchemaTestTypeComponent : IComponent
 
 	[Name("IsCommonField")]
 	public float NamedField;
-
-
-	public static DataSchemaTestTypeComponent CreateAndFillRandomData()
-	{
-		throw new NotImplementedException();
-	}
 }
