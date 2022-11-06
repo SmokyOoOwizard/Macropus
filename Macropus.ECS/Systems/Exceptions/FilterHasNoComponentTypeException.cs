@@ -1,4 +1,4 @@
-﻿namespace Macropus.ECS.System.Exceptions;
+﻿namespace Macropus.ECS.Systems.Exceptions;
 
 public class FilterHasTypesWhichAreNotComponentsException : Exception
 {

@@ -1,4 +1,5 @@
 ﻿using Macropus.CoolStuff;
+using Macropus.CoolStuff.Collections;
 using Macropus.Schema.Extensions;
 
 namespace Macropus.Schema;

@@ -1,4 +1,4 @@
-﻿using Macropus.ECS;
+﻿using Macropus.ECS.Serialize;
 using Macropus.Schema;
 using Tests.Schema;
 using Tests.Utils.Tests;

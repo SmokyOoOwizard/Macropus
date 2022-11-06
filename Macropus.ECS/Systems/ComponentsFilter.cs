@@ -1,8 +1,8 @@
 ﻿using Macropus.ECS.Component;
 using Macropus.ECS.ComponentsStorage;
-using Macropus.ECS.System.Exceptions;
+using Macropus.ECS.Systems.Exceptions;
 
-namespace Macropus.ECS.System;
+namespace Macropus.ECS.Systems;
 
 public readonly struct ComponentsFilter
 {

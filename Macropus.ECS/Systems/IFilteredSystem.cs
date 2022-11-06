@@ -1,4 +1,4 @@
-﻿namespace Macropus.ECS.System;
+﻿namespace Macropus.ECS.Systems;
 
 public interface IFilteredSystem
 {

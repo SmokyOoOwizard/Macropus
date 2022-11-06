@@ -1,5 +1,5 @@
 ﻿using Macropus.ECS;
-using Macropus.ECS.System.Exceptions;
+using Macropus.ECS.Systems.Exceptions;
 using Tests.ECS.BasicFunctionality.Systems;
 using Tests.Utils;
 using Tests.Utils.Tests;

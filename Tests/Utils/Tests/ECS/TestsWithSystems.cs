@@ -1,7 +1,7 @@
 ﻿using Macropus.ECS;
 using Macropus.ECS.ComponentsStorage;
 using Macropus.ECS.ComponentsStorage.Impl;
-using Macropus.ECS.System;
+using Macropus.ECS.Systems;
 using Xunit.Abstractions;
 
 namespace Tests.Utils.Tests.ECS;
