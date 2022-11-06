@@ -20,6 +20,9 @@ public static class DataSchemaElementExtensions
 			case ESchemaElementType.UInt64:
 			case ESchemaElementType.Int128:
 			case ESchemaElementType.UInt128:
+			case ESchemaElementType.Float:
+			case ESchemaElementType.Double:
+			case ESchemaElementType.Decimal:
 			case ESchemaElementType.String:
 				return $"\'{value}\', ";
 			default:

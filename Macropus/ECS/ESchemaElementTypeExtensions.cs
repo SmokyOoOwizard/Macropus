@@ -69,14 +69,10 @@ public static class ESchemaElementTypeExtensions
 			case ESchemaElementType.UInt64:
 			case ESchemaElementType.Int128:
 			case ESchemaElementType.UInt128:
-				return "TEXT";
-
 			case ESchemaElementType.Float:
-				return "FLOAT";
 			case ESchemaElementType.Double:
-				return "DOUBLE";
 			case ESchemaElementType.Decimal:
-				return "DECIMAL";
+				return "TEXT";
 
 			case ESchemaElementType.Guid:
 				return "TEXT COLLATE NOCASE";
