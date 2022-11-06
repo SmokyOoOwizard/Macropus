@@ -10,7 +10,7 @@ namespace Macropus.ECS.Serialize;
 
 class Serializer : IClearable
 {
-	private readonly Stack<SerializeState> serializeQueue = new();
+	private readonly Stack<SerializeState> serializeStack = new();
 	private readonly StringBuilder sqlBuilder = new();
 
 	public async Task SerializeAsync<T>(IDbConnection dbConnection, DataSchema schema, Guid entityId, T component)
@@ -21,44 +21,46 @@ class Serializer : IClearable
 		{
 			var componentName = schema.SchemaOf.FullName;
 
-			serializeQueue.Push(new SerializeState(schema, component));
+			serializeStack.Push(new SerializeState(schema, component));
 
-			var componentId = 0;
+			var componentId = 0L;
 			do
 			{
-				var target = serializeQueue.Peek();
+				var target = serializeStack.Peek();
 
-				if (target.Value == null)
+				var unprocessedNullable = target.TryGetUnprocessed();
+				if (unprocessedNullable != null)
 				{
-					NullValue(target);
+					var unprocessed = unprocessedNullable.Value;
+					var newTarget = unprocessed.Value.Dequeue();
+
+					if (newTarget == null)
+					{
+						target.AddProcessed(unprocessed.Key, null);
+						continue;
+					}
+
+					if (!unprocessed.Key.Info.SubSchemaId.HasValue)
+						// TODO
+						throw new Exception();
+
+					var refSchema = schema.SubSchemas[unprocessed.Key.Info.SubSchemaId.Value];
+					serializeStack.Push(new SerializeState(refSchema, newTarget, unprocessed.Key));
 					continue;
 				}
 
-				if (target.Unprocessed.Count > 0)
+				serializeStack.Pop();
+
+				componentId = await InsertComponent(dbConnection, target);
+				if (target.ParentRef != null && serializeStack.Count > 0)
 				{
-					target.ProcessUnprocessed(serializeQueue);
-					continue;
+					var parent = serializeStack.Peek();
+
+					parent.AddProcessed(target.ParentRef.Value, componentId);
 				}
 
-				try
-				{
-					componentId = await InsertComponentPart(dbConnection, target);
-				}
-				finally
-				{
-					serializeQueue.Pop();
-					target.Clear();
-				}
-
-
-				if (target.TargetCollection != null)
-				{
-					target.TargetCollection.Add(componentId);
-					continue;
-				}
-
-				ReturnInParent(componentId);
-			} while (serializeQueue.Count > 0);
+				target.Clear();
+			} while (serializeStack.Count > 0);
 
 
 			await AddEntityComponent(dbConnection, componentId, componentName!, entityId);
@@ -72,36 +74,11 @@ class Serializer : IClearable
 		}
 	}
 
-	private void NullValue(SerializeState target)
+	private async Task<int> InsertComponent(IDbConnection dbConnection, SerializeState target)
 	{
-		serializeQueue.Pop();
-		if (target.TargetCollection != null)
-			target.TargetCollection.Add(null);
-		else
-			ReturnInParent(null);
+		var fields = target.Schema.Elements;
 
-		target.Clear();
-	}
-
-	private void ReturnInParent(object? componentId)
-	{
-		if (serializeQueue.Count > 0)
-		{
-			var parent = serializeQueue.Peek();
-
-			parent.Unprocessed.RemoveAt(parent.Unprocessed.Count - 1);
-			parent.Processed.Push(componentId);
-		}
-	}
-
-	private async Task<int> InsertComponentPart(IDbConnection dbConnection, SerializeState data)
-	{
-		var fields = data.Schema.Elements.ToArray();
-		if (fields.Length == 0)
-			// TODO
-			return -1;
-
-		var tableName = data.Schema.SchemaOf.FullName;
+		var tableName = target.Schema.SchemaOf.FullName;
 
 		sqlBuilder.Clear();
 		sqlBuilder.Append($"INSERT INTO '{tableName}' (");
@@ -110,14 +87,15 @@ class Serializer : IClearable
 
 		foreach (var element in fields)
 		{
-			var value = element.FieldInfo.GetValue(data.Value);
+			var value = element.FieldInfo.GetValue(target.Value);
 			if (element.Info.CollectionType is ECollectionType.Array)
 			{
 				IEnumerable enumerable;
 				if (element.Info.Type is ESchemaElementType.ComplexType)
 				{
-					var ids = data.Processed.Pop();
-					enumerable = (ids as IEnumerable)!;
+					var ids = target.GetProcessed(element);
+					ids.Reverse();
+					enumerable = ids;
 				}
 				else
 				{
@@ -139,7 +117,7 @@ class Serializer : IClearable
 			}
 
 			if (element.Info.Type is ESchemaElementType.ComplexType)
-				sqlBuilder.Append(element.ToSqlInsert(data.Processed.Pop()));
+				sqlBuilder.Append(element.ToSqlInsert(target.GetProcessed(element).First()));
 			else
 				sqlBuilder.Append(element.ToSqlInsert(value));
 		}
@@ -162,7 +140,7 @@ class Serializer : IClearable
 
 	private async Task AddEntityComponent(
 		IDbConnection dbConnection,
-		int componentId,
+		long componentId,
 		string componentName,
 		Guid entityId
 	)
@@ -184,7 +162,7 @@ class Serializer : IClearable
 
 	public void Clear()
 	{
-		serializeQueue.Clear();
+		serializeStack.Clear();
 		sqlBuilder.Clear();
 	}
 }

@@ -20,7 +20,7 @@ public class SerializeTests : TestsWithDatabase
 		using var serializer = new ComponentSerializer(DbConnection);
 		await serializer.CreateTablesBySchema(schema);
 		
-		for (int i = 0; i < 1; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			var entityId = Guid.NewGuid();
 			var testComponent = RandomUtils.GetRandomDataSchemaTestTypeComponent();

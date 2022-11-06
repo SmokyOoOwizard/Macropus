@@ -1,12 +1,12 @@
 ﻿namespace Macropus.CoolStuff.Collections;
 
-public class StackPool<T> : APool<Stack<T>> where T :  new()
+public class StackPool<T> : APool<Stack<T>>
 {
 	public override Stack<T> Take()
 	{
 		Interlocked.Increment(ref taken);
 
-		if (stack.TryPeek(out var obj))
+		if (stack.TryPop(out var obj))
 		{
 			return obj;
 		}

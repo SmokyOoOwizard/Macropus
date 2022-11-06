@@ -6,7 +6,7 @@ public class Pool<T> : APool<T> where T : IClearable, new()
 	{
 		Interlocked.Increment(ref taken);
 
-		if (stack.TryPeek(out var obj))
+		if (stack.TryPop(out var obj))
 		{
 			return obj;
 		}

@@ -1,73 +1,126 @@
 ﻿using System.Collections;
 using Macropus.CoolStuff;
 using Macropus.CoolStuff.Collections;
-using Macropus.Linq;
 using Macropus.Schema;
 
 namespace Macropus.ECS.Serialize;
 
 class SerializeStatePools
 {
-	public readonly ListPool<DataSchemaElement> UnprocessedPool = new();
-	public readonly StackPool<object?> ProcessedPool = new();
+	public readonly StackPool<KeyValuePair<DataSchemaElement, Queue<object?>>> UnprocessedPool = new();
+	public readonly QueuePool<object?> UnprocessedQueuePool = new();
+	public readonly DictionaryPool<DataSchemaElement, List<long?>> ProcessedPool = new();
+	public readonly ListPool<long?> ProcessedListPool = new();
 }
 
 struct SerializeState : IClearable
 {
 	private static readonly SerializeStatePools Pools = new();
 
-	public DataSchema Schema;
-	public object? Value;
-	public List<DataSchemaElement> Unprocessed;
-	public List<int?>? TargetCollection;
-	public Stack<object?> Processed;
+	public readonly DataSchema Schema;
+	public readonly DataSchemaElement? ParentRef;
+	public readonly object? Value;
+
+	private readonly Dictionary<DataSchemaElement, List<long?>> processed;
+	private readonly Stack<KeyValuePair<DataSchemaElement, Queue<object?>>> unprocessed;
 
 	public SerializeState(DataSchema schema, object value)
 	{
 		Schema = schema;
 		Value = value;
 
-		Unprocessed = Pools.UnprocessedPool.Take();
-		schema.Elements.Where(e => e.Info.Type == ESchemaElementType.ComplexType).Fill(Unprocessed);
+		unprocessed = Pools.UnprocessedPool.Take();
 
-		TargetCollection = null;
-		//Processed = new Stack<object?>();
-		Processed = Pools.ProcessedPool.Take();
-	}
-
-	public void ProcessUnprocessed(Stack<SerializeState> stack)
-	{
-		var unprocessed = Unprocessed.Last();
-		var unprocessedSchema = Schema.SubSchemas[unprocessed.Info.SubSchemaId!.Value];
-
-		if (unprocessed.Info.CollectionType is ECollectionType.Array)
+		foreach (var element in schema.Elements)
 		{
-			var ids = new List<int?>();
-			Processed.Push(ids);
+			if (element.Info.Type != ESchemaElementType.ComplexType)
+				continue;
 
-			if (unprocessed.FieldInfo.GetValue(Value) is not ICollection array)
-				// TODO
-				throw new Exception();
+			var queue = Pools.UnprocessedQueuePool.Take();
 
-			foreach (var obj in array)
+			if (element.Info.CollectionType is ECollectionType.Array)
 			{
-				var state = new SerializeState(unprocessedSchema, obj);
-				state.TargetCollection = ids;
+				var array = element.FieldInfo.GetValue(value) as IList;
+				if (array == null)
+					continue;
 
-				stack.Push(state);
+				for (var i = 0; i < array.Count; i++)
+				{
+					queue.Enqueue(array[i]);
+				}
+			}
+			else
+			{
+				queue.Enqueue(element.FieldInfo.GetValue(value));
 			}
 
-			Unprocessed.RemoveAt(Unprocessed.Count - 1);
+			unprocessed.Push(new(element, queue));
 		}
-		else
-		{
-			stack.Push(new SerializeState(unprocessedSchema, unprocessed.FieldInfo.GetValue(Value)!));
-		}
+
+		processed = Pools.ProcessedPool.Take();
+
+		ParentRef = null;
 	}
+
+	public SerializeState(DataSchema schema, object newTarget, DataSchemaElement parentRef) : this(schema, newTarget)
+	{
+		ParentRef = parentRef;
+	}
+
+	public KeyValuePair<DataSchemaElement, Queue<object?>>? TryGetUnprocessed()
+	{
+		if (unprocessed.Count == 0)
+			return default;
+
+		while (unprocessed.Count > 0)
+		{
+			var target = unprocessed.Peek();
+
+			if (target.Value.Count == 0)
+			{
+				unprocessed.Pop();
+
+				Pools.UnprocessedQueuePool.Release(target.Value);
+				continue;
+			}
+
+			return target;
+		}
+
+		return default;
+	}
+
+	public void AddProcessed(DataSchemaElement target, long? componentId)
+	{
+		if (!processed.TryGetValue(target, out var list))
+		{
+			list = Pools.ProcessedListPool.Take();
+			processed[target] = list;
+		}
+
+		list.Add(componentId);
+	}
+
+	public List<long?> GetProcessed(DataSchemaElement target)
+	{
+		return processed[target];
+	}
+
 
 	public void Clear()
 	{
-		Pools.UnprocessedPool.Release(Unprocessed);
-		Pools.ProcessedPool.Release(Processed);
+		foreach (var queue in unprocessed)
+		{
+			Pools.UnprocessedQueuePool.Release(queue.Value);
+		}
+
+		Pools.UnprocessedPool.Release(unprocessed);
+
+		foreach (var list in processed)
+		{
+			Pools.ProcessedListPool.Release(list.Value);
+		}
+
+		Pools.ProcessedPool.Release(processed);
 	}
 }

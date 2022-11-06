@@ -14,7 +14,7 @@ public static class DataSchemaElementExtensions
 		switch (element.Info.Type)
 		{
 			case ESchemaElementType.Guid:
-				return $"\'{(Guid)value:N}\', ";
+				return $"'{(Guid)value:N}', ";
 
 			case ESchemaElementType.Int64:
 			case ESchemaElementType.UInt64:
@@ -24,7 +24,7 @@ public static class DataSchemaElementExtensions
 			case ESchemaElementType.Double:
 			case ESchemaElementType.Decimal:
 			case ESchemaElementType.String:
-				return $"\'{value}\', ";
+				return $"'{value}', ";
 			default:
 				return $"{value}, ";
 		}

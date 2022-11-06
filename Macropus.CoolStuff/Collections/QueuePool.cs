@@ -1,8 +1,8 @@
 ﻿namespace Macropus.CoolStuff.Collections;
 
-public class ListPool<T> : APool<List<T>>
+public class QueuePool<T> : APool<Queue<T>>
 {
-	public override List<T> Take()
+	public override Queue<T> Take()
 	{
 		Interlocked.Increment(ref taken);
 
@@ -11,10 +11,10 @@ public class ListPool<T> : APool<List<T>>
 			return obj;
 		}
 
-		return new List<T>();
+		return new Queue<T>();
 	}
 
-	public override void Release(List<T> obj)
+	public override void Release(Queue<T> obj)
 	{
 		Interlocked.Decrement(ref taken);
 
