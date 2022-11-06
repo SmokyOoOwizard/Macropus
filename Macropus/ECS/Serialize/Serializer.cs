@@ -1,56 +1,55 @@
 ﻿using System.Collections;
 using System.Data;
 using System.Text;
+using Macropus.CoolStuff;
 using Macropus.Database.Adapter;
 using Macropus.ECS.Component;
 using Macropus.Schema;
 
-namespace Macropus.ECS;
+namespace Macropus.ECS.Serialize;
 
-public partial class ComponentSerializer : IDisposable
+class Serializer : IClearable
 {
-	private readonly IDbConnection dbConnection;
+	private readonly Stack<SerializeState> serializeQueue = new();
+	private readonly StringBuilder sqlBuilder = new();
 
-	public ComponentSerializer(IDbConnection dbConnection)
-	{
-		this.dbConnection = dbConnection;
-	}
-
-	public async Task SerializeAsync<T>(DataSchema schema, Guid entityId, T component) where T : struct, IComponent
+	public async Task SerializeAsync<T>(IDbConnection dbConnection, DataSchema schema, Guid entityId, T component)
+		where T : struct, IComponent
 	{
 		using var transaction = dbConnection.BeginTransaction();
 		try
 		{
 			var componentName = schema.SchemaOf.FullName;
 
-			var stack = new Stack<SerializeState>();
-			stack.Push(new SerializeState(schema, component));
+			serializeQueue.Push(new SerializeState(schema, component));
 
 			var componentId = 0;
 			do
 			{
-				var target = stack.Peek();
+				var target = serializeQueue.Peek();
 
 				if (target.Value == null)
 				{
-					stack.Pop();
-					if (target.TargetCollection != null)
-						target.TargetCollection.Add(null);
-					else
-						ReturnInParent(stack, null);
-
+					NullValue(target);
 					continue;
 				}
 
 				if (target.Unprocessed.Count > 0)
 				{
-					target.ProcessUnprocessed(stack);
+					target.ProcessUnprocessed(serializeQueue);
 					continue;
 				}
 
-				componentId = await InsertComponentPart(target);
+				try
+				{
+					componentId = await InsertComponentPart(dbConnection, target);
+				}
+				finally
+				{
+					serializeQueue.Pop();
+					target.Clear();
+				}
 
-				stack.Pop();
 
 				if (target.TargetCollection != null)
 				{
@@ -58,11 +57,11 @@ public partial class ComponentSerializer : IDisposable
 					continue;
 				}
 
-				ReturnInParent(stack, componentId);
-			} while (stack.Count > 0);
+				ReturnInParent(componentId);
+			} while (serializeQueue.Count > 0);
 
 
-			await AddEntityComponent(componentId, componentName!, entityId);
+			await AddEntityComponent(dbConnection, componentId, componentName!, entityId);
 
 			transaction.Commit();
 		}
@@ -73,18 +72,29 @@ public partial class ComponentSerializer : IDisposable
 		}
 	}
 
-	private static void ReturnInParent(Stack<SerializeState> stack, object? componentId)
+	private void NullValue(SerializeState target)
 	{
-		if (stack.Count > 0)
+		serializeQueue.Pop();
+		if (target.TargetCollection != null)
+			target.TargetCollection.Add(null);
+		else
+			ReturnInParent(null);
+
+		target.Clear();
+	}
+
+	private void ReturnInParent(object? componentId)
+	{
+		if (serializeQueue.Count > 0)
 		{
-			var parent = stack.Peek();
+			var parent = serializeQueue.Peek();
 
 			parent.Unprocessed.RemoveAt(parent.Unprocessed.Count - 1);
 			parent.Processed.Push(componentId);
 		}
 	}
 
-	private async Task<int> InsertComponentPart(SerializeState data)
+	private async Task<int> InsertComponentPart(IDbConnection dbConnection, SerializeState data)
 	{
 		var fields = data.Schema.Elements.ToArray();
 		if (fields.Length == 0)
@@ -93,7 +103,7 @@ public partial class ComponentSerializer : IDisposable
 
 		var tableName = data.Schema.SchemaOf.FullName;
 
-		var sqlBuilder = new StringBuilder();
+		sqlBuilder.Clear();
 		sqlBuilder.Append($"INSERT INTO '{tableName}' (");
 		sqlBuilder.Append(string.Join(',', fields.Select(e => e.Info.ToSqlName())));
 		sqlBuilder.Append(") VALUES (");
@@ -118,13 +128,13 @@ public partial class ComponentSerializer : IDisposable
 					// TODO
 					throw new Exception();
 
-				sqlBuilder.Append("'{");
+				sqlBuilder.Append("json('[");
 
 				foreach (var collectionValue in enumerable)
-					sqlBuilder.Append(element.ToSqlInsert(collectionValue));
+					sqlBuilder.Append(element.ToSqlInsert(collectionValue).Replace('\'', '"'));
 
 				sqlBuilder.Remove(sqlBuilder.Length - 2, 2);
-				sqlBuilder.Append("}', ");
+				sqlBuilder.Append("]'), ");
 				continue;
 			}
 
@@ -150,17 +160,16 @@ public partial class ComponentSerializer : IDisposable
 		return reader.GetInt32(0);
 	}
 
-	public Task<T?> DeserializeAsync<T>(DataSchema schema, Guid entityId)
-		where T : struct, IComponent
+	private async Task AddEntityComponent(
+		IDbConnection dbConnection,
+		int componentId,
+		string componentName,
+		Guid entityId
+	)
 	{
-		throw new NotImplementedException();
-	}
-
-	private async Task AddEntityComponent(int componentId, string componentName, Guid entityId)
-	{
-		var sqlBuilder = new StringBuilder();
+		sqlBuilder.Clear();
 		sqlBuilder.Append(
-			$"INSERT INTO '{ENTITIES_COMPONENTS_TABLE_NAME}' (ComponentId, ComponentName, EntityId) VALUES(");
+			$"INSERT INTO '{ComponentSerializer.ENTITIES_COMPONENTS_TABLE_NAME}' (ComponentId, ComponentName, EntityId) VALUES(");
 		sqlBuilder.Append($"{componentId}, ");
 		sqlBuilder.Append($"'{componentName}', ");
 		sqlBuilder.Append($"\'{entityId.ToString("N")}\'");
@@ -172,8 +181,10 @@ public partial class ComponentSerializer : IDisposable
 		await cmd.ExecuteNonQueryAsync();
 	}
 
-	public void Dispose()
+
+	public void Clear()
 	{
-		dbConnection.Dispose();
+		serializeQueue.Clear();
+		sqlBuilder.Clear();
 	}
 }

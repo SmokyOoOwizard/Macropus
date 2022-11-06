@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Macropus.CoolStuff;
+namespace Macropus.CoolStuff.Collections;
 
 public class Map<T1, T2> : IEnumerable<KeyValuePair<T1, T2>> where T2 : notnull where T1 : notnull
 {

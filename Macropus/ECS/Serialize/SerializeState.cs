@@ -1,10 +1,21 @@
 ﻿using System.Collections;
+using Macropus.CoolStuff;
+using Macropus.CoolStuff.Collections;
+using Macropus.Linq;
 using Macropus.Schema;
 
-namespace Macropus.ECS;
+namespace Macropus.ECS.Serialize;
 
-internal struct SerializeState
+class SerializeStatePools
 {
+	public readonly ListPool<DataSchemaElement> UnprocessedPool = new();
+	public readonly StackPool<object?> ProcessedPool = new();
+}
+
+struct SerializeState : IClearable
+{
+	private static readonly SerializeStatePools Pools = new();
+
 	public DataSchema Schema;
 	public object? Value;
 	public List<DataSchemaElement> Unprocessed;
@@ -16,11 +27,12 @@ internal struct SerializeState
 		Schema = schema;
 		Value = value;
 
-		Unprocessed = schema.Elements.Where(e => e.Info.Type == ESchemaElementType.ComplexType)
-			.ToList();
+		Unprocessed = Pools.UnprocessedPool.Take();
+		schema.Elements.Where(e => e.Info.Type == ESchemaElementType.ComplexType).Fill(Unprocessed);
 
 		TargetCollection = null;
-		Processed = new Stack<object?>();
+		//Processed = new Stack<object?>();
+		Processed = Pools.ProcessedPool.Take();
 	}
 
 	public void ProcessUnprocessed(Stack<SerializeState> stack)
@@ -51,5 +63,11 @@ internal struct SerializeState
 		{
 			stack.Push(new SerializeState(unprocessedSchema, unprocessed.FieldInfo.GetValue(Value)!));
 		}
+	}
+
+	public void Clear()
+	{
+		Pools.UnprocessedPool.Release(Unprocessed);
+		Pools.ProcessedPool.Release(Processed);
 	}
 }

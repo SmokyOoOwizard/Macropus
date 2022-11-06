@@ -3,11 +3,11 @@ using Macropus.Database.Adapter;
 using Macropus.Database.Extensions;
 using Macropus.Schema;
 
-namespace Macropus.ECS;
+namespace Macropus.ECS.Serialize;
 
 public partial class ComponentSerializer
 {
-	private const string ENTITIES_COMPONENTS_TABLE_NAME = "EntitesComponents";
+	public const string ENTITIES_COMPONENTS_TABLE_NAME = "EntitesComponents";
 
 	public async Task CreateTablesBySchema(DataSchema schema)
 	{
