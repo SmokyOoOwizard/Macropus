@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Macropus.ECS.System.Extensions;
+namespace Macropus.ECS.Systems.Extensions;
 
 public static class ASystemExtensions
 {

@@ -1,4 +1,4 @@
-﻿using Macropus.ECS.System;
+﻿using Macropus.ECS.Systems;
 using Tests.ECS.BasicFunctionality.Components;
 using Tests.ECS.BasicFunctionality.Systems;
 using Tests.Utils.Tests.ECS;

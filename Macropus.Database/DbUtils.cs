@@ -31,7 +31,7 @@ public static class DbUtils
         }
     }
 
-    public static uint GetVersion(IDbConnection connection)
+    public static ushort GetVersion(IDbConnection connection)
     {
         using var cmd = connection.CreateCommand();
 
@@ -41,10 +41,10 @@ public static class DbUtils
 
         reader.Read();
 
-        return (uint)reader.GetInt32(0);
+        return (ushort)reader.GetInt16(0);
     }
 
-    public static void SetVersion(IDbConnection connection, uint version)
+    public static void SetVersion(IDbConnection connection, ushort version)
     {
         using var cmd = connection.CreateCommand();
 

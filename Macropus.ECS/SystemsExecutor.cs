@@ -1,7 +1,7 @@
 ﻿using Macropus.ECS.ComponentsStorage;
 using Macropus.ECS.Entity;
-using Macropus.ECS.System;
-using Macropus.ECS.System.Extensions;
+using Macropus.ECS.Systems;
+using Macropus.ECS.Systems.Extensions;
 
 namespace Macropus.ECS;
 

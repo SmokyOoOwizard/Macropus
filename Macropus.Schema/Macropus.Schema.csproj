@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Macropus.CoolStuff\Macropus.CoolStuff.csproj" />
+        <ProjectReference Include="..\Macropus.Extensions\Macropus.Extensions.csproj" />
+        <ProjectReference Include="..\Macropus.Linq\Macropus.Linq.csproj" />
+    </ItemGroup>
+
+</Project>

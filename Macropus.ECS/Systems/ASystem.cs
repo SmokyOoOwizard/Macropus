@@ -1,6 +1,6 @@
 ﻿using Macropus.ECS.Entity;
 
-namespace Macropus.ECS.System;
+namespace Macropus.ECS.Systems;
 
 public abstract class ASystem
 {

@@ -54,7 +54,7 @@ public class DatabasesProviderTests : TestsWithDatabasesProvider
 
 		Assert.Equal(0u, DbUtils.GetVersion(db));
 
-		var dbVersion = RandomUtils.GetRandomUInt(1, 100);
+		var dbVersion = RandomUtils.GetRandomByte();
 
 		DbUtils.SetVersion(db, dbVersion);
 

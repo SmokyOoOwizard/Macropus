@@ -1,5 +1,5 @@
 ﻿using Macropus.ECS.Entity;
-using Macropus.ECS.System;
+using Macropus.ECS.Systems;
 
 namespace Tests.ECS.BasicFunctionality.Systems;
 
