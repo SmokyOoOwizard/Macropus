@@ -23,24 +23,25 @@ class Deserializer : IClearable
 
 		deserializeStack.Push(new DeserializeState(schema, rootComponentId));
 
-
 		do
 		{
 			var target = deserializeStack.Peek();
 
-			if (target.UnreadValues.Count > 0)
+			var targetUnreadValues = target.GetUnreadFields();
+			if (targetUnreadValues.Count > 0)
 				await ReadComponentPart(dbConnection, target);
 
-			if (target.Refs.Count > 0)
+			var targetRefNullable = target.TryGetRef();
+			if (targetRefNullable != null)
 			{
-				var targetRef = target.Refs.Pop();
+				var targetRef = targetRefNullable.Value;
 				var refSchema = schema.SubSchemas[targetRef.Key.Info.SubSchemaId!.Value];
 
 				if (targetRef.Value.HasValue)
 					deserializeStack.Push(new DeserializeState(refSchema, targetRef.Key, targetRef.Value.Value));
 				else
 				{
-					target.ReadValues.Add(new(targetRef.Key, null));
+					target.AddReadRef(targetRef.Key, null);
 				}
 
 				continue;
@@ -51,7 +52,9 @@ class Deserializer : IClearable
 				deserializeStack.Pop();
 				var parent = deserializeStack.Peek();
 
-				parent.ReadValues.Add(new(target.element.Value, Create(target)));
+				parent.AddReadRef(target.Element.Value, Create(target));
+
+				target.Clear();
 			}
 			else if (deserializeStack.Count == 1)
 			{
@@ -65,59 +68,48 @@ class Deserializer : IClearable
 
 	private object Create(DeserializeState target)
 	{
-		var i = Activator.CreateInstance(target.Schema.SchemaOf);
-
-		var d = new Dictionary<DataSchemaElement, List<object?>>();
+		var instance = Activator.CreateInstance(target.Schema.SchemaOf);
 
 		foreach (var readValue in target.ReadValues)
 		{
-			if (readValue.Key.Info.Type == ESchemaElementType.ComplexType
-			    && readValue.Key.Info.CollectionType is ECollectionType.Array)
+			readValue.Key.FieldInfo.SetValue(instance, readValue.Value);
+		}
+
+		foreach (var readRef in target.ReadRefs)
+		{
+			if (readRef.Key.Info.CollectionType is ECollectionType.Array)
 			{
-				if (!d.TryGetValue(readValue.Key, out var list))
+				var array = Array.CreateInstance(readRef.Key.FieldInfo.FieldType.GetElementType(), readRef.Value.Count);
+
+				for (int j = 0; j < readRef.Value.Count; j++)
 				{
-					list = new List<object?>();
-					d[readValue.Key] = list;
+					array.SetValue(readRef.Value[j], j);
 				}
 
-				list.Add(readValue.Value);
+				readRef.Key.FieldInfo.SetValue(instance, array);
 			}
 			else
 			{
-				readValue.Key.FieldInfo.SetValue(i, readValue.Value);
+				readRef.Key.FieldInfo.SetValue(instance, readRef.Value.First());
 			}
 		}
 
-		foreach (var k in d)
-		{
-			var array = Array.CreateInstance(k.Key.FieldInfo.FieldType.GetElementType(), k.Value.Count);
-
-			for (int j = 0; j < k.Value.Count; j++)
-			{
-				array.SetValue(k.Value[j], j);
-			}
-
-			k.Key.FieldInfo.SetValue(i, array);
-		}
-
-		return i;
+		return instance!;
 	}
 
 	private async Task ReadComponentPart(IDbConnection dbConnection, DeserializeState state)
 	{
-		var elements = state.UnreadValues.ToSqlName();
+		var unreadValues = state.GetUnreadFields();
+		var elements = unreadValues.ToSqlName();
 		var tableName = state.Schema.SchemaOf.FullName;
 
 		sqlBuilder.Clear();
-		sqlBuilder.Append(
-			$"SELECT {string.Join(',', elements)} FROM '{tableName}' ");
+		sqlBuilder.Append($"SELECT {string.Join(',', elements)} FROM '{tableName}' ");
 		sqlBuilder.Append($"WHERE Id = '{state.ComponentId}'");
 		sqlBuilder.Append(';');
 
 		var cmd = dbConnection.CreateCommand();
 		cmd.CommandText = sqlBuilder.ToString();
-
-		Console.WriteLine("SQL:\n" + cmd.CommandText);
 
 		var reader = await cmd.ExecuteReaderAsync();
 
@@ -127,9 +119,9 @@ class Deserializer : IClearable
 			throw new Exception();
 		}
 
-		for (int i = 0; i < state.UnreadValues.Count; i++)
+		for (int i = 0; i < unreadValues.Count; i++)
 		{
-			var element = state.UnreadValues[i];
+			var element = unreadValues[i];
 
 			var elementType = element.Info.Type;
 			if (element.Info.CollectionType is ECollectionType.Array)
@@ -146,11 +138,11 @@ class Deserializer : IClearable
 
 						if (string.IsNullOrWhiteSpace(r))
 						{
-							state.Refs.Push(new(element, null));
+							state.AddRef(element, null);
 						}
 						else
 						{
-							state.Refs.Push(new(element, long.Parse(r)));
+							state.AddRef(element, long.Parse(r));
 						}
 					}
 
@@ -170,24 +162,15 @@ class Deserializer : IClearable
 
 			if (elementType == ESchemaElementType.ComplexType)
 			{
-				state.Refs.Push(new(element, reader.GetInt64(i)));
+				state.AddRef(element, reader.GetInt64(i));
 				continue;
 			}
 
-			object? value = null;
-			if (reader.IsDBNull(i))
-			{
-				value = null;
-			}
-			else
-			{
-				value = elementType.Read(reader, i);
-			}
-
+			object? value = reader.IsDBNull(i) ? null : elementType.Read(reader, i);
 			state.ReadValues.Add(new KeyValuePair<DataSchemaElement, object?>(element, value));
 		}
 
-		state.UnreadValues.Clear();
+		state.MarkUnreadFieldsAsRead();
 	}
 
 	private async Task<long> GetComponentIdAsync(IDbConnection dbConnection, Guid entityId, string componentName)
@@ -203,10 +186,12 @@ class Deserializer : IClearable
 		var cmd = dbConnection.CreateCommand();
 		cmd.CommandText = sqlBuilder.ToString();
 
-		Console.WriteLine("SQL:\n" + cmd.CommandText);
-
 		return (long)await cmd.ExecuteScalarAsync();
 	}
 
-	public void Clear() { }
+	public void Clear()
+	{
+		deserializeStack.Clear();
+		sqlBuilder.Clear();
+	}
 }

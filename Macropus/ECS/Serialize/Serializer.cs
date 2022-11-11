@@ -129,8 +129,6 @@ class Serializer : IClearable
 		var cmd = dbConnection.CreateCommand();
 		cmd.CommandText = sqlBuilder.ToString();
 
-		Console.WriteLine("SQL:\n" + cmd.CommandText);
-
 		var reader = await cmd.ExecuteReaderAsync();
 
 		await reader.ReadAsync();

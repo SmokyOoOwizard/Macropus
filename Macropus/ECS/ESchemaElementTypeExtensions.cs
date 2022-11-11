@@ -34,11 +34,11 @@ public static class ESchemaElementTypeExtensions
 				return UInt128.Parse(reader.GetString(i));
 
 			case ESchemaElementType.Float:
-				return reader.GetFloat(i);
+				return float.Parse(reader.GetString(i));
 			case ESchemaElementType.Double:
-				return reader.GetDouble(i);
+				return double.Parse(reader.GetString(i));
 			case ESchemaElementType.Decimal:
-				return reader.GetDecimal(i);
+				return decimal.Parse(reader.GetString(i));
 
 			case ESchemaElementType.Guid:
 				return Guid.Parse(reader.GetString(i));
