@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using Macropus.CoolStuff.Collections;
 using Macropus.CoolStuff.Collections.Pool;
 using Macropus.ECS.Component;
 using Macropus.Schema;

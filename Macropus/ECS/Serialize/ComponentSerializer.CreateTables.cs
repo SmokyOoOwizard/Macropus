@@ -51,6 +51,11 @@ public partial class ComponentSerializer
 
 	private async Task CreateTableBySchema(DataSchema schema)
 	{
+		var simpleFields = schema.Elements;
+		if (!simpleFields.Any())
+			// TODO schema must have fields
+			throw new Exception();
+		
 		var tableName = schema.SchemaOf.FullName;
 
 		if (string.IsNullOrWhiteSpace(tableName))
@@ -59,11 +64,6 @@ public partial class ComponentSerializer
 		if (await dbConnection.TableAlreadyExists(tableName))
 			// TODO check table
 			return;
-
-		var simpleFields = schema.Elements;
-		if (!simpleFields.Any())
-			// TODO schema must have fields
-			throw new Exception();
 
 		var sqlBuilder = new StringBuilder();
 		sqlBuilder.Append($"CREATE TABLE '{tableName}' (");
