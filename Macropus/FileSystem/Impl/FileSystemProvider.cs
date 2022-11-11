@@ -1,10 +1,10 @@
 ﻿using System.Reactive.Disposables;
+using Macropus.CoolStuff;
 using Macropus.Database;
 using Macropus.Database.Sqlite;
 using Macropus.FileSystem.Db;
 using Macropus.FileSystem.Db.Models.File;
 using Macropus.Project;
-using Macropus.Stuff;
 using Microsoft.EntityFrameworkCore;
 
 namespace Macropus.FileSystem.Impl;

@@ -1,6 +1,6 @@
-﻿namespace Macropus.Stuff;
+﻿namespace Macropus.CoolStuff;
 
-internal sealed class LockFile : IDisposable, IAsyncDisposable
+public sealed class LockFile : IDisposable, IAsyncDisposable
 {
 	private readonly FileStream lockFile;
 
@@ -58,7 +58,7 @@ internal sealed class LockFile : IDisposable, IAsyncDisposable
 					// ignored
 				}
 
-				await Task.Delay(10);
+				await Task.Delay(10, cancellationToken);
 			}
 		}, cancellationToken).ConfigureAwait(false);
 	}

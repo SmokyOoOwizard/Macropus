@@ -1,9 +1,8 @@
 ﻿using System.Reactive.Disposables;
 using Autofac;
+using Macropus.CoolStuff;
 using Macropus.FileSystem;
 using Macropus.Module;
-using Macropus.Project.Instance;
-using Macropus.Stuff;
 
 namespace Macropus.Project.Provider.Impl;
 
