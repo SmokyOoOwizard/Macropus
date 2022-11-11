@@ -1,4 +1,4 @@
-﻿namespace Macropus.CoolStuff.Collections;
+﻿namespace Macropus.CoolStuff.Collections.Pool;
 
 interface IPool
 {

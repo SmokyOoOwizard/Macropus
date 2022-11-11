@@ -1,4 +1,4 @@
-﻿namespace Macropus.CoolStuff.Collections;
+﻿namespace Macropus.CoolStuff.Collections.Pool;
 
 public class QueuePool<T> : APool<Queue<T>>
 {
@@ -7,9 +7,7 @@ public class QueuePool<T> : APool<Queue<T>>
 		Interlocked.Increment(ref taken);
 
 		if (stack.TryPop(out var obj))
-		{
 			return obj;
-		}
 
 		return new Queue<T>();
 	}

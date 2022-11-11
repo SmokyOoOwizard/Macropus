@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace Macropus.CoolStuff.Collections;
+namespace Macropus.CoolStuff.Collections.Pool;
 
 public abstract class APool<T> : IPool<T>
 {

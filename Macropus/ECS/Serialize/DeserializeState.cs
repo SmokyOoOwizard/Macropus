@@ -1,5 +1,6 @@
 ﻿using Macropus.CoolStuff;
 using Macropus.CoolStuff.Collections;
+using Macropus.CoolStuff.Collections.Pool;
 using Macropus.Linq;
 using Macropus.Schema;
 

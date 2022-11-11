@@ -1,4 +1,4 @@
-﻿namespace Macropus.CoolStuff.Collections;
+﻿namespace Macropus.CoolStuff.Collections.Pool;
 
 public class Pool<T> : APool<T> where T : IClearable, new()
 {
@@ -7,9 +7,7 @@ public class Pool<T> : APool<T> where T : IClearable, new()
 		Interlocked.Increment(ref taken);
 
 		if (stack.TryPop(out var obj))
-		{
 			return obj;
-		}
 
 		return new T();
 	}
