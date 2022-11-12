@@ -1,4 +1,5 @@
 ﻿using Macropus.ECS.Component;
+using Macropus.ECS.Systems.Filter;
 
 namespace Macropus.ECS.ComponentsStorage;
 
@@ -13,4 +14,5 @@ public interface IReadOnlyComponentsStorage
 	IComponent GetComponent(Guid entityId, string name);
 
 	IEnumerable<Guid> GetEntities();
+	IEnumerable<Guid> GetEntities(ComponentsFilter filter);
 }

@@ -1,4 +1,5 @@
 ﻿using Macropus.ECS.Component;
+using Macropus.ECS.Systems.Filter;
 
 namespace Macropus.ECS.ComponentsStorage;
 
@@ -66,6 +67,28 @@ public class MergedComponentsStorage : IReadOnlyComponentsStorage
 
 		var mainEntities = mainStorage.GetEntities();
 		var additionalEntities = additionalStorage.GetEntities();
+
+		var passedEntities = new HashSet<Guid>();
+
+		foreach (var entity in mainEntities)
+		{
+			if (passedEntities.Add(entity)) yield return entity;
+		}
+
+		foreach (var entity in additionalEntities)
+		{
+			if (passedEntities.Add(entity)) yield return entity;
+		}
+	}
+
+	public IEnumerable<Guid> GetEntities(ComponentsFilter filter)
+	{
+		if ((mainStorage == null) || (additionalStorage == null))
+			// TODO
+			throw new Exception();
+
+		var mainEntities = mainStorage.GetEntities(filter);
+		var additionalEntities = additionalStorage.GetEntities(filter);
 
 		var passedEntities = new HashSet<Guid>();
 

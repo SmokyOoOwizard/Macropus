@@ -1,5 +1,6 @@
 ﻿using Macropus.ECS.Component;
 using Macropus.ECS.Component.Exceptions;
+using Macropus.ECS.Systems.Filter;
 
 namespace Macropus.ECS.ComponentsStorage.Impl;
 
@@ -114,6 +115,15 @@ public class ComponentsStorage : IComponentsStorage
 	public IEnumerable<Guid> GetEntities()
 	{
 		return existsEntities;
+	}
+
+	public IEnumerable<Guid> GetEntities(ComponentsFilter filter)
+	{
+		foreach (var entity in existsEntities)
+		{
+			if (filter.Filter(entity, this))
+				yield return entity;
+		}
 	}
 
 	public void Clear()

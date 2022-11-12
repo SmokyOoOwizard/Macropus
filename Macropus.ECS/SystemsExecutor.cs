@@ -48,8 +48,7 @@ public sealed class SystemsExecutor
 			if (reactiveSystems.TryGetValue(system, out var filter))
 			{
 				IEnumerable<IEntity> filteredEntities = EntityWrapper.Wrap(
-					changesComponents.GetEntities().Where(id => filter.Filter(id, changesComponents)),
-					componentsStorage, changedComponents);
+					changesComponents.GetEntities(filter), componentsStorage, changedComponents);
 
 				(system as IReactiveSystem)?.Execute(filteredEntities);
 			}
