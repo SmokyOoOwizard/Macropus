@@ -7,7 +7,7 @@ namespace Tests.ECS.BasicFunctionality.Systems;
 public class RemoveTestComponentUpdateSystem : ASystem, IReactiveSystem
 {
 	public static ComponentsFilter Filter()
-		=> ComponentsFilter.AllOf(typeof(TestComponent));
+		=> ComponentsFilter.AllOf(typeof(TestComponent)).Build();
 
 	public void Execute(IEnumerable<IEntity> entities)
 	{

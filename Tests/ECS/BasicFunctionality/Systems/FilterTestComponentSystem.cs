@@ -1,5 +1,6 @@
 ﻿using Macropus.ECS.Entity;
 using Macropus.ECS.Systems;
+using Macropus.ECS.Systems.Extensions;
 using Tests.ECS.BasicFunctionality.Components;
 
 namespace Tests.ECS.BasicFunctionality.Systems;
@@ -9,10 +10,9 @@ public class FilterTestComponentUpdateSystem : ASystem, IReactiveSystem
 	public static ComponentsFilter Filter()
 	{
 		return ComponentsFilter.AnyOf(
-			ComponentsFilter.AllOf(typeof(TestComponent2), typeof(TestComponent4), typeof(TestComponent7)),
-			ComponentsFilter.AllOf(
-				ComponentsFilter.AllOf(typeof(TestComponent10)),
-				ComponentsFilter.NoneOf(typeof(TestComponent6))));
+				ComponentsFilter.AllOf(typeof(TestComponent2), typeof(TestComponent4), typeof(TestComponent7)),
+				ComponentsFilter.AllOf(typeof(TestComponent10)).NoneOf(typeof(TestComponent6)))
+			.Build();
 	}
 
 	public void Execute(IEnumerable<IEntity> entities)

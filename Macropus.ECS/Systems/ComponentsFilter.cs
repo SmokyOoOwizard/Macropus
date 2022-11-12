@@ -1,156 +1,36 @@
-﻿using Macropus.ECS.Component;
-using Macropus.ECS.ComponentsStorage;
-using Macropus.ECS.Systems.Exceptions;
+﻿using Macropus.ECS.ComponentsStorage;
 
 namespace Macropus.ECS.Systems;
 
 public readonly struct ComponentsFilter
 {
-	private readonly EComponentsFilterType type;
+	private readonly Func<Guid, IReadOnlyComponentsStorage, bool> filter;
 
-	private readonly ComponentsFilter[] subFilters;
-	private readonly string[] filterComponents;
-
-	private ComponentsFilter(EComponentsFilterType type, ComponentsFilter[] subFilters, string[] filterComponents)
+	internal ComponentsFilter(Func<Guid, IReadOnlyComponentsStorage, bool> filter)
 	{
-		this.type = type;
-		this.subFilters = subFilters;
-		this.filterComponents = filterComponents;
+		this.filter = filter;
 	}
 
-	public IEnumerable<Guid> Filter(IReadOnlyComponentsStorage components)
+	public bool Filter(Guid entityId, IReadOnlyComponentsStorage storage)
 	{
-		foreach (var entity in components.GetEntities())
-		{
-			if (EntityFitsFilter(entity, components))
-				yield return entity;
-		}
+		return filter.Invoke(entityId, storage);
 	}
 
-	private bool EntityFitsFilter(Guid entity, IReadOnlyComponentsStorage components)
-	{
-		switch (type)
-		{
-			case EComponentsFilterType.All:
-			{
-				foreach (var component in filterComponents)
-				{
-					if (!components.HasComponent(entity, component))
-						return false;
-				}
+	public static ComponentsFilterBuilder AllOf(params ComponentsFilterBuilder[] filters)
+		=> ComponentsFilterBuilder.AllOf(filters);
 
-				foreach (var filter in subFilters)
-				{
-					if (!filter.EntityFitsFilter(entity, components))
-						return false;
-				}
+	public static ComponentsFilterBuilder AllOf(params Type[] components)
+		=> ComponentsFilterBuilder.AllOf(components);
 
-				return true;
-			}
-			case EComponentsFilterType.Any:
-			{
-				foreach (var component in filterComponents)
-				{
-					if (components.HasComponent(entity, component))
-						return true;
-				}
+	public static ComponentsFilterBuilder AnyOf(params ComponentsFilterBuilder[] filters)
+		=> ComponentsFilterBuilder.AnyOf(filters);
 
-				foreach (var filter in subFilters)
-				{
-					if (filter.EntityFitsFilter(entity, components))
-						return true;
-				}
+	public static ComponentsFilterBuilder AnyOf(params Type[] components)
+		=> ComponentsFilterBuilder.AnyOf(components);
 
-				return false;
-			}
-			case EComponentsFilterType.None:
-			{
-				foreach (var component in filterComponents)
-				{
-					if (components.HasComponent(entity, component))
-						return false;
-				}
+	public static ComponentsFilterBuilder NoneOf(params ComponentsFilterBuilder[] filters)
+		=> ComponentsFilterBuilder.NoneOf(filters);
 
-				foreach (var filter in subFilters)
-				{
-					if (filter.EntityFitsFilter(entity, components))
-						return false;
-				}
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public static ComponentsFilter AllOf(params ComponentsFilter[] filters)
-	{
-		return new ComponentsFilter(
-			EComponentsFilterType.All,
-			filters,
-			Array.Empty<string>()
-		);
-	}
-
-	public static ComponentsFilter AllOf(params Type[] components)
-	{
-		CheckComponents(components);
-		return new ComponentsFilter(
-			EComponentsFilterType.All,
-			Array.Empty<ComponentsFilter>(),
-			components.Select(t => t.FullName).ToArray()!
-		);
-	}
-
-	public static ComponentsFilter AnyOf(params ComponentsFilter[] filters)
-	{
-		return new ComponentsFilter(
-			EComponentsFilterType.Any,
-			filters,
-			Array.Empty<string>()
-		);
-	}
-
-	public static ComponentsFilter AnyOf(params Type[] components)
-	{
-		CheckComponents(components);
-		return new ComponentsFilter(
-			EComponentsFilterType.Any,
-			Array.Empty<ComponentsFilter>(),
-			components.Select(t => t.FullName).ToArray()!
-		);
-	}
-
-	public static ComponentsFilter NoneOf(params ComponentsFilter[] filters)
-	{
-		return new ComponentsFilter(
-			EComponentsFilterType.None,
-			filters,
-			Array.Empty<string>()
-		);
-	}
-
-	public static ComponentsFilter NoneOf(params Type[] components)
-	{
-		CheckComponents(components);
-		return new ComponentsFilter(
-			EComponentsFilterType.None,
-			Array.Empty<ComponentsFilter>(),
-			components.Select(t => t.FullName).ToArray()!
-		);
-	}
-
-	private static void CheckComponents(Type[] components)
-	{
-		List<Type> nonComponents = new();
-		foreach (var type in components)
-		{
-			if (!type.IsAssignableTo(typeof(IComponent)))
-				nonComponents.Add(type);
-		}
-
-		if (nonComponents.Count > 0)
-			throw new FilterHasTypesWhichAreNotComponentsException(nonComponents.ToArray());
-	}
+	public static ComponentsFilterBuilder NoneOf(params Type[] components)
+		=> ComponentsFilterBuilder.NoneOf(components);
 }

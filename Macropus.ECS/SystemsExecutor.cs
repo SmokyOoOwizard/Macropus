@@ -3,6 +3,8 @@ using Macropus.ECS.Entity;
 using Macropus.ECS.Systems;
 using Macropus.ECS.Systems.Extensions;
 
+// ReSharper disable SuspiciousTypeConversion.Global
+
 namespace Macropus.ECS;
 
 public sealed class SystemsExecutor
@@ -44,7 +46,8 @@ public sealed class SystemsExecutor
 
 			if (reactiveSystems.TryGetValue(system, out var filter))
 			{
-				IEnumerable<IEntity> filteredEntities = EntityWrapper.Wrap(filter.Filter(changesComponents),
+				IEnumerable<IEntity> filteredEntities = EntityWrapper.Wrap(
+					changesComponents.GetEntities().Where(id => filter.Filter(id, changesComponents)),
 					componentsStorage, changedComponents);
 
 				(system as IReactiveSystem)?.Execute(filteredEntities);

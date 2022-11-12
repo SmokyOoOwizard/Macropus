@@ -7,7 +7,7 @@ public class BrokenFilterTestComponentUpdateSystem : ASystem, IReactiveSystem
 {
 	public static ComponentsFilter Filter()
 	{
-		return ComponentsFilter.NoneOf(typeof(string));
+		return ComponentsFilter.NoneOf(typeof(string)).Build();
 	}
 
 	public void Execute(IEnumerable<IEntity> entities)

@@ -7,7 +7,7 @@ namespace Tests.ECS.BasicFunctionality.Systems;
 public class RemoveReadOnlyComponentUpdateSystem :ASystem, IReactiveSystem
 {
 	public static ComponentsFilter Filter() 
-		=> ComponentsFilter.AllOf(typeof(ReadOnlyComponent));
+		=> ComponentsFilter.AllOf(typeof(ReadOnlyComponent)).Build();
 
 	public void Execute(IEnumerable<IEntity> entities)
 	{
