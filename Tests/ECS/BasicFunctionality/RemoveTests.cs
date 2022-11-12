@@ -15,8 +15,8 @@ public class RemoveTests : TestsWithSystems
 	{
 		return new ASystem[]
 		{
-			new RemoveTestComponentSystem(),
-			new RemoveReadOnlyComponentSystem()
+			new RemoveTestComponentUpdateSystem(),
+			new RemoveReadOnlyComponentUpdateSystem()
 		};
 	}
 

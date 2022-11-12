@@ -4,9 +4,12 @@ using Tests.ECS.BasicFunctionality.Components;
 
 namespace Tests.ECS.BasicFunctionality.Systems;
 
-public class RemoveReadOnlyComponentSystem : ASystem
+public class RemoveReadOnlyComponentUpdateSystem :ASystem, IReactiveSystem
 {
-	public override void Execute(IEnumerable<IEntity> entities)
+	public static ComponentsFilter Filter() 
+		=> ComponentsFilter.AllOf(typeof(ReadOnlyComponent));
+
+	public void Execute(IEnumerable<IEntity> entities)
 	{
 		foreach (var entity in entities)
 			entity.RemoveComponent<ReadOnlyComponent>();

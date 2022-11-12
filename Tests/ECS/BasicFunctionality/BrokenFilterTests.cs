@@ -16,7 +16,7 @@ public class BrokenFilterTests : TestsWrapper
 	{
 		try
 		{
-			var systemsExecutor = new SystemsExecutor(new BrokenFilterTestComponentSystem());
+			var systemsExecutor = new SystemsExecutor(new BrokenFilterTestComponentUpdateSystem());
 		}
 		catch (Exception e)
 		{

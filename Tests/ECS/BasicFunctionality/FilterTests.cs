@@ -14,7 +14,7 @@ public class FilterTests : TestsWithSystems
 	{
 		return new ASystem[]
 		{
-			new FilterTestComponentSystem()
+			new FilterTestComponentUpdateSystem()
 		};
 	}
 

@@ -7,13 +7,23 @@ namespace Macropus.ECS;
 
 public sealed class SystemsExecutor
 {
-	private readonly Dictionary<ASystem, ComponentsFilter?> systems;
+	private readonly ASystem[] systems;
+	private readonly Dictionary<ASystem, ComponentsFilter> reactiveSystems = new();
 	private readonly MergedComponentsStorage changesComponents = new();
 	private readonly MergedComponentsStorage componentsStorage = new();
 
 	public SystemsExecutor(params ASystem[] systems)
 	{
-		this.systems = systems.ToDictionary(s => s, s => s.GetFilter());
+		foreach (var system in systems)
+		{
+			var filter = system.GetFilter();
+			if (filter != null)
+			{
+				reactiveSystems[system] = filter.Value;
+			}
+		}
+
+		this.systems = systems;
 	}
 
 	public void Execute(
@@ -30,17 +40,15 @@ public sealed class SystemsExecutor
 
 		foreach (var system in systems)
 		{
-			var filter = system.Value;
+			(system as IUpdateSystem)?.Update();
 
-			IEnumerable<IEntity> filteredEntities;
-			if (filter.HasValue)
-				filteredEntities = EntityWrapper.Wrap(filter.Value.Filter(changesComponents),
-					componentsStorage, changedComponents);
-			else
-				filteredEntities = EntityWrapper.Wrap(changesComponents.GetEntities(),
+			if (reactiveSystems.TryGetValue(system, out var filter))
+			{
+				IEnumerable<IEntity> filteredEntities = EntityWrapper.Wrap(filter.Filter(changesComponents),
 					componentsStorage, changedComponents);
 
-			system.Key.Execute(filteredEntities);
+				(system as IReactiveSystem)?.Execute(filteredEntities);
+			}
 		}
 	}
 }
