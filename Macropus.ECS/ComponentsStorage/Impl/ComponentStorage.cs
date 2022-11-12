@@ -3,7 +3,16 @@ using Macropus.ECS.Component.Exceptions;
 
 namespace Macropus.ECS.ComponentsStorage.Impl;
 
-public class ComponentStorage<T> : IComponentStorage<T> where T : struct, IComponent
+public abstract class ComponentStorage
+{
+	public abstract bool HasEntity(Guid entity);
+	public abstract IComponent? GetComponent(Guid entity);
+	public abstract void RemoveComponent(Guid entity);
+	public abstract void Clear();
+	public abstract IReadOnlyCollection<Guid> GetEntities();
+}
+
+public class ComponentStorage<T> : ComponentStorage where T : struct, IComponent
 {
 	private readonly Dictionary<Guid, T?> components = new();
 	private readonly bool isReadOnlyComponent;
@@ -17,12 +26,12 @@ public class ComponentStorage<T> : IComponentStorage<T> where T : struct, ICompo
 		ComponentName = type.FullName!;
 	}
 
-	public bool HasEntity(Guid entity)
+	public override bool HasEntity(Guid entity)
 	{
 		return components.ContainsKey(entity);
 	}
 
-	public IComponent? GetComponent(Guid entity)
+	public override IComponent? GetComponent(Guid entity)
 	{
 		return components.TryGetValue(entity, out var component) ? component : null;
 	}
@@ -41,7 +50,7 @@ public class ComponentStorage<T> : IComponentStorage<T> where T : struct, ICompo
 		components[entity] = component;
 	}
 
-	public void RemoveComponent(Guid entity)
+	public override void RemoveComponent(Guid entity)
 	{
 		if (isReadOnlyComponent && components.ContainsKey(entity))
 			throw new IsReadOnlyComponentException();
@@ -49,12 +58,12 @@ public class ComponentStorage<T> : IComponentStorage<T> where T : struct, ICompo
 		components[entity] = null;
 	}
 
-	public void Clear()
+	public override void Clear()
 	{
 		components.Clear();
 	}
 
-	public IReadOnlyCollection<Guid> GetEntities()
+	public override IReadOnlyCollection<Guid> GetEntities()
 	{
 		return components.Keys;
 	}

@@ -3,7 +3,7 @@ using Macropus.ECS.Component.Exceptions;
 
 namespace Macropus.ECS.ComponentsStorage.Impl;
 
-public class ComponentTypesStorage : IComponentTypesStorage
+public class ComponentTypesStorage
 {
 	private readonly Dictionary<string, uint> types = new();
 

@@ -1,5 +1,5 @@
 ﻿using Macropus.ECS.Component;
-using Macropus.ECS.Systems.Filter;
+using Macropus.ECS.Component.Filter;
 
 namespace Macropus.ECS.ComponentsStorage;
 

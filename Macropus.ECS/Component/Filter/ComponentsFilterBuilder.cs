@@ -1,9 +1,8 @@
 ﻿using System.Linq.Expressions;
-using Macropus.ECS.Component;
 using Macropus.ECS.ComponentsStorage;
 using Macropus.ECS.Systems.Exceptions;
 
-namespace Macropus.ECS.Systems.Filter;
+namespace Macropus.ECS.Component.Filter;
 
 public readonly struct ComponentsFilterBuilder
 {

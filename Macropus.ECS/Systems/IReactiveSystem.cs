@@ -1,5 +1,5 @@
-﻿using Macropus.ECS.Entity;
-using Macropus.ECS.Systems.Filter;
+﻿using Macropus.ECS.Component.Filter;
+using Macropus.ECS.Entity;
 
 namespace Macropus.ECS.Systems;
 

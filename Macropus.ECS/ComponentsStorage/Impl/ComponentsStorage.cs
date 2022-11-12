@@ -1,15 +1,15 @@
 ﻿using Macropus.ECS.Component;
 using Macropus.ECS.Component.Exceptions;
-using Macropus.ECS.Systems.Filter;
+using Macropus.ECS.Component.Filter;
 
 namespace Macropus.ECS.ComponentsStorage.Impl;
 
 public class ComponentsStorage : IComponentsStorage
 {
-	private readonly Dictionary<uint, IComponentStorage> storage = new();
+	private readonly Dictionary<uint, ComponentStorage> storage = new();
 	private readonly HashSet<Guid> existsEntities = new();
 
-	private readonly IComponentTypesStorage typesStorage;
+	private readonly ComponentTypesStorage typesStorage;
 
 	public uint ComponentsCount => (uint)storage.Count;
 	public uint EntitiesCount => (uint)existsEntities.Count;
@@ -19,7 +19,7 @@ public class ComponentsStorage : IComponentsStorage
 		typesStorage = new ComponentTypesStorage();
 	}
 
-	public ComponentsStorage(IComponentTypesStorage typesStorage)
+	public ComponentsStorage(ComponentTypesStorage typesStorage)
 	{
 		this.typesStorage = typesStorage;
 	}
@@ -29,7 +29,7 @@ public class ComponentsStorage : IComponentsStorage
 		if (!storage.TryGetValue(typesStorage.GetComponentTypeId<T>(), out var entities))
 			return false;
 
-		var component = (entities as IComponentStorage<T>)!.GetGenericComponent(entityId);
+		var component = (entities as ComponentStorage<T>)!.GetGenericComponent(entityId);
 
 		return component != null;
 	}
@@ -52,7 +52,7 @@ public class ComponentsStorage : IComponentsStorage
 		if (!storage.TryGetValue(typesStorage.GetComponentTypeId<T>(), out var entities))
 			throw new ComponentNotFoundException();
 
-		var component = (entities as IComponentStorage<T>)!.GetGenericComponent(entityId);
+		var component = (entities as ComponentStorage<T>)!.GetGenericComponent(entityId);
 
 		if (component == null)
 			throw new ComponentNotFoundException();
@@ -81,10 +81,10 @@ public class ComponentsStorage : IComponentsStorage
 	{
 		var typeId = typesStorage.GetComponentTypeId<T>();
 
-		IComponentStorage<T> entities;
+		ComponentStorage<T> entities;
 		if (storage.TryGetValue(typeId, out var en))
 		{
-			entities = (en as IComponentStorage<T>)!;
+			entities = (en as ComponentStorage<T>)!;
 		}
 		else
 		{
