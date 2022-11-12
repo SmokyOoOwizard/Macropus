@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Macropus.ECS.Systems.Filter;
 
 namespace Macropus.ECS.Systems.Extensions;
 

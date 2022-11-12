@@ -1,6 +1,6 @@
 ﻿using Macropus.ECS.ComponentsStorage;
 
-namespace Macropus.ECS.Systems;
+namespace Macropus.ECS.Systems.Filter;
 
 public readonly struct ComponentsFilter
 {

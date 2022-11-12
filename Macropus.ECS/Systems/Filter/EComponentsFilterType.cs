@@ -1,4 +1,4 @@
-﻿namespace Macropus.ECS.Systems;
+﻿namespace Macropus.ECS.Systems.Filter;
 
 public enum EComponentsFilterType
 {

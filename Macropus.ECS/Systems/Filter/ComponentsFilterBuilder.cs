@@ -3,7 +3,7 @@ using Macropus.ECS.Component;
 using Macropus.ECS.ComponentsStorage;
 using Macropus.ECS.Systems.Exceptions;
 
-namespace Macropus.ECS.Systems;
+namespace Macropus.ECS.Systems.Filter;
 
 public readonly struct ComponentsFilterBuilder
 {

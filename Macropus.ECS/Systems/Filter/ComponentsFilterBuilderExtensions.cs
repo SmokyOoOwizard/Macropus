@@ -1,4 +1,4 @@
-﻿namespace Macropus.ECS.Systems.Extensions;
+﻿namespace Macropus.ECS.Systems.Filter;
 
 public static class ComponentsFilterBuilderExtensions
 {

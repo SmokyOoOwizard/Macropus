@@ -2,6 +2,7 @@
 using Macropus.ECS.Entity;
 using Macropus.ECS.Systems;
 using Macropus.ECS.Systems.Extensions;
+using Macropus.ECS.Systems.Filter;
 
 // ReSharper disable SuspiciousTypeConversion.Global
 
