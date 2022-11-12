@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Macropus.Database.Adapter;
 using Macropus.Database.Extensions;
+using Macropus.ECS.Extensions;
 using Macropus.Schema;
 
 namespace Macropus.ECS.Serialize;

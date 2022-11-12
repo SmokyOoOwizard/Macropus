@@ -2,7 +2,7 @@
 using Macropus.Schema;
 using Macropus.Schema.Extensions;
 
-namespace Macropus.ECS;
+namespace Macropus.ECS.Extensions;
 
 public static class DataSchemaElementExtensions
 {
