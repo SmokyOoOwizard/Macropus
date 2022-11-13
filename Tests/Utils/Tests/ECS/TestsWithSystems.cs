@@ -1,6 +1,7 @@
 ﻿using Macropus.ECS;
-using Macropus.ECS.ComponentsStorage;
-using Macropus.ECS.ComponentsStorage.Impl;
+using Macropus.ECS.Component.Storage;
+using Macropus.ECS.Component.Storage.Impl;
+using Macropus.ECS.Entity.Context;
 using Macropus.ECS.Systems;
 using Xunit.Abstractions;
 
@@ -10,18 +11,19 @@ public abstract class TestsWithSystems : TestsWrapper
 {
 	private readonly SystemsExecutor executor;
 
-	public readonly IComponentsStorage AlreadyExistsComponents;
-	public readonly IComponentsStorage NewComponents;
-	public readonly IComponentsStorage ChangedComponents;
+	public readonly IComponentsStorage ExistsComponents;
+	public readonly EntitiesContext Context;
 
 	public TestsWithSystems(ITestOutputHelper output) : base(output)
 	{
-		AlreadyExistsComponents = new ComponentsStorage();
-		NewComponents = new ComponentsStorage();
-		ChangedComponents = new ComponentsStorage();
+		ExistsComponents = new ComponentsStorage();
+
+		Context = new(ExistsComponents);
 
 		// ReSharper disable once VirtualMemberCallInConstructor
 		executor = new SystemsExecutor(GetSystems());
+
+		executor.SetCollectors(Context);
 	}
 
 	public abstract ASystem[] GetSystems();
@@ -29,10 +31,7 @@ public abstract class TestsWithSystems : TestsWrapper
 	// ReSharper disable once InconsistentNaming
 	public void ExecuteSystems()
 	{
-		executor.Execute(
-			AlreadyExistsComponents,
-			NewComponents,
-			ChangedComponents);
+		executor.Execute(Context);
 	}
 
 	[Fact]

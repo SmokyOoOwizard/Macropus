@@ -13,7 +13,7 @@ public static class ASystemExtensions
 			if (!type.IsAssignableTo(typeof(IReactiveSystem)))
 				return null;
 
-			var method = type.GetMethod(nameof(IReactiveSystem.Filter));
+			var method = type.GetMethod(nameof(IReactiveSystem.GetTrigger));
 			if (method == null)
 				// TODO internal error
 				throw new Exception();

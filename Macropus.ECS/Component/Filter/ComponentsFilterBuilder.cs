@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using Macropus.ECS.ComponentsStorage;
+using Macropus.ECS.Component.Storage;
 using Macropus.ECS.Systems.Exceptions;
 
 namespace Macropus.ECS.Component.Filter;

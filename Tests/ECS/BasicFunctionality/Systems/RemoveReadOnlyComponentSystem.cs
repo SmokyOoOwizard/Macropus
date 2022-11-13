@@ -5,9 +5,9 @@ using Tests.ECS.BasicFunctionality.Components;
 
 namespace Tests.ECS.BasicFunctionality.Systems;
 
-public class RemoveReadOnlyComponentUpdateSystem :ASystem, IReactiveSystem
+public class RemoveReadOnlyComponentSystem :ASystem, IReactiveSystem
 {
-	public static ComponentsFilter Filter() 
+	public static ComponentsFilter GetTrigger() 
 		=> ComponentsFilter.AllOf(typeof(ReadOnlyComponent)).Build();
 
 	public void Execute(IEnumerable<IEntity> entities)

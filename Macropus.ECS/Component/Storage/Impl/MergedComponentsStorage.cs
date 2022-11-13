@@ -1,7 +1,6 @@
-﻿using Macropus.ECS.Component;
-using Macropus.ECS.Component.Filter;
+﻿using Macropus.ECS.Component.Filter;
 
-namespace Macropus.ECS.ComponentsStorage.Impl;
+namespace Macropus.ECS.Component.Storage.Impl;
 
 public class MergedComponentsStorage : IReadOnlyComponentsStorage
 {
@@ -10,6 +9,14 @@ public class MergedComponentsStorage : IReadOnlyComponentsStorage
 
 	private IReadOnlyComponentsStorage? mainStorage;
 	private IReadOnlyComponentsStorage? additionalStorage;
+
+	public MergedComponentsStorage() { }
+
+	public MergedComponentsStorage(IReadOnlyComponentsStorage main, IReadOnlyComponentsStorage additional)
+	{
+		mainStorage = main;
+		additionalStorage = additional;
+	}
 
 	public void SetStorages(IReadOnlyComponentsStorage main, IReadOnlyComponentsStorage additional)
 	{
@@ -100,6 +107,21 @@ public class MergedComponentsStorage : IReadOnlyComponentsStorage
 		foreach (var entity in additionalEntities)
 		{
 			if (passedEntities.Add(entity)) yield return entity;
+		}
+	}
+
+	public IEnumerable<IReadOnlyComponentStorage> GetComponents()
+	{
+		if (additionalStorage != null)
+		{
+			foreach (var storage in additionalStorage.GetComponents())
+				yield return storage;
+		}
+
+		if (mainStorage != null)
+		{
+			foreach (var storage in mainStorage.GetComponents())
+				yield return storage;
 		}
 	}
 }

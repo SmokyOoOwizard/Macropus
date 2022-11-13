@@ -5,6 +5,6 @@ namespace Macropus.ECS.Systems;
 
 public interface IReactiveSystem
 {
-	static abstract ComponentsFilter Filter();
+	static abstract ComponentsFilter GetTrigger();
 	void Execute(IEnumerable<IEntity> entities);
 }

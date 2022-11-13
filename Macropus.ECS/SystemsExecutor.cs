@@ -1,7 +1,7 @@
-﻿using Macropus.ECS.Component.Filter;
-using Macropus.ECS.ComponentsStorage;
-using Macropus.ECS.ComponentsStorage.Impl;
+﻿using Macropus.ECS.Component.Storage;
+using Macropus.ECS.Component.Storage.Impl;
 using Macropus.ECS.Entity;
+using Macropus.ECS.Entity.Context;
 using Macropus.ECS.Systems;
 using Macropus.ECS.Systems.Extensions;
 
@@ -12,9 +12,9 @@ namespace Macropus.ECS;
 public sealed class SystemsExecutor
 {
 	private readonly ASystem[] systems;
-	private readonly Dictionary<ASystem, ComponentsFilter> reactiveSystems = new();
-	private readonly MergedComponentsStorage changes = new();
-	private readonly MergedComponentsStorage storage = new();
+	private readonly Dictionary<ASystem, ReactiveSystemContext> reactiveSystems = new();
+
+	private readonly IComponentsStorage changes = new ComponentsStorage();
 
 	public SystemsExecutor(params ASystem[] systems)
 	{
@@ -23,40 +23,49 @@ public sealed class SystemsExecutor
 			var filter = system.GetFilter();
 			if (filter != null)
 			{
-				reactiveSystems[system] = filter.Value;
+				reactiveSystems[system] = new(filter.Value);
 			}
 		}
 
 		this.systems = systems;
 	}
 
-	public ComponentsFilter[] GetFilters()
+	public void SetCollectors(EntitiesContext context)
 	{
-		return reactiveSystems.Values.ToArray();
+		foreach (var system in reactiveSystems)
+		{
+			context.AddCollector(system.Value.GetCollector());
+		}
 	}
 
-	public void Execute(
-		IComponentsStorage alreadyExistsComponents,
-		IReadOnlyComponentsStorage newComponents,
-		IComponentsStorage changedComponents
-	)
+	public void RemoveCollectors(EntitiesContext context)
 	{
-		if (newComponents.EntitiesCount == 0)
-			return;
+		foreach (var system in reactiveSystems)
+		{
+			context.RemoveCollector(system.Value.GetCollector());
+		}
+	}
 
-		changes.SetStorages(changedComponents, newComponents);
-		storage.SetStorages(changes, alreadyExistsComponents);
+	public void Execute(EntitiesContext context)
+	{
+		if (!context.HasChanges())
+			return;
 
 		foreach (var system in systems)
 		{
 			(system as IUpdateSystem)?.Update();
 
-			if (reactiveSystems.TryGetValue(system, out var filter))
+			if (reactiveSystems.TryGetValue(system, out var systemContext))
 			{
-				IEnumerable<IEntity> filteredEntities =
-					EntityWrapper.Wrap(changes.GetEntities(filter), storage, changedComponents);
+				var collector = systemContext.GetCollector();
+				systemContext.SwapCollector(context);
 
-				(system as IReactiveSystem)?.Execute(filteredEntities);
+				(system as IReactiveSystem)?.Execute(EntityWrapper.Wrap(collector.GetEntities(),
+					context.GetHotComponentsStorage(), changes));
+				collector.Clear();
+
+				context.ApplyBuffer(changes);
+				changes.Clear();
 			}
 		}
 	}

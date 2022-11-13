@@ -5,9 +5,9 @@ using Tests.ECS.BasicFunctionality.Components;
 
 namespace Tests.ECS.BasicFunctionality.Systems;
 
-public class RemoveTestComponentUpdateSystem : ASystem, IReactiveSystem
+public class RemoveTestComponentSystem : ASystem, IReactiveSystem
 {
-	public static ComponentsFilter Filter()
+	public static ComponentsFilter GetTrigger()
 		=> ComponentsFilter.AllOf(typeof(TestComponent)).Build();
 
 	public void Execute(IEnumerable<IEntity> entities)

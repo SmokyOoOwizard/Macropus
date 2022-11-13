@@ -6,7 +6,7 @@ namespace Tests.ECS.BasicFunctionality.Systems;
 
 public class BrokenFilterTestComponentUpdateSystem : ASystem, IReactiveSystem
 {
-	public static ComponentsFilter Filter()
+	public static ComponentsFilter GetTrigger()
 	{
 		return ComponentsFilter.NoneOf(typeof(string)).Build();
 	}

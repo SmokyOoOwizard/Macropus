@@ -8,7 +8,7 @@ namespace Tests.ECS.BasicFunctionality.Systems;
 
 public class FilterTestComponentUpdateSystem : ASystem, IReactiveSystem
 {
-	public static ComponentsFilter Filter()
+	public static ComponentsFilter GetTrigger()
 	{
 		return ComponentsFilter.AnyOf(
 				ComponentsFilter.AllOf(typeof(TestComponent2), typeof(TestComponent4), typeof(TestComponent7)),
