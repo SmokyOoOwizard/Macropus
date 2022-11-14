@@ -1,4 +1,5 @@
 ﻿using Macropus.ECS.Component.Exceptions;
+using Macropus.ECS.Component.Storage.Impl;
 using Macropus.ECS.Systems;
 using Tests.ECS.BasicFunctionality.Components;
 using Tests.ECS.BasicFunctionality.Systems;
@@ -24,14 +25,16 @@ public class RemoveTests : TestsWithSystems
 	public void RemoveExistsComponentTest()
 	{
 		var entityId = Guid.NewGuid();
-		NewComponents.ReplaceComponent(entityId, new TestComponent());
+		
+		var buffer = new ComponentsStorage();
+		buffer.ReplaceComponent(entityId, new TestComponent());
+		Context.ApplyBuffer(buffer);
 
-		Assert.True(NewComponents.HasComponent<TestComponent>(entityId));
+		Assert.True(Context.GetHotComponentsStorage().HasComponent<TestComponent>(entityId));
 
 		ExecuteSystems();
 
-		Assert.False(ChangedComponents.HasComponent<TestComponent>(entityId));
-		Assert.True(NewComponents.HasComponent<TestComponent>(entityId));
+		Assert.False(Context.GetHotComponentsStorage().HasComponent<TestComponent>(entityId));
 	}
 
 	[Fact]
@@ -39,19 +42,21 @@ public class RemoveTests : TestsWithSystems
 	{
 		var entityId = Guid.NewGuid();
 
-		Assert.False(NewComponents.HasComponent<TestComponent>(entityId));
+		Assert.False(Context.GetHotComponentsStorage().HasComponent<TestComponent>(entityId));
 
 		ExecuteSystems();
 
-		Assert.False(ChangedComponents.HasComponent<TestComponent>(entityId));
-		Assert.False(NewComponents.HasComponent<TestComponent>(entityId));
+		Assert.False(Context.GetHotComponentsStorage().HasComponent<TestComponent>(entityId));
 	}
 
 	[Fact]
 	public void TryRemoveReadOnlyComponentTest()
 	{
 		var entityId = Guid.NewGuid();
-		NewComponents.ReplaceComponent(entityId, new ReadOnlyComponent());
+		
+		var buffer = new ComponentsStorage();
+		buffer.ReplaceComponent(entityId, new ReadOnlyComponent());
+		Context.ApplyBuffer(buffer);
 
 		try
 		{

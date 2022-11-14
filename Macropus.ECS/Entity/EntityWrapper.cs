@@ -1,4 +1,4 @@
-﻿using Macropus.ECS.ComponentsStorage;
+﻿using Macropus.ECS.Component.Storage;
 
 namespace Macropus.ECS.Entity;
 

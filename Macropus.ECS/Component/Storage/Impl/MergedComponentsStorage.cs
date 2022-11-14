@@ -1,6 +1,6 @@
-﻿using Macropus.ECS.Component;
+﻿using Macropus.ECS.Component.Filter;
 
-namespace Macropus.ECS.ComponentsStorage;
+namespace Macropus.ECS.Component.Storage.Impl;
 
 public class MergedComponentsStorage : IReadOnlyComponentsStorage
 {
@@ -9,6 +9,14 @@ public class MergedComponentsStorage : IReadOnlyComponentsStorage
 
 	private IReadOnlyComponentsStorage? mainStorage;
 	private IReadOnlyComponentsStorage? additionalStorage;
+
+	public MergedComponentsStorage() { }
+
+	public MergedComponentsStorage(IReadOnlyComponentsStorage main, IReadOnlyComponentsStorage additional)
+	{
+		mainStorage = main;
+		additionalStorage = additional;
+	}
 
 	public void SetStorages(IReadOnlyComponentsStorage main, IReadOnlyComponentsStorage additional)
 	{
@@ -77,6 +85,43 @@ public class MergedComponentsStorage : IReadOnlyComponentsStorage
 		foreach (var entity in additionalEntities)
 		{
 			if (passedEntities.Add(entity)) yield return entity;
+		}
+	}
+
+	public IEnumerable<Guid> GetEntities(ComponentsFilter filter)
+	{
+		if ((mainStorage == null) || (additionalStorage == null))
+			// TODO
+			throw new Exception();
+
+		var mainEntities = mainStorage.GetEntities(filter);
+		var additionalEntities = additionalStorage.GetEntities(filter);
+
+		var passedEntities = new HashSet<Guid>();
+
+		foreach (var entity in mainEntities)
+		{
+			if (passedEntities.Add(entity)) yield return entity;
+		}
+
+		foreach (var entity in additionalEntities)
+		{
+			if (passedEntities.Add(entity)) yield return entity;
+		}
+	}
+
+	public IEnumerable<IReadOnlyComponentStorage> GetComponents()
+	{
+		if (additionalStorage != null)
+		{
+			foreach (var storage in additionalStorage.GetComponents())
+				yield return storage;
+		}
+
+		if (mainStorage != null)
+		{
+			foreach (var storage in mainStorage.GetComponents())
+				yield return storage;
 		}
 	}
 }

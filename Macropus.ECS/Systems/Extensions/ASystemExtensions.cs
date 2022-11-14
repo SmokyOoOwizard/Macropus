@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Macropus.ECS.Component.Filter;
 
 namespace Macropus.ECS.Systems.Extensions;
 
@@ -9,10 +10,10 @@ public static class ASystemExtensions
 		try
 		{
 			var type = system.GetType();
-			if (!type.IsAssignableTo(typeof(IFilteredSystem)))
+			if (!type.IsAssignableTo(typeof(IReactiveSystem)))
 				return null;
 
-			var method = type.GetMethod(nameof(IFilteredSystem.Filter));
+			var method = type.GetMethod(nameof(IReactiveSystem.GetTrigger));
 			if (method == null)
 				// TODO internal error
 				throw new Exception();

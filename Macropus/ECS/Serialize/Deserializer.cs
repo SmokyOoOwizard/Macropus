@@ -4,6 +4,7 @@ using System.Text.Json.Nodes;
 using Macropus.CoolStuff;
 using Macropus.Database.Adapter;
 using Macropus.ECS.Component;
+using Macropus.ECS.Extensions;
 using Macropus.Schema;
 
 namespace Macropus.ECS.Serialize;
