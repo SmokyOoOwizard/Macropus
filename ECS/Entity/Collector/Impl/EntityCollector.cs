@@ -8,6 +8,8 @@ public class EntityCollector : IEntityCollector
 
 	public ComponentsFilter Filter { get; }
 
+	public int Count => entities.Count;
+
 
 	public EntityCollector(ComponentsFilter filter)
 	{
