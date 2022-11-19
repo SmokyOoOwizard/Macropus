@@ -2,7 +2,7 @@
 
 namespace Macropus.Project;
 
-internal interface IProjectInformationInternal : IProjectInformation
+public interface IProjectInformationInternal : IProjectInformation
 {
 	string Path { get; }
 }

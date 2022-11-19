@@ -30,18 +30,23 @@ public class ServiceHost
 		if (services.Length == 0)
 			return;
 
-		using var logger = scopeLogger.CreatePerfMonitor(new PerfMonitorCreateOptions());
-
-		logger.Log("Starting services: {0}", StartServiceTags,
-			services.Select(s => (object)s.GetType().Name).ToArray());
-
 		foreach (var service in services)
 		{
-			using var startupLogger = scopeLogger.CreatePerfMonitor(new PerfMonitorCreateOptions());
+			switch (service.Status)
+			{
+				case EServiceStatus.Error:
+				case EServiceStatus.Started:
+				case EServiceStatus.Starting:
+				case EServiceStatus.Terminated:
+				case EServiceStatus.Termination:
+					continue;
+			}
+
+			using var logger = scopeLogger.CreatePerfMonitor(new PerfMonitorCreateOptions());
 
 			var serviceName = service.GetType().Name;
 
-			startupLogger.Log("Try start service: {0}",
+			logger.Log("Try start service: {0}",
 				new[] { serviceName, "Start" }, new Object[] { serviceName });
 
 			if (service is IAsyncService asyncService)
@@ -50,7 +55,7 @@ public class ServiceHost
 				justService.Start();
 			else
 			{
-				startupLogger.Log("Service: {0} not implement any of the interfaces: {1}, {2}",
+				logger.Log("Service: {0} not implement any of the interfaces: {1}, {2}",
 					new[] { serviceName, "Start", "Warning" },
 					new Object[] { serviceName, nameof(IService), nameof(IAsyncService) });
 			}
@@ -63,18 +68,13 @@ public class ServiceHost
 		if (services.Length == 0)
 			return;
 
-		using var logger = scopeLogger.CreatePerfMonitor(new PerfMonitorCreateOptions());
-
-		logger.Log("Termination services: {0}", StopServiceTags,
-			services.Select(s => (object)s.GetType().Name).ToArray());
-
 		foreach (var service in services)
 		{
-			using var shutdownLogger = scopeLogger.CreatePerfMonitor(new PerfMonitorCreateOptions());
+			using var logger = scopeLogger.CreatePerfMonitor(new PerfMonitorCreateOptions());
 
 			var serviceName = service.GetType().Name;
 
-			shutdownLogger.Log("Try terminate service: {0}",
+			logger.Log("Try terminate service: {0}",
 				new[] { serviceName, "Terminate" }, new Object[] { serviceName });
 
 			if (service is IAsyncService asyncService)
@@ -83,7 +83,7 @@ public class ServiceHost
 				justService.Stop();
 			else
 			{
-				shutdownLogger.Log("Service: {0} not implement any of the interfaces: {1}, {2}",
+				logger.Log("Service: {0} not implement any of the interfaces: {1}, {2}",
 					new[] { serviceName, "Terminate", "Warning" },
 					new Object[] { serviceName, nameof(IService), nameof(IAsyncService) });
 			}

@@ -1,6 +1,6 @@
 ﻿namespace Macropus.Module;
 
-internal interface IModuleInfo
+public interface IModuleInfo
 {
     bool Enable { get; }
 }

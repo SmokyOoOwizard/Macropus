@@ -9,5 +9,9 @@ public class MacropusContainerBuilder : Autofac.Module
 	{
 		builder.RegisterType<ServiceHost>().InstancePerLifetimeScope();
 		builder.RegisterType<MainServiceHost>().AsSelf().AsImplementedInterfaces();
+
+		builder.RegisterType<ConnectionEmulator>().AsSelf().AsImplementedInterfaces();
+
+		builder.RegisterModule<ProjectContainerBuilder>();
 	}
 }
