@@ -25,9 +25,12 @@
   </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Macropus.DatabasesProvider\Macropus.DatabasesProvider.csproj" />
         <ProjectReference Include="..\Macropus.Database\Macropus.Database.csproj" />
         <ProjectReference Include="..\Macropus.ECS\Macropus.ECS.csproj" />
         <ProjectReference Include="..\Macropus.Extensions\Macropus.Extensions.csproj" />
+        <ProjectReference Include="..\Macropus.FileSystem.Interfaces\Macropus.FileSystem.Interfaces.csproj" />
+        <ProjectReference Include="..\Macropus.FileSystem\Macropus.FileSystem.csproj" />
         <ProjectReference Include="..\Macropus.Interfaces\Macropus.Interfaces.csproj" />
         <ProjectReference Include="..\Macropus.Schema\Macropus.Schema.csproj" />
     </ItemGroup>

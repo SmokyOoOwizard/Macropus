@@ -9,6 +9,6 @@ public abstract class TestsWithProjectsStorage : TestsWithFiles
 
     public TestsWithProjectsStorage(ITestOutputHelper output) : base(output)
     {
-        ProjectStorage = new ProjectsStorageLocal(ExecutePath);
+        //ProjectStorage = new ProjectsStorageLocal(ExecutePath);
     }
 }

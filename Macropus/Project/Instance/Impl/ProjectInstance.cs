@@ -1,53 +1,39 @@
-﻿using System.Reactive.Disposables;
-using Macropus.Module;
-using Macropus.Module.Impl;
-using Macropus.Project.Provider;
+﻿using Autofac;
+using Macropus.CoolStuff;
+using Macropus.Interfaces.Project;
+using Macropus.Project.Raw;
 
 namespace Macropus.Project.Instance.Impl;
 
-internal sealed class ProjectInstance : IProjectInstance
+internal sealed class ProjectInstance : IProjectInstance, IMakeRef<IProjectInstance>
 {
-    private readonly IProjectProvider projectProvider;
+	private readonly ILifetimeScope scope;
+	private readonly IRawProject rawProject;
 
-    private readonly ModulesInstance modulesInstance;
+	public IProjectInformation ProjectInformation => rawProject.ProjectInformation;
 
-    private bool disposed;
+	private bool disposed;
 
-    private ProjectInstance(IProjectProvider projectProvider, ModulesInstance modulesInstance)
-    {
-        this.projectProvider = projectProvider;
-        this.modulesInstance = modulesInstance;
-    }
+	public ProjectInstance(ILifetimeScope scope, IRawProject rawProject)
+	{
+		this.scope = scope;
+		this.rawProject = rawProject;
+	}
+	
+	
+	
 
+	public void Dispose()
+	{
+		if (disposed) return;
+		disposed = true;
 
-    public void Dispose()
-    {
-        if (disposed) return;
-        disposed = true;
+		scope.Dispose();
+	}
 
-        modulesInstance.Dispose();
-        projectProvider.Dispose();
-    }
-
-    public static async Task<IProjectInstance> Create(IProjectProvider projectProvider,
-        CancellationToken cancellationToken = default)
-    {
-        var disposable = new CompositeDisposable(Disposable.Empty);
-
-        try
-        {
-            var modules = await ModulesInstance
-                .Create(projectProvider.ModuleProvider, new ModulesCache(), cancellationToken)
-                .ConfigureAwait(false);
-            disposable.Add(modules);
-
-
-            return new ProjectInstance(projectProvider, modules);
-        }
-        catch
-        {
-            disposable.Dispose();
-            throw;
-        }
-    }
+	public IProjectInstance MakeRef()
+	{
+		// TODO
+		return this;
+	}
 }

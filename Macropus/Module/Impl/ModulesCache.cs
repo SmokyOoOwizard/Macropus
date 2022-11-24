@@ -1,5 +1,7 @@
 ﻿using Macropus.Extensions;
 using Macropus.FileSystem;
+using Macropus.FileSystem.Extensions;
+using Macropus.FileSystem.Interfaces;
 using Macropus.Stuff;
 using Macropus.Stuff.Cache;
 
@@ -11,8 +13,10 @@ internal class ModulesCache : IModulesCache
 
 	private bool disposed;
 
-	public async Task<ICacheRef<IRawModuleContainer, string>> GetOrLoadModuleAsync(IFileProvider file,
-		CancellationToken cancellationToken)
+	public async Task<ICacheRef<IRawModuleContainer, string>> GetOrLoadModuleAsync(
+		IFileProvider file,
+		CancellationToken cancellationToken
+	)
 	{
 		if (disposed) throw new ObjectDisposedException(nameof(ModulesCache));
 

@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Macropus.Project.Provider.Impl;
 
 namespace Macropus.Project.Storage.Impl;
 
@@ -14,6 +13,6 @@ public class ProjectsStorageLocalFactory
 
 	public ProjectsStorageLocal Create(string path)
 	{
-		return new ProjectsStorageLocal(path, scope.Resolve<ProjectProviderFactory>());
+		return scope.Resolve<ProjectsStorageLocal>(new NamedParameter("path", path));
 	}
 }

@@ -9,17 +9,19 @@ namespace Macropus;
 
 public class ConnectionEmulator : IAsyncService
 {
+	private readonly IComponentContext scope;
 	private readonly IDScope logger;
 	private readonly IProjectsStorage storage;
 
 	private IProjectConnection? connection;
-	
+
 	public EServiceStatus Status { get; private set; } = EServiceStatus.ReadyToStart;
 
 	public ConnectionEmulator(IComponentContext scope, IDScope logger)
 	{
+		this.scope = scope;
 		this.logger = logger;
-		
+
 		var storageMaster = scope.Resolve<ProjectsStorageMaster>();
 		var storageFactory = scope.Resolve<ProjectsStorageLocalFactory>();
 
@@ -34,17 +36,18 @@ public class ConnectionEmulator : IAsyncService
 	{
 		Status = EServiceStatus.Started;
 
-		var ids = await storage.GetExistsProjectsAsync(null, cancellationToken).ConfigureAwait(false);
+		var ids = await storage.GetExistsProjectsAsync(cancellationToken).ConfigureAwait(false);
 		if (ids.Length == 0)
 		{
 			ids = new[]
 			{
 				await storage.CreateProjectAsync(new ProjectCreationInfo() { Name = "SSS" }, cancellationToken)
+					.ConfigureAwait(false)
 			};
 		}
 
 
-		connection = await storage.OpenProjectAsync(ids[0], null, cancellationToken);
+		connection = await scope.Resolve<IConnectionService>().Connect(null, ids[0]).ConfigureAwait(false);
 	}
 
 	public Task StopAsync()

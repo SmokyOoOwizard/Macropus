@@ -8,7 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Macropus.DatabasesProvider\Macropus.DatabasesProvider.csproj" />
       <ProjectReference Include="..\Macropus.Linq\Macropus.Linq.csproj" />
+      <ProjectReference Include="..\Macropus.Schema\Macropus.Schema.csproj" />
     </ItemGroup>
 
 </Project>

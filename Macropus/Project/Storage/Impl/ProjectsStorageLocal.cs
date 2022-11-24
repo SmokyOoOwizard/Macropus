@@ -1,19 +1,18 @@
-﻿using Macropus.Interfaces.User;
-using Macropus.Project.Connection;
-using Macropus.Project.Connection.Impl;
-using Macropus.Project.Provider.Impl;
+﻿using Macropus.Project.Raw;
+using Macropus.Project.Raw.Impl;
+using Macropus.Project.Storage.Utils;
 
 namespace Macropus.Project.Storage.Impl;
 
 public class ProjectsStorageLocal : IProjectsStorage
 {
 	private readonly string storagePath;
-	private readonly ProjectProviderFactory projectFactory;
+	private readonly RawProjectFactory rawProjectFactory;
 
-	public ProjectsStorageLocal(string storagePath, ProjectProviderFactory projectFactory)
+	public ProjectsStorageLocal(string path, RawProjectFactory rawProjectFactory)
 	{
-		this.storagePath = storagePath;
-		this.projectFactory = projectFactory;
+		this.storagePath = path;
+		this.rawProjectFactory = rawProjectFactory;
 	}
 
 
@@ -37,37 +36,32 @@ public class ProjectsStorageLocal : IProjectsStorage
 
 	public Task<bool> DeleteProjectAsync(
 		Guid id,
-		IUser user,
 		CancellationToken cancellationToken = default
 	)
 	{
 		throw new NotImplementedException();
 	}
 
-	public Task GetProjectInformation(Guid projectId, IUser user, CancellationToken cancellationToken = default)
+	public Task GetProjectInformation(Guid projectId, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}
 
-	public Task<Guid[]> GetExistsProjectsAsync(IUser user, CancellationToken cancellationToken = default)
+	public Task<Guid[]> GetExistsProjectsAsync(CancellationToken cancellationToken = default)
 	{
 		return ProjectsLocalUtils.GetProjectsAsync(storagePath, cancellationToken);
 	}
 
 
-	public async Task<IProjectConnection> OpenProjectAsync(
+	public async Task<IRawProject> OpenProjectAsync(
 		Guid id,
-		IUser user,
 		CancellationToken cancellationToken = default
 	)
 	{
 		var path = await ProjectsLocalUtils.FindProjectAsync(GetPath(string.Empty), id,
 			cancellationToken);
 
-		var projInstance = await projectFactory.Create(path, cancellationToken);
-
-		return await ProjectConnection.Create(projInstance, cancellationToken)
-			.ConfigureAwait(false);
+		return await rawProjectFactory.Create(path, cancellationToken);
 	}
 
 	private string GetPath(string name)

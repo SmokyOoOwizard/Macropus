@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
-using Macropus.Interfaces.User;
 using Macropus.Linq;
-using Macropus.Project.Connection;
+using Macropus.Project.Raw;
 
 namespace Macropus.Project.Storage.Impl;
 
@@ -39,9 +38,8 @@ public class ProjectsStorageMaster : IProjectsStorage
 		return defaultStorage.CreateProjectAsync(creationInfo, cancellationToken);
 	}
 
-	public async Task<IProjectConnection> OpenProjectAsync(
+	public async Task<IRawProject> OpenProjectAsync(
 		Guid id,
-		IUser user,
 		CancellationToken cancellationToken = default
 	)
 	{
@@ -49,7 +47,7 @@ public class ProjectsStorageMaster : IProjectsStorage
 		{
 			try
 			{
-				return await storage.Key.OpenProjectAsync(id, user, cancellationToken).ConfigureAwait(false);
+				return await storage.Key.OpenProjectAsync(id, cancellationToken).ConfigureAwait(false);
 			}
 			catch
 			{
@@ -60,28 +58,28 @@ public class ProjectsStorageMaster : IProjectsStorage
 		throw new NotImplementedException();
 	}
 
-	public async Task<bool> DeleteProjectAsync(Guid id, IUser user, CancellationToken cancellationToken = default)
+	public async Task<bool> DeleteProjectAsync(Guid id, CancellationToken cancellationToken = default)
 	{
 		foreach (var storage in storages)
 		{
-			if (await storage.Key.DeleteProjectAsync(id, user, cancellationToken).ConfigureAwait(false))
+			if (await storage.Key.DeleteProjectAsync(id, cancellationToken).ConfigureAwait(false))
 				return true;
 		}
 
 		return false;
 	}
 
-	public Task GetProjectInformation(Guid projectId, IUser user, CancellationToken cancellationToken = default)
+	public Task GetProjectInformation(Guid projectId, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}
 
-	public async Task<Guid[]> GetExistsProjectsAsync(IUser user, CancellationToken cancellationToken = default)
+	public async Task<Guid[]> GetExistsProjectsAsync(CancellationToken cancellationToken = default)
 	{
 		var ids = new HashSet<Guid>();
 		foreach (var storage in storages)
 		{
-			ids.AddRange(await storage.Key.GetExistsProjectsAsync(user, cancellationToken).ConfigureAwait(false));
+			ids.AddRange(await storage.Key.GetExistsProjectsAsync(cancellationToken).ConfigureAwait(false));
 		}
 
 		return ids.ToArray();

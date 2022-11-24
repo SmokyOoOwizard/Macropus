@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Macropus.Project;
 using Macropus.Service.Impl;
 
 namespace Macropus;

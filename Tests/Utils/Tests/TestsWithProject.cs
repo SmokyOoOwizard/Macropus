@@ -22,7 +22,7 @@ public abstract class TestsWithProject : TestsWithProjectsStorage, IAsyncLifetim
     {
         var id = await ProjectStorage.CreateProjectAsync(ProjectCreateInfo).ConfigureAwait(false);
 
-        ProjectConnection = await ProjectStorage.OpenProjectAsync(id, ConnectionUser).ConfigureAwait(false);
+        //ProjectConnection = await ProjectStorage.OpenProjectAsync(id, ConnectionUser).ConfigureAwait(false);
     }
 
     public virtual Task DisposeAsync()

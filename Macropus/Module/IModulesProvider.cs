@@ -1,4 +1,4 @@
-﻿using Macropus.FileSystem;
+﻿using Macropus.FileSystem.Interfaces;
 
 namespace Macropus.Module;
 

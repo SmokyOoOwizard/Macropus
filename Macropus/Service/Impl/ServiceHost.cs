@@ -1,20 +1,11 @@
-﻿using Delogger.Scope;
+﻿using Delogger;
+using Delogger.Scope;
 using Delogger.Scope.Perf;
 
 namespace Macropus.Service.Impl;
 
 public class ServiceHost
 {
-	private static readonly string[] StartServiceTags =
-	{
-		nameof(ServiceHost), "Start"
-	};
-
-	private static readonly string[] StopServiceTags =
-	{
-		nameof(ServiceHost), "Terminate"
-	};
-
 	private readonly IServiceBase[] services;
 
 	private readonly IDScope scopeLogger;
@@ -42,22 +33,36 @@ public class ServiceHost
 					continue;
 			}
 
-			using var logger = scopeLogger.CreatePerfMonitor(new PerfMonitorCreateOptions());
-
 			var serviceName = service.GetType().Name;
 
-			logger.Log("Try start service: {0}",
-				new[] { serviceName, "Start" }, new Object[] { serviceName });
+			using var logger = scopeLogger.CreatePerfMonitor(new PerfMonitorCreateOptions()
+				{ Tags = new[] { serviceName, "Start" } });
 
-			if (service is IAsyncService asyncService)
-				await asyncService.StartAsync(cancellationToken);
-			else if (service is IService justService)
-				justService.Start();
-			else
+
+			logger.Log("Try start service: {0}", args: new Object[] { serviceName });
+
+			try
 			{
-				logger.Log("Service: {0} not implement any of the interfaces: {1}, {2}",
-					new[] { serviceName, "Start", "Warning" },
-					new Object[] { serviceName, nameof(IService), nameof(IAsyncService) });
+				if (service is IAsyncService asyncService)
+					await asyncService.StartAsync(cancellationToken);
+				else if (service is IService justService)
+					justService.Start();
+				else
+				{
+					logger.Log("Service: not implement any of the interfaces: {1}, {2}",
+						new[] { serviceName, "Start", "Warning" },
+						new Object[] { nameof(IService), nameof(IAsyncService) });
+
+					continue;
+				}
+
+				logger.Log("Done.");
+			}
+			catch (Exception e)
+			{
+				logger.LogException(e);
+				// TODO
+				throw new Exception();
 			}
 		}
 	}
@@ -70,23 +75,37 @@ public class ServiceHost
 
 		foreach (var service in services)
 		{
-			using var logger = scopeLogger.CreatePerfMonitor(new PerfMonitorCreateOptions());
-
 			var serviceName = service.GetType().Name;
 
-			logger.Log("Try terminate service: {0}",
-				new[] { serviceName, "Terminate" }, new Object[] { serviceName });
+			using var logger = scopeLogger.CreatePerfMonitor(new PerfMonitorCreateOptions()
+				{ Tags = new[] { serviceName, "Terminate" } });
 
-			if (service is IAsyncService asyncService)
-				await asyncService.StopAsync();
-			else if (service is IService justService)
-				justService.Stop();
-			else
+			logger.Log("Try terminate service: {0}", args: new Object[] { serviceName });
+
+			try
 			{
-				logger.Log("Service: {0} not implement any of the interfaces: {1}, {2}",
-					new[] { serviceName, "Terminate", "Warning" },
-					new Object[] { serviceName, nameof(IService), nameof(IAsyncService) });
+				if (service is IAsyncService asyncService)
+					await asyncService.StopAsync();
+				else if (service is IService justService)
+					justService.Stop();
+				else
+				{
+					logger.Log("Service not implement any of the interfaces: {1}, {2}",
+						new[] { serviceName, "Terminate", "Warning" },
+						new Object[] { nameof(IService), nameof(IAsyncService) });
+
+					continue;
+				}
+
+				logger.Log("Done.");
+			}
+			catch (Exception e)
+			{
+				logger.LogException(e);
 			}
 		}
+
+		// TODO delogger error. write thread end before all logs be write
+		await Task.Delay(1000);
 	}
 }

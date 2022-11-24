@@ -1,40 +1,24 @@
-﻿using System.Reactive.Disposables;
+﻿using Autofac;
 using Macropus.Interfaces.Project;
-using Macropus.Project.Provider;
+using Macropus.Project.Instance;
 
 namespace Macropus.Project.Connection.Impl;
 
 internal class ProjectConnection : IProjectConnection
 {
-    private readonly IProjectProvider project;
+	private readonly IProjectInstance project;
+	private readonly ILifetimeScope scope;
 
-    public IProjectInformation ProjectInformation => project.ProjectInformation;
+	public IProjectInformation ProjectInformation => project.ProjectInformation;
 
-    public ProjectConnection(IProjectProvider project)
-    {
-        this.project = project;
-    }
+	public ProjectConnection(IProjectInstance project, ILifetimeScope scope)
+	{
+		this.project = project;
+		this.scope = scope;
+	}
 
-    public void Dispose()
-    {
-        project.Dispose();
-    }
-
-    public static async Task<IProjectConnection> Create(IProjectProvider projectInstance,
-        CancellationToken cancellationToken = default)
-    {
-        var disposable = new CompositeDisposable(Disposable.Empty);
-
-        try
-        {
-            disposable.Add(projectInstance);
-
-            return new ProjectConnection(projectInstance);
-        }
-        catch
-        {
-            disposable.Dispose();
-            throw;
-        }
-    }
+	public void Dispose()
+	{
+		project.Dispose();
+	}
 }

@@ -1,4 +1,4 @@
-﻿using Macropus.FileSystem;
+﻿using Macropus.FileSystem.Interfaces;
 using Xunit.Abstractions;
 
 #pragma warning disable CS8618
@@ -13,8 +13,8 @@ public abstract class TestsWithFileSystemProvider : TestsWithFiles, IAsyncLifeti
 
 	public virtual async Task InitializeAsync()
 	{
-		FileSystemProvider =
-			await Macropus.FileSystem.Impl.FileSystemProvider.Create(ExecutePath).ConfigureAwait(false);
+		//FileSystemProvider =
+		//	await Macropus.FileSystem.FileSystemProvider.Create(ExecutePath).ConfigureAwait(false);
 	}
 
 	public virtual async Task DisposeAsync()
