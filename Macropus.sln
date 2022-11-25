@@ -25,7 +25,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.FileSystem", "Macr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.FileSystem.Interfaces", "Macropus.FileSystem.Interfaces\Macropus.FileSystem.Interfaces.csproj", "{01731961-91C9-4126-93AA-85D7D1ACF682}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.DatabasesProvider", "Macropus.DatabasesProvider\Macropus.DatabasesProvider.csproj", "{2493456D-5366-4A8F-BF3D-3C5653B4BB00}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.Database.Interfaces", "Macropus.Database.Interfaces\Macropus.Database.Interfaces.csproj", "{2493456D-5366-4A8F-BF3D-3C5653B4BB00}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{04AD8001-566B-4287-8952-478D6B0B3244}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,5 +89,9 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5BDC59E7-78BF-4D75-B9C7-6247B34D9894}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E39F32E4-4A7B-43AE-9A8C-8A60D096B492} = {04AD8001-566B-4287-8952-478D6B0B3244}
+		{2493456D-5366-4A8F-BF3D-3C5653B4BB00} = {04AD8001-566B-4287-8952-478D6B0B3244}
 	EndGlobalSection
 EndGlobal

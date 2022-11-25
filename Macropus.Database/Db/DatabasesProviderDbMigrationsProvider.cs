@@ -1,8 +1,8 @@
 ﻿using Macropus.Database.Db.Migrations;
+using Macropus.Database.Interfaces.Migration;
 using Macropus.Database.Migration;
-using Macropus.Database.Migration.Impl;
 
-namespace Macropus.DatabasesProvider.Db;
+namespace Macropus.Database.Db;
 
 internal class DatabasesProviderDbMigrationsProvider : IMigrationsProvider
 {

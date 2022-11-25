@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Macropus.Database.Adapter;
 
-namespace Macropus.DatabasesProvider.Extensions;
+namespace Macropus.Database.Extensions;
 
 public static class DbConnectionExtensions
 {

@@ -1,6 +1,7 @@
 ﻿using Macropus.Database.Adapter;
 using Macropus.Database.Migration;
 using System.Data;
+using Macropus.Database.Interfaces.Migration;
 
 namespace Macropus.FileSystem.Db.Migrations
 {

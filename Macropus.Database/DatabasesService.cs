@@ -1,29 +1,35 @@
 ﻿using System.Data;
-using System.Reactive.Disposables;
-using Macropus.Database;
-using Macropus.DatabasesProvider.Db;
-using Macropus.DatabasesProvider.Db.Models;
-using Macropus.DatabasesProvider.Sqlite;
+using Delogger.Scope;
+using Delogger.Scope.Log;
+using Macropus.Database.Db;
+using Macropus.Database.Db.Models;
+using Macropus.Database.Interfaces;
+using Macropus.Database.Sqlite;
 using Macropus.FileSystem.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Macropus.DatabasesProvider.Impl;
+namespace Macropus.Database;
 
-public class DatabasesProvider : IDatabasesProvider
+internal class DatabasesService : IDatabasesService
 {
 	private readonly DatabasesDbContext context;
 	private readonly IFileSystemProvider fileSystemProvider;
+	private readonly IDScope scope;
+	private readonly IDLogger logger;
 
-	private DatabasesProvider(DatabasesDbContext context, IFileSystemProvider fileSystemProvider)
+	public DatabasesService(DatabasesDbContext context, IFileSystemProvider fileSystemProvider, IDScope scope)
 	{
 		this.context = context;
 		this.fileSystemProvider = fileSystemProvider;
+		this.scope = scope;
+		logger = scope.CreateLogger(new LoggerCreateOptions() { Tags = new[] { nameof(DatabasesService) } });
 	}
 
 
 	public async Task<IDbConnection?> TryGetDatabase(string name, CancellationToken cancellationToken = default)
 	{
-		if (string.IsNullOrWhiteSpace(name)) throw new ArgumentNullException(nameof(name));
+		if (string.IsNullOrWhiteSpace(name))
+			throw new ArgumentNullException(nameof(name));
 
 		try
 		{
@@ -113,48 +119,5 @@ public class DatabasesProvider : IDatabasesProvider
 	{
 		context.Dispose();
 		fileSystemProvider.Dispose();
-	}
-
-	public static async Task<DatabasesProvider> Create(
-		string path,
-		IFileSystemProvider fileSystemProvider,
-		CancellationToken cancellationToken = default
-	)
-	{
-		var disposable = new CompositeDisposable(Disposable.Empty);
-
-		try
-		{
-			var dbContext = await GetOrCreateDbContextAsync(path, cancellationToken);
-			disposable.Add(dbContext);
-
-			return new DatabasesProvider(dbContext, fileSystemProvider);
-		}
-		catch
-		{
-			disposable.Dispose();
-			throw;
-		}
-	}
-
-	private static async Task<DatabasesDbContext> GetOrCreateDbContextAsync(
-		string path,
-		CancellationToken cancellationToken = default
-	)
-	{
-		var dbProvider = new SqliteDbProvider($"Data Source={path}", path, Guid.Empty);
-
-		await using (var dbConnection = dbProvider.CreateConnection())
-		{
-			await dbConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
-
-			if (DbUtils.GetTableCount(dbConnection) == 0)
-				await DbUtils.MigrateDb<DatabasesProviderDbMigrationsProvider>(dbConnection, 0,
-						DatabasesProviderDbMigrationsProvider.LastVersion, cancellationToken)
-					.ConfigureAwait(false);
-		}
-
-
-		return new DatabasesDbContext(dbProvider.CreateConnection());
 	}
 }

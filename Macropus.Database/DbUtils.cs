@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Macropus.Database.Interfaces.Migration;
 using Macropus.Database.Migration;
 
 namespace Macropus.Database;

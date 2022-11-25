@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Macropus.Database.Migration;
+namespace Macropus.Database.Interfaces.Migration;
 
 public interface IMigration
 {

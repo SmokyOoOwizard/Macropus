@@ -1,4 +1,5 @@
-﻿using Macropus.DatabasesProvider;
+﻿using Macropus.Database.Interfaces;
+using Macropus.DatabasesProvider;
 using Xunit.Abstractions;
 
 #pragma warning disable CS8618
@@ -7,7 +8,7 @@ namespace Tests.Utils.Tests;
 
 public abstract class TestsWithDatabasesProvider : TestsWithFileSystemProvider
 {
-	public IDatabasesProvider DatabasesProvider { get; private set; }
+	public IDatabasesService DatabasesService { get; private set; }
 
 	public TestsWithDatabasesProvider(ITestOutputHelper output) : base(output) { }
 
@@ -15,14 +16,14 @@ public abstract class TestsWithDatabasesProvider : TestsWithFileSystemProvider
 	{
 		await base.InitializeAsync().ConfigureAwait(false);
 
-		DatabasesProvider = await Macropus.DatabasesProvider.Impl.DatabasesProvider
+		DatabasesService = await Macropus.Database.DatabasesService
 			.Create(ExecutePath, FileSystemProvider)
 			.ConfigureAwait(false);
 	}
 
 	public override async Task DisposeAsync()
 	{
-		DatabasesProvider.Dispose();
+		DatabasesService.Dispose();
 
 		await base.DisposeAsync();
 	}

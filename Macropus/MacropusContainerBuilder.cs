@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Macropus.Database;
 using Macropus.Project;
 using Macropus.Service.Impl;
 
@@ -14,5 +15,6 @@ public class MacropusContainerBuilder : Autofac.Module
 		builder.RegisterType<ConnectionEmulator>().AsSelf().AsImplementedInterfaces();
 
 		builder.RegisterModule<ProjectContainerBuilder>();
+		builder.RegisterModule<DatabasesContainerBuilder>();
 	}
 }

@@ -1,10 +1,11 @@
 ﻿using System.Data;
 using Macropus.Database.Adapter;
+using Macropus.Database.Interfaces.Migration;
 using Macropus.Database.Migration;
 
 namespace Macropus.Database.Db.Migrations;
 
-public sealed class m1_BaseDatabasesProviderDbMigration : IMigration
+internal sealed class m1_BaseDatabasesProviderDbMigration : IMigration
 {
 	public uint Version => 1;
 

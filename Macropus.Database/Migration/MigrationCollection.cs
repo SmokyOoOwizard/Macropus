@@ -1,6 +1,7 @@
 ﻿using System.Collections;
+using Macropus.Database.Interfaces.Migration;
 
-namespace Macropus.Database.Migration.Impl;
+namespace Macropus.Database.Migration;
 
 public sealed class MigrationCollection : IMigrationCollection
 {

@@ -1,8 +1,8 @@
 ﻿using System.Data;
 
-namespace Macropus.DatabasesProvider;
+namespace Macropus.Database.Interfaces;
 
-public interface IDatabasesProvider : IDisposable
+public interface IDatabasesService : IDisposable
 {
 	Task<IDbConnection?> TryGetDatabase(string name, CancellationToken cancellationToken = default);
 	Task<bool> CreateDatabaseAsync(string name, CancellationToken cancellationToken = default);

@@ -1,8 +1,8 @@
 ﻿using System.Data.Common;
-using Macropus.Database;
+using Macropus.Database.Interfaces;
 using Microsoft.Data.Sqlite;
 
-namespace Macropus.DatabasesProvider.Sqlite;
+namespace Macropus.Database.Sqlite;
 
 internal sealed class SqliteDbProvider : IDbProvider
 {

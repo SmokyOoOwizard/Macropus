@@ -1,7 +1,7 @@
 ﻿using Macropus.FileSystem.Interfaces;
 using Microsoft.Data.Sqlite;
 
-namespace Macropus.DatabasesProvider.Sqlite;
+namespace Macropus.Database.Sqlite;
 
 public class SqliteConnectionWithIFile : SqliteConnection
 {

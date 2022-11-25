@@ -1,4 +1,4 @@
-﻿namespace Macropus.Stuff;
+﻿namespace Macropus.CoolStuff;
 
 internal sealed class DisposableTrigger : IDisposable
 {

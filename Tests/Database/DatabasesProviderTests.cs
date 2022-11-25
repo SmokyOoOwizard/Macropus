@@ -15,9 +15,9 @@ public class DatabasesProviderTests : TestsWithDatabasesProvider
 	{
 		var dbName = RandomUtils.GetRandomString(64);
 
-		Assert.True(await DatabasesProvider.CreateDatabaseAsync(dbName).ConfigureAwait(false));
+		Assert.True(await DatabasesService.CreateDatabaseAsync(dbName).ConfigureAwait(false));
 
-		var db = await DatabasesProvider.TryGetDatabase(dbName).ConfigureAwait(false);
+		var db = await DatabasesService.TryGetDatabase(dbName).ConfigureAwait(false);
 
 		Assert.NotNull(db);
 	}
@@ -27,11 +27,11 @@ public class DatabasesProviderTests : TestsWithDatabasesProvider
 	{
 		var dbName = RandomUtils.GetRandomString(64);
 
-		Assert.True(await DatabasesProvider.CreateDatabaseAsync(dbName).ConfigureAwait(false));
+		Assert.True(await DatabasesService.CreateDatabaseAsync(dbName).ConfigureAwait(false));
 
-		Assert.True(await DatabasesProvider.DeleteDatabaseAsync(dbName).ConfigureAwait(false));
+		Assert.True(await DatabasesService.DeleteDatabaseAsync(dbName).ConfigureAwait(false));
 
-		var db = await DatabasesProvider.TryGetDatabase(dbName).ConfigureAwait(false);
+		var db = await DatabasesService.TryGetDatabase(dbName).ConfigureAwait(false);
 
 		if (db != null)
 			Assert.Fail("Database must not exist after delete");
@@ -42,9 +42,9 @@ public class DatabasesProviderTests : TestsWithDatabasesProvider
 	{
 		var dbName = RandomUtils.GetRandomString(64);
 
-		Assert.True(await DatabasesProvider.CreateDatabaseAsync(dbName).ConfigureAwait(false));
+		Assert.True(await DatabasesService.CreateDatabaseAsync(dbName).ConfigureAwait(false));
 
-		using var db = await DatabasesProvider.TryGetDatabase(dbName).ConfigureAwait(false);
+		using var db = await DatabasesService.TryGetDatabase(dbName).ConfigureAwait(false);
 
 		Assert.NotNull(db);
 
