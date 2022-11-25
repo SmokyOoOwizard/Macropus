@@ -10,7 +10,7 @@ using Macropus.FileSystem.Interfaces;
 
 namespace Macropus.FileSystem;
 
-public class FileSystemProviderFactory
+internal class FileSystemProviderFactory : IFileSystemServiceFactory
 {
 	private readonly ILifetimeScope scope;
 	private readonly IDbContextService dbContextService;

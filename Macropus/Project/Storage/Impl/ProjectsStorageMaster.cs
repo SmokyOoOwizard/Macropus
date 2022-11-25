@@ -1,4 +1,6 @@
 ﻿using System.Collections.Concurrent;
+using Delogger.Scope;
+using Delogger.Scope.Log;
 using Macropus.Linq;
 using Macropus.Project.Raw;
 
@@ -6,8 +8,18 @@ namespace Macropus.Project.Storage.Impl;
 
 public class ProjectsStorageMaster : IProjectsStorage
 {
+	private readonly IDScope scope;
+	private readonly IDLogger logger;
+
 	private readonly ConcurrentDictionary<IProjectsStorage, bool> storages = new();
+
 	private IProjectsStorage? defaultStorage;
+
+	public ProjectsStorageMaster(IDScope scope)
+	{
+		this.scope = scope;
+		logger = scope.CreateLogger(new LoggerCreateOptions() { Tags = new[] { nameof(ProjectsStorageMaster) } });
+	}
 
 	public void AddStorage(IProjectsStorage storage)
 	{
@@ -49,12 +61,21 @@ public class ProjectsStorageMaster : IProjectsStorage
 			{
 				return await storage.Key.OpenProjectAsync(id, cancellationToken).ConfigureAwait(false);
 			}
-			catch
+			catch (Exception ex)
 			{
-				// ignored
+				// TODO ignore exception not found and etc
+				logger.Log(ex.ToString(), new[]
+				{
+					"Error",
+					nameof(OpenProjectAsync)
+				}, null, new KeyValuePair<string, object>[]
+				{
+					new("Project Id", id)
+				});
 			}
 		}
 
+		// TODO throw exception not found
 		throw new NotImplementedException();
 	}
 

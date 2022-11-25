@@ -8,6 +8,7 @@ public class FileSystemContainerBuilder : Module
 	{
 		builder.RegisterType<FileSystemProviderFactory>()
 			.AsSelf()
+			.AsImplementedInterfaces()
 			.SingleInstance();
 
 		builder.RegisterType<FileSystemService>()

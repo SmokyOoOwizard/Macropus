@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Macropus.CoolStuff;
+using Macropus.Database.Interfaces;
 using Macropus.FileSystem.Interfaces;
 using Macropus.Module;
 
@@ -12,7 +13,7 @@ internal class RawProject : IRawProject
 
 	public IProjectInformationInternal ProjectInformation { get; }
 	public IFileSystemService FilesService { get; }
-	public IModulesProvider ModuleProvider { get; }
+	public IDatabasesService DatabasesService { get; }
 
 	private bool disposed;
 
@@ -23,13 +24,16 @@ internal class RawProject : IRawProject
 
 		ProjectInformation = container.Resolve<IProjectInformationInternal>();
 		FilesService = container.Resolve<IFileSystemService>();
-		ModuleProvider = container.Resolve<IModulesProvider>();
+		DatabasesService = container.Resolve<IDatabasesService>();
 	}
 
 	public void Dispose()
 	{
 		if (disposed) return;
 		disposed = true;
+
+		DatabasesService.Dispose();
+		FilesService.Dispose();
 
 		lockFile.Dispose();
 	}
@@ -38,6 +42,9 @@ internal class RawProject : IRawProject
 	{
 		if (disposed) return;
 		disposed = true;
+
+		DatabasesService.Dispose();
+		await FilesService.DisposeAsync();
 
 		await lockFile.DisposeAsync();
 	}
