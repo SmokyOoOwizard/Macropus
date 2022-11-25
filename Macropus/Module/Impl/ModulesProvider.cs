@@ -9,14 +9,14 @@ namespace Macropus.Module.Impl;
 internal class ModulesProvider : IModulesProvider
 {
 	private readonly ModulesDbContext dbContext;
-	private readonly IFileSystemProvider fsProvider;
+	private readonly IFileSystemService fsService;
 
 	private bool disposed;
 
-	public ModulesProvider(ModulesDbContext dbContext, IFileSystemProvider fsProvider)
+	public ModulesProvider(ModulesDbContext dbContext, IFileSystemService fsService)
 	{
 		this.dbContext = dbContext;
-		this.fsProvider = fsProvider;
+		this.fsService = fsService;
 	}
 
 	public Task<IModuleInfo[]> GetModulesInfoAsync(CancellationToken cancellationToken = default)
@@ -38,7 +38,7 @@ internal class ModulesProvider : IModulesProvider
 	}
 
 	public static async Task<ModulesProvider> Create(
-		IFileSystemProvider fsProvider,
+		IFileSystemService fsService,
 		DbConnection dbConnection,
 		CancellationToken cancellationToken = default
 	)
@@ -50,7 +50,7 @@ internal class ModulesProvider : IModulesProvider
 			var dbContext = await GetOrCreateDbContextAsync(dbConnection, cancellationToken).ConfigureAwait(false);
 			disposable.Add(dbContext);
 
-			return new ModulesProvider(dbContext, fsProvider);
+			return new ModulesProvider(dbContext, fsService);
 		}
 		catch
 		{

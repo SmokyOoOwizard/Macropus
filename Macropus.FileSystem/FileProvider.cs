@@ -39,22 +39,7 @@ internal class FileProvider : IFileProviderInternal
 		this.fileStream = fileStream;
 	}
 
-	public void Dispose()
-	{
-		fileStream.Dispose();
-	}
-
-	public async ValueTask DisposeAsync()
-	{
-		await fileStream.DisposeAsync();
-	}
-
-	public static FileProvider Create(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
-	{
-		return Create(path, string.Empty, Guid.Empty, fileMode, fileAccess, fileShare);
-	}
-
-	public static FileProvider Create(
+	public FileProvider(
 		string path,
 		string? name,
 		Guid id,
@@ -63,13 +48,39 @@ internal class FileProvider : IFileProviderInternal
 		FileShare fileShare
 	)
 	{
-		if (path == null) throw new ArgumentNullException(nameof(path));
+		if (path == null)
+			throw new ArgumentNullException(nameof(path));
 
 		if (name == null)
 			name = string.Empty;
 
-		var fileStream = new FileStream(path, fileMode, fileAccess, fileShare);
+		Path = path;
+		Name = name;
+		Id = id;
+		Mode = fileMode;
+		Access = fileAccess;
+		Share = fileShare;
 
-		return new FileProvider(path, name, id, fileMode, fileAccess, fileShare, fileStream);
+		fileStream = new FileStream(path, fileMode, fileAccess, fileShare);
+	}
+
+	public FileProvider(
+		string path,
+		FileMode fileMode,
+		FileAccess fileAccess,
+		FileShare fileShare
+	) : this(path, string.Empty, Guid.Empty, fileMode, fileAccess, fileShare)
+	{
+		
+	}
+
+	public void Dispose()
+	{
+		fileStream.Dispose();
+	}
+
+	public async ValueTask DisposeAsync()
+	{
+		await fileStream.DisposeAsync();
 	}
 }

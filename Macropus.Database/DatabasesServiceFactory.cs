@@ -26,7 +26,7 @@ internal class DatabasesServiceFactory : IDatabasesServiceFactory
 
 	public async Task<IDatabasesService> Create(
 		string path,
-		IFileSystemProvider fileSystemProvider,
+		IFileSystemService fileSystemService,
 		CancellationToken cancellationToken = default
 	)
 	{
@@ -39,7 +39,7 @@ internal class DatabasesServiceFactory : IDatabasesServiceFactory
 					.GetOrCreateDbContextAsync<DatabasesDbContext, DatabasesProviderDbMigrationsProvider>(path, cancellationToken);
 			disposable.Add(dbContext);
 
-			return new DatabasesService(dbContext, fileSystemProvider, scope.Resolve<IDScope>());
+			return new DatabasesService(dbContext, fileSystemService, scope.Resolve<IDScope>());
 		}
 		catch (Exception ex)
 		{

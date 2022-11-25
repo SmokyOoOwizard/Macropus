@@ -11,7 +11,7 @@ internal class RawProject : IRawProject
 	private readonly IComponentContext container;
 
 	public IProjectInformationInternal ProjectInformation { get; }
-	public IFileSystemProvider FilesProvider { get; }
+	public IFileSystemService FilesService { get; }
 	public IModulesProvider ModuleProvider { get; }
 
 	private bool disposed;
@@ -22,7 +22,7 @@ internal class RawProject : IRawProject
 		this.container = container;
 
 		ProjectInformation = container.Resolve<IProjectInformationInternal>();
-		FilesProvider = container.Resolve<IFileSystemProvider>();
+		FilesService = container.Resolve<IFileSystemService>();
 		ModuleProvider = container.Resolve<IModulesProvider>();
 	}
 

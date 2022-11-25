@@ -13,14 +13,14 @@ namespace Macropus.Database;
 internal class DatabasesService : IDatabasesService
 {
 	private readonly DatabasesDbContext context;
-	private readonly IFileSystemProvider fileSystemProvider;
+	private readonly IFileSystemService fileSystemService;
 	private readonly IDScope scope;
 	private readonly IDLogger logger;
 
-	public DatabasesService(DatabasesDbContext context, IFileSystemProvider fileSystemProvider, IDScope scope)
+	public DatabasesService(DatabasesDbContext context, IFileSystemService fileSystemService, IDScope scope)
 	{
 		this.context = context;
-		this.fileSystemProvider = fileSystemProvider;
+		this.fileSystemService = fileSystemService;
 		this.scope = scope;
 		logger = scope.CreateLogger(new LoggerCreateOptions() { Tags = new[] { nameof(DatabasesService) } });
 	}
@@ -37,7 +37,7 @@ internal class DatabasesService : IDatabasesService
 				.ConfigureAwait(false);
 			if (db == null) return null;
 
-			var dbFile = await fileSystemProvider.GetFileAsync(db.FileId, FileAccess.ReadWrite, FileShare.ReadWrite,
+			var dbFile = await fileSystemService.GetFileAsync(db.FileId, FileAccess.ReadWrite, FileShare.ReadWrite,
 					cancellationToken)
 				.ConfigureAwait(false) as IFileProviderInternal;
 
@@ -64,7 +64,7 @@ internal class DatabasesService : IDatabasesService
 		await using var trans = await context.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 		try
 		{
-			var dbFileId = await fileSystemProvider.CreateFileAsync("Database." + name, cancellationToken)
+			var dbFileId = await fileSystemService.CreateFileAsync("Database." + name, cancellationToken)
 				.ConfigureAwait(false);
 			try
 			{
@@ -77,7 +77,7 @@ internal class DatabasesService : IDatabasesService
 			}
 			catch
 			{
-				await fileSystemProvider.DeleteFileAsync(dbFileId).ConfigureAwait(false);
+				await fileSystemService.DeleteFileAsync(dbFileId).ConfigureAwait(false);
 				throw;
 			}
 		}
@@ -104,7 +104,7 @@ internal class DatabasesService : IDatabasesService
 
 			await context.SaveChangesAsync().ConfigureAwait(false);
 
-			await fileSystemProvider.DeleteFileAsync(db.FileId);
+			await fileSystemService.DeleteFileAsync(db.FileId);
 
 			return true;
 		}
@@ -118,6 +118,6 @@ internal class DatabasesService : IDatabasesService
 	public void Dispose()
 	{
 		context.Dispose();
-		fileSystemProvider.Dispose();
+		fileSystemService.Dispose();
 	}
 }

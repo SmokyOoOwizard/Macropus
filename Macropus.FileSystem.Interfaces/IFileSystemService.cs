@@ -1,6 +1,6 @@
 ﻿namespace Macropus.FileSystem.Interfaces;
 
-public interface IFileSystemProvider : IDisposable, IAsyncDisposable
+public interface IFileSystemService : IDisposable, IAsyncDisposable
 {
 	Task<IFileProvider> GetFileAsync(
 		Guid id,

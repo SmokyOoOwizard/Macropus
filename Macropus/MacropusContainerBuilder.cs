@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Macropus.Database;
+using Macropus.FileSystem;
 using Macropus.Project;
 using Macropus.Service.Impl;
 
@@ -16,5 +17,6 @@ public class MacropusContainerBuilder : Autofac.Module
 
 		builder.RegisterModule<ProjectContainerBuilder>();
 		builder.RegisterModule<DatabasesContainerBuilder>();
+		builder.RegisterModule<FileSystemContainerBuilder>();
 	}
 }

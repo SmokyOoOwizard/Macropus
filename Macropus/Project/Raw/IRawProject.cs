@@ -7,7 +7,7 @@ public interface IRawProject : IDisposable, IAsyncDisposable
 {
 	IProjectInformationInternal ProjectInformation { get; }
 
-	IFileSystemProvider FilesProvider { get; }
+	IFileSystemService FilesService { get; }
 
 	IModulesProvider ModuleProvider { get; }
 	// raw access to project data/settings/db

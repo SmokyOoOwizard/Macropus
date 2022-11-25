@@ -6,7 +6,7 @@ public interface IDatabasesServiceFactory
 {
 	Task<IDatabasesService> Create(
 		string path,
-		IFileSystemProvider fileSystemProvider,
+		IFileSystemService fileSystemService,
 		CancellationToken cancellationToken = default
 	);
 }
