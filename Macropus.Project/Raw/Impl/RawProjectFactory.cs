@@ -2,6 +2,7 @@
 using Autofac;
 using Macropus.CoolStuff;
 using Macropus.Database.Interfaces;
+using Macropus.Extensions;
 using Macropus.FileSystem.Interfaces;
 
 namespace Macropus.Project.Raw.Impl;
@@ -45,12 +46,12 @@ public class RawProjectFactory
 			var fileSystemService = await fileSystemServiceFactory.Create(
 					ProjectPaths.FS_OBJECTS_PATH, ProjectPaths.FS_OBJECTS_DB_NAME, cancellationToken)
 				.ConfigureAwait(false);
-			disposable.Add(fileSystemService);
+			fileSystemService.AddTo(disposable);
 
 			var databasesService = await databasesServiceFactory
 				.Create(ProjectPaths.DATABASES_PROVIDER_DB_NAME, fileSystemService, cancellationToken)
 				.ConfigureAwait(false);
-			disposable.Add(databasesService);
+			databasesService.AddTo(disposable);
 
 			var instanceScope = scope.BeginLifetimeScope(cb =>
 			{
@@ -64,7 +65,7 @@ public class RawProjectFactory
 					.AsImplementedInterfaces()
 					.SingleInstance();
 			});
-			disposable.Add(instanceScope);
+			instanceScope.AddTo(disposable);
 
 			var provider = new RawProject(lockFile, instanceScope);
 

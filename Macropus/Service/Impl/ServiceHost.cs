@@ -39,7 +39,7 @@ public class ServiceHost
 				{ Tags = new[] { serviceName, "Start" } });
 
 
-			logger.Log("Try start service: {0}", args: new Object[] { serviceName });
+			logger.AddAttachment("Service", serviceName);
 
 			try
 			{
@@ -52,11 +52,7 @@ public class ServiceHost
 					logger.Log("Service: not implement any of the interfaces: {1}, {2}",
 						new[] { serviceName, "Start", "Warning" },
 						new Object[] { nameof(IService), nameof(IAsyncService) });
-
-					continue;
 				}
-
-				logger.Log("Done.");
 			}
 			catch (Exception e)
 			{
@@ -80,7 +76,7 @@ public class ServiceHost
 			using var logger = scopeLogger.CreatePerfMonitor(new PerfMonitorCreateOptions()
 				{ Tags = new[] { serviceName, "Terminate" } });
 
-			logger.Log("Try terminate service: {0}", args: new Object[] { serviceName });
+			logger.AddAttachment("Service", serviceName);
 
 			try
 			{
@@ -93,11 +89,7 @@ public class ServiceHost
 					logger.Log("Service not implement any of the interfaces: {1}, {2}",
 						new[] { serviceName, "Terminate", "Warning" },
 						new Object[] { nameof(IService), nameof(IAsyncService) });
-
-					continue;
 				}
-
-				logger.Log("Done.");
 			}
 			catch (Exception e)
 			{

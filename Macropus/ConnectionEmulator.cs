@@ -46,7 +46,6 @@ public class ConnectionEmulator : IAsyncService
 			};
 		}
 
-
 		connection = await scope.Resolve<IConnectionService>().Connect(null, ids[0]).ConfigureAwait(false);
 	}
 

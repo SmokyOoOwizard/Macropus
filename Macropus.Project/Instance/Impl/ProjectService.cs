@@ -5,7 +5,7 @@ using Macropus.Project.Raw;
 
 namespace Macropus.Project.Instance.Impl;
 
-public class ProjectService : IProjectService
+public class ProjectService : IProjectService, IDisposable
 {
 	private readonly ConcurrentDictionary<Guid, IProjectInstance> projects = new();
 	private readonly KeyedLock<Guid> keyedLock = new();
@@ -35,30 +35,42 @@ public class ProjectService : IProjectService
 				return project;
 			}
 
-			var projectProvider = await rawProjectService.GetOrLoadAsync(projectId, cancellationToken);
-			var projectScope = scope.BeginLifetimeScope(b =>
-			{
-				b.RegisterInstance(projectProvider).AsSelf().AsImplementedInterfaces();
-			});
-
-			try
-			{
-				var project = projectScope.Resolve<IProjectInstance>(new NamedParameter("scope", projectScope));
-
-				projects.TryAdd(projectId, project);
-				
-				if (project is IMakeRef<IProjectInstance> refProject)
-				{
-					project = refProject.MakeRef();
-				}
-
-				return project;
-			}
-			catch
-			{
-				projectScope.Dispose();
-				throw;
-			}
+			return await LoadAsync(projectId, cancellationToken);
 		}
+	}
+
+	private async Task<IProjectInstance> LoadAsync(Guid projectId, CancellationToken cancellationToken)
+	{
+		var projectProvider = await rawProjectService.GetOrLoadAsync(projectId, cancellationToken);
+		var projectScope = scope.BeginLifetimeScope(b =>
+		{
+			b.RegisterInstance(projectProvider).AsSelf().AsImplementedInterfaces();
+		});
+
+		try
+		{
+			var project = projectScope.Resolve<IProjectInstance>(new NamedParameter("scope", projectScope));
+
+			projects.TryAdd(projectId, project);
+
+			_ = project.InitializeAsync();
+			
+			if (project is IMakeRef<IProjectInstance> refProject)
+			{
+				return refProject.MakeRef();
+			}
+
+			return project;
+		}
+		catch
+		{
+			projectScope.Dispose();
+			throw;
+		}
+	}
+
+	public void Dispose()
+	{
+		scope.Dispose();
 	}
 }
