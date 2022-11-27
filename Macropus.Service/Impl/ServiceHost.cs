@@ -69,7 +69,7 @@ public class ServiceHost
 		if (services.Length == 0)
 			return;
 
-		foreach (var service in services)
+		foreach (var service in services.Reverse())
 		{
 			var serviceName = service.GetType().Name;
 
