@@ -6,7 +6,7 @@ using Macropus.Project.Storage.Impl;
 
 namespace Macropus.Project;
 
-public class ProjectContainerBuilder : Autofac.Module
+public class ProjectContainerBuilder : Module
 {
 	protected override void Load(ContainerBuilder builder)
 	{

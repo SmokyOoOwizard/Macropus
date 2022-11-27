@@ -32,6 +32,7 @@
         <ProjectReference Include="..\Macropus.FileSystem.Interfaces\Macropus.FileSystem.Interfaces.csproj" />
         <ProjectReference Include="..\Macropus.FileSystem\Macropus.FileSystem.csproj" />
         <ProjectReference Include="..\Macropus.Interfaces\Macropus.Interfaces.csproj" />
+        <ProjectReference Include="..\Macropus.Project\Macropus.Project.csproj" />
         <ProjectReference Include="..\Macropus.Schema\Macropus.Schema.csproj" />
     </ItemGroup>
 

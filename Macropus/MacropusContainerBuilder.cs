@@ -6,7 +6,7 @@ using Macropus.Service.Impl;
 
 namespace Macropus;
 
-public class MacropusContainerBuilder : Autofac.Module
+public class MacropusContainerBuilder : Module
 {
 	protected override void Load(ContainerBuilder builder)
 	{

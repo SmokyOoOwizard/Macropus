@@ -62,7 +62,7 @@ internal static class ProjectUtils
 			.WithNamingConvention(UnderscoredNamingConvention.Instance)
 			.Build();
 
-		using var fs = new FileStream(Path.Combine(path, ProjectPaths.PROJECT_FILE_NAME), FileMode.Open);
+		await using var fs = new FileStream(Path.Combine(path, ProjectPaths.PROJECT_FILE_NAME), FileMode.Open);
 		using var sr = new StreamReader(fs);
 
 		var projInfo =
