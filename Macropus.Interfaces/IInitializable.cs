@@ -1,6 +1,11 @@
 ﻿namespace Macropus.Interfaces;
 
-public interface IInitializable<in T>
+public interface IInitializableAsync<in T>
 {
-	Task Initialize(T data, CancellationToken cancellationToken = default);
+	Task InitializeAsync(T data, CancellationToken cancellationToken = default);
+}
+
+public interface IInitializableAsync
+{
+	Task InitializeAsync(CancellationToken cancellationToken = default);
 }

@@ -37,30 +37,34 @@ public sealed class LockFile : IDisposable, IAsyncDisposable
 		Dispose();
 	}
 
-	public static async Task<LockFile> LockWhileAsync(string path, string lockName = nameof(lockFile),
-		CancellationToken cancellationToken = default)
+	public static async Task<LockFile> LockWhileAsync(
+		string path,
+		string lockName = nameof(lockFile),
+		CancellationToken cancellationToken = default
+	)
 	{
 		path = Path.Combine(path, lockName);
 
 		return await Task.Run(async () =>
-		{
-			while (true)
 			{
-				cancellationToken.ThrowIfCancellationRequested();
-				try
+				while (true)
 				{
-					var steam = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None);
+					cancellationToken.ThrowIfCancellationRequested();
+					try
+					{
+						var steam = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None);
 
-					return new LockFile(steam);
-				}
-				catch
-				{
-					// ignored
-				}
+						return new LockFile(steam);
+					}
+					catch
+					{
+						// ignored
+					}
 
-				await Task.Delay(10, cancellationToken);
-			}
-		}, cancellationToken).ConfigureAwait(false);
+					await Task.Delay(10, cancellationToken);
+				}
+			}, cancellationToken)
+			.ConfigureAwait(false);
 	}
 
 	public static bool TryLock(string path, out LockFile lockFile)

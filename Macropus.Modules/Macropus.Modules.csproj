@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Macropus.Database\Macropus.Database.csproj" />
+      <ProjectReference Include="..\Macropus.FileSystem.Interfaces\Macropus.FileSystem.Interfaces.csproj" />
+      <ProjectReference Include="..\Macropus.Interfaces\Macropus.Interfaces.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="6.4.0" />
+      <PackageReference Include="System.Reactive" Version="5.0.0" />
+    </ItemGroup>
+
+</Project>

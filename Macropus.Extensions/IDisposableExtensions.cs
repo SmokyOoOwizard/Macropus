@@ -13,4 +13,9 @@ public static class DisposableExtensions
 			// ignored
 		}
 	}
+
+	public static void AddTo(this IDisposable disposable, ICollection<IDisposable> collection)
+	{
+		collection.Add(disposable);
+	}
 }

@@ -7,4 +7,17 @@
         <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="6.4.0" />
+      <PackageReference Include="Delogger" Version="1.0.1" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.9" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="6.0.9" />
+      <PackageReference Include="System.Reactive" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Macropus.Database.Interfaces\Macropus.Database.Interfaces.csproj" />
+      <ProjectReference Include="..\Macropus.FileSystem.Interfaces\Macropus.FileSystem.Interfaces.csproj" />
+    </ItemGroup>
+
 </Project>
