@@ -26,10 +26,13 @@ public class WebApiService : IService
 		this.dScope = dScope;
 		dLogger = dScope.CreateLogger(new LoggerCreateOptions { Tags = new[] { nameof(WebApiService) } });
 
-		server = new WebServer(ConfigureServer);
-		
-		// TODO write dLogger wrapper for SwanLogger
 		Logger.NoLogging();
+		Logger.RegisterLogger(new DeloggerWrapperForSwanILogger(dScope.CreateLogger(new LoggerCreateOptions
+		{
+			Tags = new[] { nameof(WebApiService) }
+		})));
+
+		server = new WebServer(ConfigureServer);
 	}
 
 	private void ConfigureServer(WebServerOptions options)
@@ -40,7 +43,7 @@ public class WebApiService : IService
 
 	private void SetupEndpoints()
 	{
-		scope.Resolve<TestApiModule>().SetupModule(server,"/api");
+		scope.Resolve<TestApiModule>().SetupModule(server, "/api");
 		server.WithModule(new ActionModule("/", HttpVerbs.Any, ctx => ctx.SendDataAsync(new { Message = "404" })));
 	}
 
