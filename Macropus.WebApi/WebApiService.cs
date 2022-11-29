@@ -1,30 +1,47 @@
-﻿using Delogger.Scope;
+﻿using Autofac;
+using Delogger.Scope;
 using Delogger.Scope.Log;
 using EmbedIO;
 using EmbedIO.Actions;
-using EmbedIO.WebApi;
 using Macropus.Service;
+using Macropus.WebApi.Extensions;
 using Swan.Logging;
 
 namespace Macropus.WebApi;
 
 public class WebApiService : IService
 {
+	private readonly ILifetimeScope scope;
 	private readonly IDScope dScope;
 	private readonly IDLogger dLogger;
 
-	private WebServer server;
+	private readonly WebServer server;
 
 	public EServiceStatus Status { get; private set; } = EServiceStatus.ReadyToStart;
 
 
-	public WebApiService(IDScope dScope)
+	public WebApiService(ILifetimeScope scope, IDScope dScope)
 	{
+		this.scope = scope;
 		this.dScope = dScope;
-		dLogger = dScope.CreateLogger(new LoggerCreateOptions() { Tags = new[] { nameof(WebApiService) } });
+		dLogger = dScope.CreateLogger(new LoggerCreateOptions { Tags = new[] { nameof(WebApiService) } });
 
+		server = new WebServer(ConfigureServer);
+		
 		// TODO write dLogger wrapper for SwanLogger
-		Logger.UnregisterLogger<ConsoleLogger>();
+		Logger.NoLogging();
+	}
+
+	private void ConfigureServer(WebServerOptions options)
+	{
+		options.WithUrlPrefix("http://localhost:9696/");
+		options.WithMode(HttpListenerMode.Microsoft);
+	}
+
+	private void SetupEndpoints()
+	{
+		scope.Resolve<TestApiModule>().SetupModule(server,"/api");
+		server.WithModule(new ActionModule("/", HttpVerbs.Any, ctx => ctx.SendDataAsync(new { Message = "404" })));
 	}
 
 
@@ -32,16 +49,11 @@ public class WebApiService : IService
 	{
 		Status = EServiceStatus.Starting;
 
-		server = new WebServer(o => o
-				.WithUrlPrefix("http://localhost:9696/")
-				.WithMode(HttpListenerMode.Microsoft))
-			// TODO write autofac wrapper for pass controllers into EmbedIo
-			.WithWebApi("/api", m => { m.WithController<PeopleController>(); })
-			.WithModule(new ActionModule("/", HttpVerbs.Any, ctx => ctx.SendDataAsync(new { Message = "Error" })));
+		SetupEndpoints();
 
-		server.StateChanged += (s, e)
+		server.StateChanged += (_, e)
 			=> dLogger.Log("WebApi server state: {0}", null, new object[] { e.NewState });
-		
+
 		server.RunAsync();
 
 		Status = EServiceStatus.Started;
