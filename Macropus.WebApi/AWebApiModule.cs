@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Autofac;
+﻿using Autofac;
 using EmbedIO.Routing;
 using EmbedIO.WebApi;
 

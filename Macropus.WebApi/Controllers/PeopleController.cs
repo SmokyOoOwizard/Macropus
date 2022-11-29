@@ -4,7 +4,7 @@ using EmbedIO.Routing;
 using EmbedIO.Utilities;
 using EmbedIO.WebApi;
 
-namespace Macropus.WebApi;
+namespace Macropus.WebApi.Controllers;
 
 public sealed class PeopleController : WebApiController
 {

@@ -1,5 +1,7 @@
 ﻿using Autofac;
+using Macropus.WebApi.Controllers;
 using Macropus.WebApi.Extensions;
+using Macropus.WebApi.Service;
 
 
 namespace Macropus.WebApi;

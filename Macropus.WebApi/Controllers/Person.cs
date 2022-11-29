@@ -1,7 +1,7 @@
 ﻿using Swan;
 using Swan.Cryptography;
 
-namespace Macropus.WebApi;
+namespace Macropus.WebApi.Controllers;
 
 public class Person
 {

@@ -1,7 +1,7 @@
 ﻿using Delogger.Scope.Log;
 using Swan.Logging;
 
-namespace Macropus.WebApi;
+namespace Macropus.WebApi.Wrapper;
 
 public class DeloggerWrapperForSwanILogger : ILogger
 {

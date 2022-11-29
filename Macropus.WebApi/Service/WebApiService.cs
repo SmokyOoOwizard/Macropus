@@ -5,9 +5,10 @@ using EmbedIO;
 using EmbedIO.Actions;
 using Macropus.Service;
 using Macropus.WebApi.Extensions;
+using Macropus.WebApi.Wrapper;
 using Swan.Logging;
 
-namespace Macropus.WebApi;
+namespace Macropus.WebApi.Service;
 
 public class WebApiService : IService
 {

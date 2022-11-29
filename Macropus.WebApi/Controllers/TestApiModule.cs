@@ -1,6 +1,6 @@
 ﻿using Autofac;
 
-namespace Macropus.WebApi;
+namespace Macropus.WebApi.Controllers;
 
 public class TestApiModule : AWebApiModule
 {
