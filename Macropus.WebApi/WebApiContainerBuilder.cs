@@ -12,6 +12,6 @@ public class WebApiContainerBuilder : Module
 			.AsImplementedInterfaces()
 			.SingleInstance();
 		
-		builder.RegisterWebApiModule<TestApiModule>();
+		builder.RegisterWebApiModule<TestApiModule>("/api");
 	}
 }

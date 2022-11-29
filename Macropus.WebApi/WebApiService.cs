@@ -13,7 +13,7 @@ public class WebApiService : IService
 {
 	private readonly ILifetimeScope scope;
 	private readonly IDScope dScope;
-	private readonly IDLogger dLogger;
+	private readonly IDLogger logger;
 
 	private readonly WebServer server;
 
@@ -24,7 +24,7 @@ public class WebApiService : IService
 	{
 		this.scope = scope;
 		this.dScope = dScope;
-		dLogger = dScope.CreateLogger(new LoggerCreateOptions { Tags = new[] { nameof(WebApiService) } });
+		logger = dScope.CreateLogger(new LoggerCreateOptions { Tags = new[] { nameof(WebApiService) } });
 
 		Logger.NoLogging();
 		Logger.RegisterLogger(new DeloggerWrapperForSwanILogger(dScope.CreateLogger(new LoggerCreateOptions
@@ -43,8 +43,26 @@ public class WebApiService : IService
 
 	private void SetupEndpoints()
 	{
-		scope.Resolve<TestApiModule>().SetupModule(server, "/api");
-		server.WithModule(new ActionModule("/", HttpVerbs.Any, ctx => ctx.SendDataAsync(new { Message = "404" })));
+		foreach (var module in scope.Resolve<IEnumerable<AWebApiModule>>())
+		{
+			module.SetupModule(server);
+
+			var endpoints = module.GetEndpoints()
+				.Select(kv
+					=> new KeyValuePair<string, object>(kv.Key.Name, $"{kv.Value.Verb} {kv.Value.Route}"))
+				.ToArray();
+
+			if (endpoints.Length > 0)
+			{
+				logger.Log("Setup endpoints {0} {1}",
+					new[] { "Endpoints", "Setup" },
+					new object[] { module.GetType().Name, module.Url },
+					endpoints
+				);
+			}
+		}
+
+		server.WithModule(new ActionModule("/", HttpVerbs.Any, ctx => throw HttpException.NotFound()));
 	}
 
 
@@ -55,7 +73,7 @@ public class WebApiService : IService
 		SetupEndpoints();
 
 		server.StateChanged += (_, e)
-			=> dLogger.Log("WebApi server state: {0}", null, new object[] { e.NewState });
+			=> logger.Log("WebApi server state: {0}", null, new object[] { e.NewState });
 
 		server.RunAsync();
 

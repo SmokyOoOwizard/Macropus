@@ -11,6 +11,12 @@ public static class WebApiModuleExtensions
 	private static readonly MethodInfo ResolveControllerMethodInfo
 		= typeof(AWebApiModule).GetMethod(nameof(AWebApiModule.ResolveController))!;
 
+
+	public static void SetupModule(this AWebApiModule module, WebServer server)
+	{
+		SetupModule(module, server, module.Url);
+	}
+
 	public static void SetupModule(this AWebApiModule module, WebServer server, string url)
 	{
 		var webModule = new WebApiModule(url);
