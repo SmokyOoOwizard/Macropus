@@ -35,7 +35,7 @@
         <ProjectReference Include="..\Macropus.Project\Macropus.Project.csproj" />
         <ProjectReference Include="..\Macropus.Schema\Macropus.Schema.csproj" />
         <ProjectReference Include="..\Macropus.Service\Macropus.Service.csproj" />
-        <ProjectReference Include="..\Macropus.WebApi\Macropus.WebApi.csproj" />
+        <ProjectReference Include="..\Macropus.WebBase\Macropus.WebBase.csproj" />
     </ItemGroup>
 
 </Project>

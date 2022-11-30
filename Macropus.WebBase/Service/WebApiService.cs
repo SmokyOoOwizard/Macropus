@@ -2,13 +2,12 @@
 using Delogger.Scope;
 using Delogger.Scope.Log;
 using EmbedIO;
-using EmbedIO.Actions;
 using Macropus.Service;
-using Macropus.WebApi.Extensions;
-using Macropus.WebApi.Wrapper;
+using Macropus.Web.Base.Wrapper;
+using Macropus.Web.Base.Extensions;
 using Swan.Logging;
 
-namespace Macropus.WebApi.Service;
+namespace Macropus.Web.Base.Service;
 
 public class WebApiService : IService
 {
@@ -44,7 +43,7 @@ public class WebApiService : IService
 
 	private void SetupEndpoints()
 	{
-		foreach (var module in scope.Resolve<IEnumerable<AWebApiModule>>())
+		foreach (var module in scope.Resolve<IEnumerable<AWebModule>>())
 		{
 			module.SetupModule(server);
 
@@ -62,8 +61,6 @@ public class WebApiService : IService
 				);
 			}
 		}
-
-		server.WithModule(new ActionModule("/", HttpVerbs.Any, ctx => throw HttpException.NotFound()));
 	}
 
 

@@ -2,9 +2,9 @@
 using EmbedIO.Routing;
 using EmbedIO.WebApi;
 
-namespace Macropus.WebApi;
+namespace Macropus.Web.Base;
 
-public abstract class AWebApiModule
+public abstract class AWebModule
 {
 	public string Url { get; internal set; }
 

@@ -1,10 +1,9 @@
 ﻿using Autofac;
-using Macropus.WebApi.Controllers;
-using Macropus.WebApi.Extensions;
-using Macropus.WebApi.Service;
+using Macropus.Web.Base.Controllers;
+using Macropus.Web.Base.Extensions;
+using Macropus.Web.Base.Service;
 
-
-namespace Macropus.WebApi;
+namespace Macropus.Web.Base;
 
 public class WebApiContainerBuilder : Module
 {
@@ -14,6 +13,6 @@ public class WebApiContainerBuilder : Module
 			.AsImplementedInterfaces()
 			.SingleInstance();
 		
-		builder.RegisterWebApiModule<TestApiModule>("/api");
+		builder.RegisterWebApiModule<BaseWebModule>("/");
 	}
 }

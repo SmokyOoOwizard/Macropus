@@ -1,10 +1,10 @@
 ﻿using Autofac;
 
-namespace Macropus.WebApi.Extensions;
+namespace Macropus.Web.Base.Extensions;
 
 public static class AutofacContainerBuilderExtensions
 {
-	public static void RegisterWebApiModule<T>(this ContainerBuilder builder, string url) where T : AWebApiModule, new()
+	public static void RegisterWebApiModule<T>(this ContainerBuilder builder, string url) where T : AWebModule, new()
 	{
 		builder.Register((ILifetimeScope scope) =>
 			{
@@ -15,7 +15,7 @@ public static class AutofacContainerBuilderExtensions
 				return module;
 			})
 			.AsSelf()
-			.As<AWebApiModule>()
+			.As<AWebModule>()
 			.SingleInstance();
 	}
 }
