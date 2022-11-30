@@ -4,12 +4,11 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>Macropus.CoolStuff</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Macropus.CoolStuff\Macropus.CoolStuff.csproj" />
-        <ProjectReference Include="..\Macropus.Extensions\Macropus.Extensions.csproj" />
-        <ProjectReference Include="..\Macropus.Linq\Macropus.Linq.csproj" />
+      <PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
     </ItemGroup>
 
 </Project>

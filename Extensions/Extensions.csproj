@@ -4,6 +4,11 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>Macropus.Extensions</RootNamespace>
     </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AnyOf" Version="0.3.0" />
+    </ItemGroup>
 
 </Project>

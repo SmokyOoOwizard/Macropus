@@ -25,17 +25,17 @@
   </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Macropus.Database.Interfaces\Macropus.Database.Interfaces.csproj" />
-        <ProjectReference Include="..\Macropus.Database\Macropus.Database.csproj" />
-        <ProjectReference Include="..\Macropus.ECS\Macropus.ECS.csproj" />
-        <ProjectReference Include="..\Macropus.Extensions\Macropus.Extensions.csproj" />
-        <ProjectReference Include="..\Macropus.FileSystem.Interfaces\Macropus.FileSystem.Interfaces.csproj" />
-        <ProjectReference Include="..\Macropus.FileSystem\Macropus.FileSystem.csproj" />
-        <ProjectReference Include="..\Macropus.Interfaces\Macropus.Interfaces.csproj" />
-        <ProjectReference Include="..\Macropus.Project\Macropus.Project.csproj" />
-        <ProjectReference Include="..\Macropus.Schema\Macropus.Schema.csproj" />
-        <ProjectReference Include="..\Macropus.Service\Macropus.Service.csproj" />
-        <ProjectReference Include="..\Macropus.WebBase\Macropus.WebBase.csproj" />
+        <ProjectReference Include="..\Database.Interfaces\Database.Interfaces.csproj" />
+        <ProjectReference Include="..\Database\Database.csproj" />
+        <ProjectReference Include="..\ECS\ECS.csproj" />
+        <ProjectReference Include="..\Extensions\Extensions.csproj" />
+        <ProjectReference Include="..\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
+        <ProjectReference Include="..\FileSystem\FileSystem.csproj" />
+        <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
+        <ProjectReference Include="..\Project\Project.csproj" />
+        <ProjectReference Include="..\Schema\Schema.csproj" />
+        <ProjectReference Include="..\Service\Service.csproj" />
+        <ProjectReference Include="..\WebBase\WebBase.csproj" />
     </ItemGroup>
 
 </Project>
