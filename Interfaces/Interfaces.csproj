@@ -4,10 +4,12 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>preview</LangVersion>
+        <RootNamespace>Macropus.Interfaces</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     </ItemGroup>
 
 </Project>

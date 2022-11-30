@@ -4,12 +4,13 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>Macropus.FileSystem</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Macropus.CoolStuff\Macropus.CoolStuff.csproj" />
-      <ProjectReference Include="..\Macropus.Database\Macropus.Database.csproj" />
-      <ProjectReference Include="..\Macropus.FileSystem.Interfaces\Macropus.FileSystem.Interfaces.csproj" />
+      <ProjectReference Include="..\CoolStuff\CoolStuff.csproj" />
+      <ProjectReference Include="..\Database\Database.csproj" />
+      <ProjectReference Include="..\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
     </ItemGroup>
 
     <ItemGroup>

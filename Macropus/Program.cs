@@ -19,9 +19,9 @@ internal class Program
 		builder.UseServiceProviderFactory(new AutofacServiceProviderFactory())
 			.ConfigureContainer<ContainerBuilder>(b => { b.RegisterModule<MacropusContainerBuilder>(); })
 			.UseConsoleLifetime();
-
+		
 		var host = builder.Build();
-
+		
 		await host.RunAsync();
 	}
 }

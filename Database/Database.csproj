@@ -5,6 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>preview</LangVersion>
+        <RootNamespace>Macropus.Database</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,8 +17,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Macropus.Database.Interfaces\Macropus.Database.Interfaces.csproj" />
-      <ProjectReference Include="..\Macropus.FileSystem.Interfaces\Macropus.FileSystem.Interfaces.csproj" />
+      <ProjectReference Include="..\Database.Interfaces\Database.Interfaces.csproj" />
+      <ProjectReference Include="..\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
     </ItemGroup>
 
 </Project>

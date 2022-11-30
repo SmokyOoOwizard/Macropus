@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>preview</LangVersion>
+        <RootNamespace>Macropus.ECS</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Database.Interfaces\Database.Interfaces.csproj" />
+      <ProjectReference Include="..\Database\Database.csproj" />
+      <ProjectReference Include="..\Linq\Linq.csproj" />
+      <ProjectReference Include="..\Schema\Schema.csproj" />
+    </ItemGroup>
+
+</Project>

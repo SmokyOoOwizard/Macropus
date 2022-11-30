@@ -5,27 +5,27 @@ VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Macropus", "Macropus\Macropus.csproj", "{B852833B-48B8-4C72-B54B-770875F49100}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Macropus.Interfaces", "Macropus.Interfaces\Macropus.Interfaces.csproj", "{4E0FE93B-F960-4766-811E-2DB42E1D2F51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interfaces", "Interfaces\Interfaces.csproj", "{4E0FE93B-F960-4766-811E-2DB42E1D2F51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.Database", "Macropus.Database\Macropus.Database.csproj", "{E39F32E4-4A7B-43AE-9A8C-8A60D096B492}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database", "Database\Database.csproj", "{E39F32E4-4A7B-43AE-9A8C-8A60D096B492}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{0DE04E8A-8941-4279-933C-4EC3D560F8CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.ECS", "Macropus.ECS\Macropus.ECS.csproj", "{545ED6BE-038F-408A-B12E-5EAC21405A52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECS", "ECS\ECS.csproj", "{545ED6BE-038F-408A-B12E-5EAC21405A52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.Schema", "Macropus.Schema\Macropus.Schema.csproj", "{FACBB3B3-E9B1-4B81-B238-91864215D506}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Schema", "Schema\Schema.csproj", "{FACBB3B3-E9B1-4B81-B238-91864215D506}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.Extensions", "Macropus.Extensions\Macropus.Extensions.csproj", "{44C1BF97-58F1-48BF-964A-833574B86CD9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extensions", "Extensions\Extensions.csproj", "{44C1BF97-58F1-48BF-964A-833574B86CD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.Linq", "Macropus.Linq\Macropus.Linq.csproj", "{2FF93311-60A0-4D7C-9A1C-64351E0729FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Linq", "Linq\Linq.csproj", "{2FF93311-60A0-4D7C-9A1C-64351E0729FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.CoolStuff", "Macropus.CoolStuff\Macropus.CoolStuff.csproj", "{DAE55C8B-B10F-4DA3-AD9C-533A211E1E55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoolStuff", "CoolStuff\CoolStuff.csproj", "{DAE55C8B-B10F-4DA3-AD9C-533A211E1E55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.FileSystem", "Macropus.FileSystem\Macropus.FileSystem.csproj", "{8838F523-0541-44C3-A674-F9F5BD0CE9FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSystem", "FileSystem\FileSystem.csproj", "{8838F523-0541-44C3-A674-F9F5BD0CE9FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.FileSystem.Interfaces", "Macropus.FileSystem.Interfaces\Macropus.FileSystem.Interfaces.csproj", "{01731961-91C9-4126-93AA-85D7D1ACF682}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSystem.Interfaces", "FileSystem.Interfaces\FileSystem.Interfaces.csproj", "{01731961-91C9-4126-93AA-85D7D1ACF682}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.Database.Interfaces", "Macropus.Database.Interfaces\Macropus.Database.Interfaces.csproj", "{2493456D-5366-4A8F-BF3D-3C5653B4BB00}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database.Interfaces", "Database.Interfaces\Database.Interfaces.csproj", "{2493456D-5366-4A8F-BF3D-3C5653B4BB00}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{04AD8001-566B-4287-8952-478D6B0B3244}"
 EndProject
@@ -35,7 +35,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{5E7B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.Modules", "Macropus.Modules\Macropus.Modules.csproj", "{10DC47F2-B02C-4B6F-AC9E-E5C722F28169}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Macropus.Project", "Macropus.Project\Macropus.Project.csproj", "{8C61AA9B-F3A3-4C2F-8CFF-E57C4347BEF9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project", "Project\Project.csproj", "{8C61AA9B-F3A3-4C2F-8CFF-E57C4347BEF9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebBase", "WebBase\WebBase.csproj", "{09CC2325-FC82-4E8F-867D-919CA4246A07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Service.csproj", "{9096BD7E-E148-4913-A96D-EEE4B0D85404}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{CD8EE505-145E-4771-AEAA-AF820600CA97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,6 +105,14 @@ Global
 		{8C61AA9B-F3A3-4C2F-8CFF-E57C4347BEF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C61AA9B-F3A3-4C2F-8CFF-E57C4347BEF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C61AA9B-F3A3-4C2F-8CFF-E57C4347BEF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09CC2325-FC82-4E8F-867D-919CA4246A07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09CC2325-FC82-4E8F-867D-919CA4246A07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09CC2325-FC82-4E8F-867D-919CA4246A07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09CC2325-FC82-4E8F-867D-919CA4246A07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9096BD7E-E148-4913-A96D-EEE4B0D85404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9096BD7E-E148-4913-A96D-EEE4B0D85404}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9096BD7E-E148-4913-A96D-EEE4B0D85404}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9096BD7E-E148-4913-A96D-EEE4B0D85404}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,5 +126,6 @@ Global
 		{8838F523-0541-44C3-A674-F9F5BD0CE9FA} = {FF7B02A6-13AF-45C6-A3D9-7ACC52F782D9}
 		{01731961-91C9-4126-93AA-85D7D1ACF682} = {FF7B02A6-13AF-45C6-A3D9-7ACC52F782D9}
 		{10DC47F2-B02C-4B6F-AC9E-E5C722F28169} = {5E7BC190-5F50-4016-A965-4C825C99AF47}
+		{09CC2325-FC82-4E8F-867D-919CA4246A07} = {CD8EE505-145E-4771-AEAA-AF820600CA97}
 	EndGlobalSection
 EndGlobal
