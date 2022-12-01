@@ -13,16 +13,18 @@ public abstract class TestsWithDatabase : TestsWithFiles, IAsyncLifetime
 	public IDbConnection DbConnection { get; private set; }
 	public TestsWithDatabase(ITestOutputHelper output) : base(output) { }
 
-	public async Task InitializeAsync()
+	public override async Task InitializeAsync()
 	{
+		await base.InitializeAsync();
+		
 		DbConnection = new SqliteConnection($"Data Source={Path.Combine(ExecutePath, "Test.db")}");
 		await DbConnection.OpenAsync();
 	}
 
-	public Task DisposeAsync()
+	public override async Task DisposeAsync()
 	{
 		DbConnection.TryDispose();
 
-		return Task.CompletedTask;
+		await base.DisposeAsync();
 	}
 }

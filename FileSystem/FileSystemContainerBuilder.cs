@@ -16,6 +16,8 @@ public class FileSystemContainerBuilder : Module
 
 		builder.RegisterType<FileProvider>()
 			.AsSelf()
+			.UsingConstructor(typeof(string), typeof(string), typeof(Guid), typeof(FileMode), typeof(FileAccess),
+				typeof(FileShare))
 			.AsImplementedInterfaces();
 	}
 }

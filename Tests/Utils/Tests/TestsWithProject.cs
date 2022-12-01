@@ -1,34 +1,31 @@
-﻿using Macropus.Interfaces.User;
-using Macropus.Project.Connection;
+﻿using Macropus.Project.Raw;
 using Macropus.Project.Storage;
 using Macropus.Project.Storage.Impl;
 using Xunit.Abstractions;
 
 namespace Tests.Utils.Tests;
 
-public abstract class TestsWithProject : TestsWithProjectsStorage, IAsyncLifetime
+public abstract class TestsWithProject : TestsWithProjectsStorage
 {
-    public virtual IProjectCreationInfo ProjectCreateInfo { get; } = new ProjectCreationInfo() { Name = "TestProject" };
+	public virtual IProjectCreationInfo ProjectCreateInfo { get; } = new ProjectCreationInfo() { Name = "TestProject" };
 
-    public abstract IUser ConnectionUser { get; }
+	public IRawProject ProjectConnection { get; private set; } = null!;
 
-    public IProjectConnection ProjectConnection { get; private set; } = null!;
+	protected TestsWithProject(ITestOutputHelper output) : base(output) { }
 
-    protected TestsWithProject(ITestOutputHelper output) : base(output)
-    {
-    }
+	public override async Task InitializeAsync()
+	{
+		await base.InitializeAsync();
+		
+		var id = await ProjectStorage.CreateProjectAsync(ProjectCreateInfo).ConfigureAwait(false);
 
-    public virtual async Task InitializeAsync()
-    {
-        var id = await ProjectStorage.CreateProjectAsync(ProjectCreateInfo).ConfigureAwait(false);
+		ProjectConnection = await ProjectStorage.OpenProjectAsync(id).ConfigureAwait(false);
+	}
 
-        //ProjectConnection = await ProjectStorage.OpenProjectAsync(id, ConnectionUser).ConfigureAwait(false);
-    }
+	public override async Task DisposeAsync()
+	{
+		ProjectConnection.Dispose();
 
-    public virtual Task DisposeAsync()
-    {
-        ProjectConnection.Dispose();
-
-        return Task.CompletedTask;
-    }
+		await base.DisposeAsync();
+	}
 }

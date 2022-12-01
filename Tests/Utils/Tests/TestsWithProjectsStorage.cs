@@ -3,12 +3,20 @@ using Xunit.Abstractions;
 
 namespace Tests.Utils.Tests;
 
-public abstract class TestsWithProjectsStorage : TestsWithFiles
+public abstract class TestsWithProjectsStorage : TestsWithFileSystemProvider
 {
-    public readonly ProjectsStorageLocal ProjectStorage;
+	public ProjectsStorageMaster ProjectStorage { get; private set; }
 
-    public TestsWithProjectsStorage(ITestOutputHelper output) : base(output)
-    {
-        //ProjectStorage = new ProjectsStorageLocal(ExecutePath);
-    }
+	public TestsWithProjectsStorage(ITestOutputHelper output) : base(output) { }
+
+	public override async Task InitializeAsync()
+	{
+		await base.InitializeAsync();
+
+		ProjectStorage = Mock.Create<ProjectsStorageMaster>();
+
+		var storage = Mock.Create<ProjectsStorageLocalFactory>().Create(ExecutePath);
+		ProjectStorage.AddStorage(storage);
+		ProjectStorage.SetDefaultStorage(storage);
+	}
 }

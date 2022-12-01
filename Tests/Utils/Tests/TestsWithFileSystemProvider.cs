@@ -1,24 +1,37 @@
-﻿using Macropus.FileSystem.Interfaces;
+﻿using Autofac;
+using Macropus.Database;
+using Macropus.FileSystem;
+using Macropus.FileSystem.Interfaces;
 using Xunit.Abstractions;
 
 #pragma warning disable CS8618
 
 namespace Tests.Utils.Tests;
 
-public abstract class TestsWithFileSystemProvider : TestsWithFiles, IAsyncLifetime
+public abstract class TestsWithFileSystemProvider : TestsWithFiles
 {
-	public IFileSystemProvider FileSystemProvider { get; private set; }
+	public IFileSystemService FileSystem { get; private set; }
 
 	public TestsWithFileSystemProvider(ITestOutputHelper output) : base(output) { }
 
-	public virtual async Task InitializeAsync()
+	protected override void Configure(ContainerBuilder builder)
 	{
-		//FileSystemProvider =
-		//	await Macropus.FileSystem.FileSystemProvider.Create(ExecutePath).ConfigureAwait(false);
+		base.Configure(builder);
+
+		builder.RegisterModule<DatabasesContainerBuilder>();
+		builder.RegisterModule<FileSystemContainerBuilder>();
 	}
 
-	public virtual async Task DisposeAsync()
+	public override async Task InitializeAsync()
 	{
-		await FileSystemProvider.DisposeAsync();
+		await base.InitializeAsync();
+		FileSystem = await Mock.Create<IFileSystemServiceFactory>()
+			.Create(ExecutePath, Path.Combine(ExecutePath, "fs.db"));
+	}
+
+	public override async Task DisposeAsync()
+	{
+		await FileSystem.DisposeAsync();
+		await base.DisposeAsync();
 	}
 }

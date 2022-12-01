@@ -15,13 +15,13 @@ public class FileSystemProviderTests : TestsWithFileSystemProvider
 	{
 		var fileName = RandomUtils.GetRandomString(64);
 
-		var fileId = await FileSystemProvider.CreateFileAsync(fileName).ConfigureAwait(false);
+		var fileId = await FileSystem.CreateFileAsync(fileName).ConfigureAwait(false);
 
 		Assert.NotEqual(Guid.Empty, fileId);
 
 		var fileAccess = FileAccess.ReadWrite;
 		var fileShare = FileShare.ReadWrite;
-		await using var file = await FileSystemProvider.GetFileAsync(fileId, fileAccess, fileShare)
+		await using var file = await FileSystem.GetFileAsync(fileId, fileAccess, fileShare)
 			.ConfigureAwait(false);
 
 		Assert.NotNull(file);
@@ -39,13 +39,13 @@ public class FileSystemProviderTests : TestsWithFileSystemProvider
 	{
 		var fileName = RandomUtils.GetRandomString(64);
 
-		var fileId = await FileSystemProvider.CreateFileAsync(fileName).ConfigureAwait(false);
+		var fileId = await FileSystem.CreateFileAsync(fileName).ConfigureAwait(false);
 
 		Assert.NotEqual(Guid.Empty, fileId);
 
-		await FileSystemProvider.DeleteFileAsync(fileId).ConfigureAwait(false);
+		await FileSystem.DeleteFileAsync(fileId).ConfigureAwait(false);
 
-		var file = await FileSystemProvider
+		var file = await FileSystem
 			.GetFileAsync(fileId, FileAccess.ReadWrite, FileShare.ReadWrite)
 			.WrapException()
 			.ConfigureAwait(false);
@@ -59,13 +59,13 @@ public class FileSystemProviderTests : TestsWithFileSystemProvider
 	{
 		var fileName = RandomUtils.GetRandomString(64);
 
-		var fileId = await FileSystemProvider.CreateFileAsync(fileName).ConfigureAwait(false);
+		var fileId = await FileSystem.CreateFileAsync(fileName).ConfigureAwait(false);
 
 		Assert.NotEqual(Guid.Empty, fileId);
 
 		await using var memory = new MemoryStream(RandomUtils.GetRandomByteArray(300));
 		{
-			await using var file = await FileSystemProvider
+			await using var file = await FileSystem
 				.GetFileAsync(fileId, FileAccess.ReadWrite, FileShare.ReadWrite)
 				.ConfigureAwait(false);
 
@@ -75,7 +75,7 @@ public class FileSystemProviderTests : TestsWithFileSystemProvider
 		}
 
 		{
-			await using var file = await FileSystemProvider
+			await using var file = await FileSystem
 				.GetFileAsync(fileId, FileAccess.ReadWrite, FileShare.ReadWrite)
 				.ConfigureAwait(false);
 

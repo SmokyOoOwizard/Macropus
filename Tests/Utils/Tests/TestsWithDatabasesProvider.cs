@@ -1,5 +1,4 @@
 ﻿using Macropus.Database.Interfaces;
-using Macropus.DatabasesProvider;
 using Xunit.Abstractions;
 
 #pragma warning disable CS8618
@@ -14,11 +13,10 @@ public abstract class TestsWithDatabasesProvider : TestsWithFileSystemProvider
 
 	public override async Task InitializeAsync()
 	{
-		await base.InitializeAsync().ConfigureAwait(false);
+		await base.InitializeAsync();
 
-		DatabasesService = await Macropus.Database.DatabasesService
-			.Create(ExecutePath, FileSystemProvider)
-			.ConfigureAwait(false);
+		DatabasesService = await Mock.Create<IDatabasesServiceFactory>()
+			.Create(Path.Combine(ExecutePath, "db"), FileSystem);
 	}
 
 	public override async Task DisposeAsync()

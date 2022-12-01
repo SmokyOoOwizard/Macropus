@@ -50,10 +50,10 @@ internal class FileSystemService : IFileSystemService
 			return scope.Resolve<FileProvider>(
 				new PositionalParameter(0, Path.Combine(path, fileDb.ObjectName)),
 				new PositionalParameter(1, fileDb.Name!),
-				new PositionalParameter(2, fileDb.Id),
-				new PositionalParameter(3, FileMode.OpenOrCreate),
-				new PositionalParameter(4, access),
-				new PositionalParameter(5, share));
+				new TypedParameter(typeof(Guid), fileDb.Id),
+				new TypedParameter(typeof(FileMode), FileMode.OpenOrCreate),
+				new TypedParameter(typeof(FileAccess), access),
+				new TypedParameter(typeof(FileShare), share));
 		}
 		catch (Exception e)
 		{
