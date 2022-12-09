@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
+      <PackageReference Include="AsyncKeyedLock" Version="5.1.0" />
     </ItemGroup>
 
 </Project>
