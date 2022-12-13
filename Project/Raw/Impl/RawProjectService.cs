@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using AsyncKeyedLock;
 using Autofac;
 using Macropus.CoolStuff;
 using Macropus.Project.Storage.Impl;
@@ -8,7 +9,7 @@ namespace Macropus.Project.Raw.Impl;
 public class RawProjectService : IRawProjectService
 {
 	private readonly ConcurrentDictionary<Guid, IRawProject> projects = new();
-	private readonly KeyedLock<Guid> keyedLock = new();
+	private readonly AsyncKeyedLocker<Guid> keyedLock = new();
 
 	private readonly ILifetimeScope scope;
 	private readonly ProjectsStorageMaster storageMaster;
