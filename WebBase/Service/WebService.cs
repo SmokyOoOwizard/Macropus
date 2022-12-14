@@ -9,7 +9,7 @@ using Swan.Logging;
 
 namespace Macropus.Web.Base.Service;
 
-public class WebApiService : IService
+public class WebService : IService
 {
 	private readonly ILifetimeScope scope;
 	private readonly IDScope dScope;
@@ -20,16 +20,16 @@ public class WebApiService : IService
 	public EServiceStatus Status { get; private set; } = EServiceStatus.ReadyToStart;
 
 
-	public WebApiService(ILifetimeScope scope, IDScope dScope)
+	public WebService(ILifetimeScope scope, IDScope dScope)
 	{
 		this.scope = scope;
 		this.dScope = dScope;
-		logger = dScope.CreateLogger(new LoggerCreateOptions { Tags = new[] { nameof(WebApiService) } });
+		logger = dScope.CreateLogger(new LoggerCreateOptions { Tags = new[] { nameof(WebService) } });
 
 		Logger.NoLogging();
 		Logger.RegisterLogger(new DeloggerWrapperForSwanILogger(dScope.CreateLogger(new LoggerCreateOptions
 		{
-			Tags = new[] { nameof(WebApiService) }
+			Tags = new[] { nameof(WebService) }
 		})));
 
 		server = new WebServer(ConfigureServer);
@@ -63,15 +63,28 @@ public class WebApiService : IService
 		}
 	}
 
+	private void SetupModules()
+	{
+		foreach (var module in scope.Resolve<IEnumerable<IWebModule>>())
+		{
+			server.WithModule(module);
+			logger.Log("Setup module {0}",
+				new[] { "Module", "Setup" },
+				new object[] { module.GetType().Name }
+			);
+		}
+	}
+
 
 	public void Start()
 	{
 		Status = EServiceStatus.Starting;
 
 		SetupEndpoints();
+		SetupModules();
 
 		server.StateChanged += (_, e)
-			=> logger.Log("WebApi server state: {0}", null, new object[] { e.NewState });
+			=> logger.Log("Web server state: {0}", null, new object[] { e.NewState });
 
 		server.RunAsync();
 

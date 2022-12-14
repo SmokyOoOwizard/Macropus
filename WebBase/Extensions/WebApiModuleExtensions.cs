@@ -8,8 +8,8 @@ public static class WebApiModuleExtensions
 {
 	private static readonly Type FuncWebApiControllerType = typeof(Func<WebApiController>);
 
-	private static readonly MethodInfo ResolveControllerMethodInfo
-		= typeof(AWebModule).GetMethod(nameof(AWebModule.ResolveController))!;
+	private static readonly MethodInfo ResolveMethodInfo
+		= typeof(AWebModule).GetMethod(nameof(AWebModule.Resolve))!;
 
 
 	public static void SetupModule(this AWebModule module, WebServer server)
@@ -23,7 +23,7 @@ public static class WebApiModuleExtensions
 
 		var types = module.GetWebApiControllers();
 
-		var resolveGeneric = ResolveControllerMethodInfo;
+		var resolveGeneric = ResolveMethodInfo;
 
 		foreach (var type in types)
 		{

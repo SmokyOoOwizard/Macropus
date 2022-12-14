@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Macropus.Web.Front</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="6.4.0" />
+    </ItemGroup>
+	
+    <ItemGroup>
+      <ProjectReference Include="..\WebBase\WebBase.csproj" />
+    </ItemGroup>
+	
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\Front\**\*" />
+    </ItemGroup>
+
+</Project>

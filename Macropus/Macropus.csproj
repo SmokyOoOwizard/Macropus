@@ -36,6 +36,7 @@
         <ProjectReference Include="..\Schema\Schema.csproj" />
         <ProjectReference Include="..\Service\Service.csproj" />
         <ProjectReference Include="..\WebBase\WebBase.csproj" />
+        <ProjectReference Include="..\WebFront\WebFront.csproj" />
     </ItemGroup>
 
 </Project>

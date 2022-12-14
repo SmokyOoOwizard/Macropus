@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using EmbedIO;
 using EmbedIO.Routing;
 using EmbedIO.WebApi;
 
@@ -22,7 +23,7 @@ public abstract class AWebModule
 
 	protected abstract void Configure(ContainerBuilder builder);
 
-	public T ResolveController<T>() where T : WebApiController
+	public T Resolve<T>() where T : notnull
 	{
 		if (configuredScope == null)
 			// TODO
