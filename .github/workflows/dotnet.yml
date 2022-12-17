@@ -35,5 +35,5 @@ jobs:
       uses: bibipkins/dotnet-test-reporter@v1.0.0
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        test-results: ./TestsReport
+        results-path: ./TestsReport
         comment-title: 'Unit Test Results'
