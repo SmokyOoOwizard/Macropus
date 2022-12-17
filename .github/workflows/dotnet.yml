@@ -30,17 +30,10 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      uses: zyborg/dotnet-tests-report@v1
-      with:
-        project_path: Tests
-        report_name: Tests report
-        report_title: report
-        no_build: true
-        trx_xsl_path: TestResults.xls
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      run: dotnet test --logger "trx;logfilename=TestResults.trx" --results-directory ./TestsReport --no-build
     - name: Result
       uses: bibipkins/dotnet-test-reporter@v1.0.0
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        test-results: TestResults.xls
+        test-results: ./TestsReport
         comment-title: 'Unit Test Results'
