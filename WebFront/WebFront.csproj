@@ -18,5 +18,29 @@
     <ItemGroup>
       <EmbeddedResource Include="Resources\Front\**\*" />
     </ItemGroup>
+	
+	
+	<PropertyGroup>
+	  <HTMLPath>$(MSBuildProjectDirectory)\HTML</HTMLPath>
+	  <HTMLBuildPath>$(HTMLPath)\build</HTMLBuildPath>
+	  <ResourcesFront>$(MSBuildProjectDirectory)\Resources\Front</ResourcesFront>
+	</PropertyGroup>
+	
+	<ItemGroup>
+      <HTMLFiles Include="$(HTMLPath)\**\*" Exclude="$(HTMLBuildPath)\**\*" />
+	  <UpToDateCheckInput Include="@(HTMLFiles)" />
+	</ItemGroup>
+	
+    <Target Name="Build HTML" BeforeTargets="PrepareForBuild">
+	  <RemoveDir Directories="$(HTMLBuildPath)" />
+	  <Exec Command="npm run build -prefix $(HTMLPath)" />
+	  
+	  <ItemGroup>
+	    <HTMLBuildFiles Include="$(HTMLBuildPath)\**\*" />
+	  </ItemGroup>
+	  
+	  <RemoveDir Directories="$(ResourcesFront)" />
+	  <Copy SourceFiles="@(HTMLBuildFiles)" DestinationFiles="@(HTMLBuildFiles->'$(ResourcesFront)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    </Target>
 
 </Project>
