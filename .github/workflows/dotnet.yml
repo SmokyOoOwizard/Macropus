@@ -40,7 +40,7 @@ jobs:
       with:
         name: Tests            # Name of the check run which will be created
         path: TestsReport/*    # Path to test results
-        reporter: jest-junit        # Format of test results
+        reporter: dotnet-trx     # Format of test results
       
     - name: Post result
       uses: bibipkins/dotnet-test-reporter@v1.0.0
