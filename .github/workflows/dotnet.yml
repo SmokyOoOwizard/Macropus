@@ -32,15 +32,10 @@ jobs:
       run: dotnet build --no-restore
       
     - name: Test
-      run: dotnet test --logger "trx;logfilename=TestResults.trx" --results-directory ./TestsReport --no-build
+      run: dotnet test --logger "trx;logfilename=TestResults.trx" --results-directory ./TestsReport --no-build --collect:"XPlat Code Coverage"
       
-    - name: Create tests report
-      uses: zyborg/dotnet-tests-report@v1
-      with:
-        trx_xsl_path: ./TestsReport/TestResults.trx
-        report_name: Tests report
-        report_title: Report
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Codecov
+      uses: codecov/codecov-action@v1.5.2
       
     - name: Post result
       uses: bibipkins/dotnet-test-reporter@v1.0.0
