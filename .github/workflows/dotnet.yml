@@ -37,7 +37,7 @@ jobs:
     - name: Create tests report
       uses: zyborg/dotnet-tests-report@v1
       with:
-        test_results_path: ./TestsReport
+        test_results_path: ./TestsReport/TestResults.trx
         report_name: Tests report
         report_title: Report
         github_token: ${{ secrets.GITHUB_TOKEN }}
