@@ -30,12 +30,17 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
-    - name: use this action, test solution dir
       uses: zyborg/dotnet-tests-report@v1
       with:
         project_path: Tests
         report_name: Tests report
         report_title: report
         no_build: true
+        trx_xsl_path: ./TestResults/
         github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Result
+      uses: bibipkins/dotnet-test-reporter@v1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        test-results: ./TestResults/
+        comment-title: 'Unit Test Results'
