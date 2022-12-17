@@ -37,4 +37,5 @@ jobs:
         project_path: Tests
         report_name: Tests report
         report_title: report
+        no_build: true
         github_token: ${{ secrets.GITHUB_TOKEN }}
