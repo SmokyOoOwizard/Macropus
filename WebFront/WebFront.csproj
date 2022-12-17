@@ -32,8 +32,9 @@
 	</ItemGroup>
 	
     <Target Name="Build HTML" BeforeTargets="PrepareForBuild">
+	  <Exec Command="yarn --cwd $(HTMLPath) install" />
 	  <RemoveDir Directories="$(HTMLBuildPath)" />
-	  <Exec Command="npm run build -prefix $(HTMLPath)" />
+	  <Exec Command="yarn --cwd $(HTMLPath) build" />
 	  
 	  <ItemGroup>
 	    <HTMLBuildFiles Include="$(HTMLBuildPath)\**\*" />
