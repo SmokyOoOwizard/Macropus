@@ -39,7 +39,7 @@ jobs:
       if: success() || failure()    # run this step even if previous step failed
       with:
         name: Tests            # Name of the check run which will be created
-        path: reports/*    # Path to test results
+        path: TestsReport/*    # Path to test results
         reporter: jest-junit        # Format of test results
       
     - name: Post result
