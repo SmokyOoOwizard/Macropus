@@ -22,7 +22,7 @@ public class ProjectService : IProjectService, IDisposable
 
 	public async Task<IProjectInstance> GetOrLoadAsync(Guid projectId, CancellationToken cancellationToken = default)
 	{
-		using (keyedLock.Lock(projectId))
+		using (await keyedLock.LockAsync(projectId, cancellationToken).ConfigureAwait(false))
 		{
 			if (projects.ContainsKey(projectId))
 			{

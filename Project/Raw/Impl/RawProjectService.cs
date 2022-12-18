@@ -22,7 +22,7 @@ public class RawProjectService : IRawProjectService
 
 	public async Task<IRawProject> GetOrLoadAsync(Guid projectId, CancellationToken cancellationToken = default)
 	{
-		using (keyedLock.Lock(projectId))
+		using (await keyedLock.LockAsync(projectId, cancellationToken).ConfigureAwait(false))
 		{
 			IRawProject project;
 
