@@ -8,6 +8,15 @@ on:
     branches: [ "Develop" ]
   pull_request:
     branches: [ "Develop" ]
+    
+permissions: 
+  checks: read|write
+  contents: read|write
+  id-token: read|write
+  discussions: read|write
+  pull-requests: read|write
+  repository-projects: read
+  statuses: read|write
 
 jobs:
   build:
