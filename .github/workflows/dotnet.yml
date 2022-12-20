@@ -10,13 +10,13 @@ on:
     branches: [ "Develop" ]
     
 permissions: 
-  checks: read|write
-  contents: read|write
-  id-token: read|write
-  discussions: read|write
-  pull-requests: read|write
+  checks: write
+  contents: write
+  id-token: read
+  discussions: write
+  pull-requests: write
   repository-projects: read
-  statuses: read|write
+  statuses: write
 
 jobs:
   build:
