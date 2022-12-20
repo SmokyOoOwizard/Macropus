@@ -24,23 +24,29 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
+    - name: Install report generator
+      run: dotnet tool install --global dotnet-reportgenerator-globaltool
+      
     - name: Setup node
       uses: actions/setup-node@v3
       with:
         node-version: 18
         registry-url: https://registry.npmjs.org/
+        
     - name: Restore dependencies
       run: dotnet restore
-      
     - name: Build
       run: dotnet build --no-restore
       
     - name: Test
       run: dotnet test --logger "trx;logfilename=TestResults.trx" --results-directory ./TestsReport --no-build --collect:"XPlat Code Coverage"
+    - name: create coverage report
+      run: reportgenerator -reports:TestsReport/**/coverage.cobertura.xml -targetdir:TestsReport -reporttypes:Cobertura
       
     - name: Post result
       uses: bibipkins/dotnet-test-reporter@v1.0.0
@@ -48,7 +54,7 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         results-path: ./TestsReport
-        coverage-path: TestsReport/**/coverage.cobertura.xml
+        coverage-path: TestsReport/Cobertura.xml
         comment-title: 'Unit Test Results'
         post-new-comment: true
         coverage-type: cobertura
@@ -64,7 +70,7 @@ jobs:
     - name: Code Coverage Report
       uses: irongut/CodeCoverageSummary@v1.3.0
       with:
-        filename: TestsReport/**/coverage.cobertura.xml
+        filename: TestsReport/Cobertura.xml
         format: markdown
         hide_branch_rate: false
         hide_complexity: true
