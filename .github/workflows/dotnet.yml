@@ -38,6 +38,14 @@ jobs:
         node-version: 18
         registry-url: https://registry.npmjs.org/
         
+    - name: Cache nugets
+      uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+        
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
