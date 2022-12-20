@@ -48,8 +48,10 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         results-path: ./TestsReport
+        coverage-path: TestsReport/**/coverage.cobertura.xml
         comment-title: 'Unit Test Results'
         post-new-comment: true
+        coverage-type: cobertura
       
     - name: Create tests report
       uses: dorny/test-reporter@v1
@@ -67,10 +69,3 @@ jobs:
         hide_branch_rate: false
         hide_complexity: true
         output: both
-
-    - name: Add Coverage PR Comment
-      uses: marocchino/sticky-pull-request-comment@v2
-      if: github.event_name == 'pull_request'
-      with:
-        recreate: true
-        path: code-coverage-results.md
