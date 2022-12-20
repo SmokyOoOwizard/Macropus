@@ -45,7 +45,7 @@ jobs:
       
     - name: Test
       run: dotnet test --logger "trx;logfilename=TestResults.trx" --results-directory ./TestsReport --no-build --collect:"XPlat Code Coverage"
-    - name: create coverage report
+    - name: Create coverage report
       run: reportgenerator -reports:TestsReport/**/coverage.cobertura.xml -targetdir:TestsReport -reporttypes:Cobertura
       
     - name: Post result
@@ -64,7 +64,7 @@ jobs:
       if: success() || failure()    # run this step even if previous step failed
       with:
         name: Tests Report     # Name of the check run which will be created
-        path: TestsReport/*    # Path to test results
+        path: TestsReport/*.trx    # Path to test results
         reporter: dotnet-trx     # Format of test results
         
     - name: Code Coverage Report
