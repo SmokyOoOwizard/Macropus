@@ -60,14 +60,6 @@ jobs:
       
     - name: Create coverage report
       run: reportgenerator -reports:TestsReport/**/coverage.cobertura.xml -targetdir:TestsReport -reporttypes:Cobertura
-      
-    - name: Create tests report
-      uses: dorny/test-reporter@v1
-      if: success() || failure()    # run this step even if previous step failed
-      with:
-        name: Test Report     # Name of the check run which will be created
-        path: TestsReport/*.trx    # Path to test results
-        reporter: dotnet-trx     # Format of test results
         
     - name: Upload Test Results
       if: always()
@@ -76,6 +68,7 @@ jobs:
         name: Test Results
         path: |
           TestsReport/*.trx
+          TestsReport/Cobertura.xml
         
   event_file:
     name: "Event File"
