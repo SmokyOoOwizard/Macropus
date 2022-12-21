@@ -8,21 +8,12 @@ on:
     branches: [ "Develop" ]
   pull_request:
     branches: [ "Develop" ]
-    
-    
-permissions: 
-  checks: write
-  contents: write
-  discussions: write
-  pull-requests: write
-  repository-projects: read
-  statuses: write
 
 jobs:
-  build:
-
+  setupEnv:
+    name: "Setup build env"
     runs-on: ubuntu-latest
-
+    
     steps:
     - uses: actions/checkout@v3
     
@@ -38,7 +29,13 @@ jobs:
       with:
         node-version: 18
         registry-url: https://registry.npmjs.org/
-        
+    
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:        
     - name: Cache nugets
       uses: actions/cache@v3
       with:
@@ -78,14 +75,21 @@ jobs:
         name: Tests Report     # Name of the check run which will be created
         path: TestsReport/*.trx    # Path to test results
         reporter: dotnet-trx     # Format of test results
-
-    - name: Post result
-      uses: bibipkins/dotnet-test-reporter@v1.0.0
-      if: success() || failure()    # run this step even if previous step failed
+        
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v2
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        results-path: ./TestsReport
-        coverage-path: TestsReport/Cobertura.xml
-        comment-title: 'Unit Test Results'
-        post-new-comment: true
-        coverage-type: cobertura
+        name: Test Results
+        path: |
+          TestsReport/*.trx
+        
+  event_file:
+    name: "Event File"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: Event File
+        path: ${{ github.event_path }}    
