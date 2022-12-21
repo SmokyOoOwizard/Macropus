@@ -3,7 +3,7 @@ name: Test Results
 on:
   workflow_run:
     workflows: 
-      - DotNet
+      - DotNet_Tests
     types:
       - completed
 permissions: {}
@@ -45,3 +45,4 @@ jobs:
           event_file: artifacts/Event File/event.json
           event_name: ${{ github.event.workflow_run.event }}
           trx_files: "artifacts/**/*.trx"
+          job_summary: false
