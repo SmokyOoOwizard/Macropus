@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net7.0": {
+      "AsyncKeyedLock": {
+        "type": "Direct",
+        "requested": "[5.1.2, )",
+        "resolved": "5.1.2",
+        "contentHash": "PRpjWySd2amMGy9PD+u2VifOsnzh+7oTR/klFvYv7PW2Uuk2h2cIlcl2VBZxWkcMzkw+7y+nGV14n+MWoLV8tQ=="
+      }
+    }
+  }
+}

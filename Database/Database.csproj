@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <LangVersion>preview</LangVersion>
         <RootNamespace>Macropus.Database</RootNamespace>
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     </PropertyGroup>
 
     <ItemGroup>

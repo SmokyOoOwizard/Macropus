@@ -1,7 +1,7 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: .NET
+name: DotNet_Tests
 
 on:
   push:
@@ -9,12 +9,11 @@ on:
   pull_request:
     branches: [ "Develop" ]
 
-jobs:
+jobs: 
   build:
-
     runs-on: ubuntu-latest
 
-    steps:
+    steps:        
     - uses: actions/checkout@v3
     
     - name: Setup .NET
@@ -29,7 +28,7 @@ jobs:
       with:
         node-version: 18
         registry-url: https://registry.npmjs.org/
-        
+    
     - name: Cache nugets
       uses: actions/cache@v3
       with:
@@ -61,13 +60,29 @@ jobs:
       
     - name: Create coverage report
       run: reportgenerator -reports:TestsReport/**/coverage.cobertura.xml -targetdir:TestsReport -reporttypes:Cobertura
-
-    - name: Post result
-      uses: bibipkins/dotnet-test-reporter@v1.0.0
+      
+    - name: Create tests report
+      uses: dorny/test-reporter@v1
+      if: success() || failure()    # run this step even if previous step failed
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        results-path: ./TestsReport
-        coverage-path: TestsReport/Cobertura.xml
-        comment-title: 'Unit Test Results'
-        post-new-comment: true
-        coverage-type: cobertura
+        name: Test Report     # Name of the check run which will be created
+        path: TestsReport/*.trx    # Path to test results
+        reporter: dotnet-trx     # Format of test results
+        
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: Test Results
+        path: |
+          TestsReport/*.trx
+        
+  event_file:
+    name: "Event File"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: Event File
+        path: ${{ github.event_path }}    
