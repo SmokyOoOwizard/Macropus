@@ -3,7 +3,7 @@ name: Test Results
 on:
   workflow_run:
     workflows: 
-      - .NET
+      - DotNet
     types:
       - completed
 permissions: {}
