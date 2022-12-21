@@ -46,12 +46,3 @@ jobs:
           event_name: ${{ github.event.workflow_run.event }}
           trx_files: "artifacts/**/*.trx"
           job_summary: false
-          
-      - name: Create tests report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()    # run this step even if previous step failed
-        with:
-            name: Test Report     # Name of the check run which will be created
-            path: artifacts/**/*.trx    # Path to test results
-            reporter: dotnet-trx     # Format of test results
-            only-summary: true
