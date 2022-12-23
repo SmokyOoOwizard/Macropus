@@ -2,6 +2,7 @@
 using System.Data;
 using Macropus.CoolStuff;
 using Macropus.ECS.Component;
+using Macropus.ECS.Serialize.Sql;
 using Macropus.Schema;
 
 namespace Macropus.ECS.Serialize;

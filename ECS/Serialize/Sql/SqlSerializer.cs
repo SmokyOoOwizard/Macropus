@@ -7,7 +7,7 @@ using Macropus.ECS.Serialize.Extensions;
 using Macropus.Linq;
 using Macropus.Schema;
 
-namespace Macropus.ECS.Serialize;
+namespace Macropus.ECS.Serialize.Sql;
 
 class SqlSerializer : IClearable
 {
