@@ -33,7 +33,7 @@ class Serializer : IClearable
 					var unprocessed = unprocessedNullable.Value;
 					var newTarget = unprocessed.Value.Dequeue();
 
-					if (newTarget == null || newTarget is ICollection { Count: 0 })
+					if (newTarget == null)
 					{
 						target.AddProcessed(unprocessed.Key, null);
 						continue;

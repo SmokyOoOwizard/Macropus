@@ -41,7 +41,7 @@ class SqlSerializer : IClearable
 					enumerable = (value as IEnumerable)!;
 				}
 
-				if (enumerable == null)
+				if (enumerable == null || value == null)
 				{
 					sqlBuilder.Append("null, ");
 					continue;

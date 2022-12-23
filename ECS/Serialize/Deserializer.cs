@@ -127,12 +127,24 @@ class Deserializer : IClearable
 			var elementType = element.Info.Type;
 			if (element.Info.CollectionType is ECollectionType.Array)
 			{
+				if (reader.IsDBNull(i))
+				{
+					state.ReadValues.Add(new(element, null));
+					continue;
+				}
 				var rawArray = reader.GetString(i);
 
 				var obj = JsonNode.Parse(rawArray)!.AsArray();
 
 				if (elementType == ESchemaElementType.ComplexType)
 				{
+					if (obj.Count == 0)
+					{
+						var w = Array.CreateInstance(element.FieldInfo.FieldType.GetElementType(), obj.Count);
+						state.ReadValues.Add(new (element, w));
+						continue;
+					}
+						
 					for (int j = 0; j < obj.Count; j++)
 					{
 						var r = obj[j]?.ToString();
@@ -157,7 +169,7 @@ class Deserializer : IClearable
 					array.SetValue(element.Info.Parse(obj[j]?.ToString()), j);
 				}
 
-				state.ReadValues.Add(new KeyValuePair<DataSchemaElement, object?>(element, array));
+				state.ReadValues.Add(new(element, array));
 				continue;
 			}
 
@@ -168,7 +180,7 @@ class Deserializer : IClearable
 			}
 
 			object? value = reader.IsDBNull(i) ? null : elementType.Read(reader, i);
-			state.ReadValues.Add(new KeyValuePair<DataSchemaElement, object?>(element, value));
+			state.ReadValues.Add(new(element, value));
 		}
 
 		state.MarkUnreadFieldsAsRead();

@@ -38,6 +38,11 @@ public struct DataSchemaElement
 			element.Info.CollectionType = ECollectionType.Array;
 		}
 
+		if (fieldType == typeof(string))
+		{
+			element.Info.Nullable = true;
+		}
+
 		if (fieldType!.IsGenericType && (fieldType.GetGenericTypeDefinition() == typeof(Nullable<>)))
 		{
 			fieldType = Nullable.GetUnderlyingType(fieldType);
