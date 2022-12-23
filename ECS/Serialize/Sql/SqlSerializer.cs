@@ -29,58 +29,15 @@ class SqlSerializer : IClearable
 			var value = element.FieldInfo.GetValue(target.Value);
 			if (element.Info.CollectionType is ECollectionType.Array)
 			{
-				IEnumerable enumerable;
-				if (element.Info.Type is ESchemaElementType.ComplexType)
-				{
-					var ids = target.GetProcessed(element);
-					ids.Reverse();
-					enumerable = ids;
-				}
-				else
-				{
-					enumerable = (value as IEnumerable)!;
-				}
-
-				if (enumerable == null || value == null)
-				{
-					sqlBuilder.Append("null, ");
-					continue;
-				}
-
-				sqlBuilder.Append("json('[");
-
-				if (enumerable.Any())
-				{
-					foreach (var collectionValue in enumerable)
-						sqlBuilder.Append(element.ToSqlInsert(collectionValue).Replace('\'', '"'));
-
-					sqlBuilder.Remove(sqlBuilder.Length - 2, 2);
-				}
-
-				sqlBuilder.Append("]'), ");
+				InsertArray(target, element, value);
 				continue;
 			}
 
 			if (element.Info.Type is ESchemaElementType.ComplexType)
-				sqlBuilder.Append(element.ToSqlInsert(target.GetProcessed(element).First()));
+				sqlBuilder.Append(element.ToSqlInsert(target.GetProcessed(element)?.First()));
 			else
 			{
-				if (value == null && !element.Info.Nullable)
-				{
-					if (element.Info.Type == ESchemaElementType.String)
-					{
-						sqlBuilder.Append("'', ");
-					}
-					else
-					{
-						// TODO
-						throw new Exception();
-					}
-				}
-				else
-				{
-					sqlBuilder.Append(element.ToSqlInsert(value));
-				}
+				sqlBuilder.Append(element.ToSqlInsert(value));
 			}
 		}
 
@@ -96,6 +53,40 @@ class SqlSerializer : IClearable
 		await reader.ReadAsync();
 
 		return reader.GetInt32(0);
+	}
+
+	private void InsertArray(SerializeState target, DataSchemaElement element, object? value)
+	{
+		IEnumerable? enumerable = null;
+		if (element.Info.Type is ESchemaElementType.ComplexType)
+		{
+			var ids = target.GetProcessed(element);
+			if (ids != null)
+			{
+				ids.Reverse();
+				enumerable = ids;
+			}
+		}
+		else
+			enumerable = (value as IEnumerable)!;
+
+		if (enumerable == null)
+		{
+			sqlBuilder.Append("null, ");
+			return;
+		}
+
+		sqlBuilder.Append("json('[");
+
+		if (enumerable.Any())
+		{
+			foreach (var collectionValue in enumerable)
+				sqlBuilder.Append(element.ToSqlInsert(collectionValue).Replace('\'', '"'));
+
+			sqlBuilder.Remove(sqlBuilder.Length - 2, 2);
+		}
+
+		sqlBuilder.Append("]'), ");
 	}
 
 	public async Task AddEntityComponent(

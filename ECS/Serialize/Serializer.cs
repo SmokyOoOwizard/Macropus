@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Data;
+﻿using System.Data;
 using Macropus.CoolStuff;
 using Macropus.ECS.Component;
 using Macropus.ECS.Serialize.Sql;

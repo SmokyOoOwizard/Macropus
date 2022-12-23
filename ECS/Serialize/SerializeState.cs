@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using Macropus.CoolStuff;
-using Macropus.CoolStuff.Collections;
 using Macropus.CoolStuff.Collections.Pool;
 using Macropus.Schema;
 
@@ -10,7 +9,7 @@ class SerializeStatePools
 {
 	public readonly StackPool<KeyValuePair<DataSchemaElement, Queue<object?>>> UnprocessedPool = new();
 	public readonly QueuePool<object?> UnprocessedQueuePool = new();
-	public readonly DictionaryPool<DataSchemaElement, List<long?>> ProcessedPool = new();
+	public readonly DictionaryPool<DataSchemaElement, List<long?>?> ProcessedPool = new();
 	public readonly ListPool<long?> ProcessedListPool = new();
 }
 
@@ -22,7 +21,7 @@ struct SerializeState : IClearable
 	public readonly DataSchemaElement? ParentRef;
 	public readonly object? Value;
 
-	private readonly Dictionary<DataSchemaElement, List<long?>> processed;
+	private readonly Dictionary<DataSchemaElement, List<long?>?> processed;
 	private readonly Stack<KeyValuePair<DataSchemaElement, Queue<object?>>> unprocessed;
 
 	public SerializeState(DataSchema schema, object value)
@@ -40,9 +39,11 @@ struct SerializeState : IClearable
 
 			var queue = Pools.UnprocessedQueuePool.Take();
 
+			var elementValue = element.FieldInfo.GetValue(value);
+
 			if (element.Info.CollectionType is ECollectionType.Array)
 			{
-				if (element.FieldInfo.GetValue(value) is IList array)
+				if (elementValue is IList array)
 				{
 					for (var i = 0; i < array.Count; i++)
 					{
@@ -56,7 +57,17 @@ struct SerializeState : IClearable
 			}
 
 			if (queue.Count == 0)
-				processed.Add(element, new List<long?>());
+			{
+				Pools.UnprocessedQueuePool.Release(queue);
+				if (elementValue == null)
+				{
+					processed.Add(element, null);
+				}
+				else
+				{
+					processed.Add(element, Pools.ProcessedListPool.Take());
+				}
+			}
 			else
 				unprocessed.Push(new(element, queue));
 		}
@@ -104,7 +115,7 @@ struct SerializeState : IClearable
 		list.Add(componentId);
 	}
 
-	public List<long?> GetProcessed(DataSchemaElement target)
+	public List<long?>? GetProcessed(DataSchemaElement target)
 	{
 		return processed[target];
 	}
@@ -120,7 +131,8 @@ struct SerializeState : IClearable
 
 		foreach (var list in processed)
 		{
-			Pools.ProcessedListPool.Release(list.Value);
+			if (list.Value != null)
+				Pools.ProcessedListPool.Release(list.Value);
 		}
 
 		Pools.ProcessedPool.Release(processed);

@@ -38,54 +38,17 @@ class SqlDeserializer : IClearable
 		for (int i = 0; i < unreadValues.Count; i++)
 		{
 			var element = unreadValues[i];
+			
+			if (reader.IsDBNull(i))
+			{
+				state.ReadValues.Add(new(element, null));
+				continue;
+			}
 
 			var elementType = element.Info.Type;
 			if (element.Info.CollectionType is ECollectionType.Array)
 			{
-				if (reader.IsDBNull(i))
-				{
-					state.ReadValues.Add(new(element, null));
-					continue;
-				}
-
-				var rawArray = reader.GetString(i);
-
-				var obj = JsonNode.Parse(rawArray)!.AsArray();
-
-				if (elementType == ESchemaElementType.ComplexType)
-				{
-					if (obj.Count == 0)
-					{
-						var w = Array.CreateInstance(element.FieldInfo.FieldType.GetElementType(), obj.Count);
-						state.ReadValues.Add(new(element, w));
-						continue;
-					}
-
-					for (int j = 0; j < obj.Count; j++)
-					{
-						var r = obj[j]?.ToString();
-
-						if (string.IsNullOrWhiteSpace(r))
-						{
-							state.AddRef(element, null);
-						}
-						else
-						{
-							state.AddRef(element, long.Parse(r));
-						}
-					}
-
-					continue;
-				}
-
-				var array = Array.CreateInstance(element.ToType(), obj.Count);
-
-				for (int j = 0; j < obj.Count; j++)
-				{
-					array.SetValue(element.Info.Parse(obj[j]?.ToString()), j);
-				}
-
-				state.ReadValues.Add(new(element, array));
+				ReadArray(state, reader, i, element);
 				continue;
 			}
 
@@ -95,11 +58,47 @@ class SqlDeserializer : IClearable
 				continue;
 			}
 
-			object? value = reader.IsDBNull(i) ? null : elementType.Read(reader, i);
+			object value = elementType.Read(reader, i);
 			state.ReadValues.Add(new(element, value));
 		}
 
 		state.MarkUnreadFieldsAsRead();
+	}
+
+	private static void ReadArray(
+		DeserializeState state,
+		IDataReader reader,
+		int i,
+		DataSchemaElement element
+	)
+	{
+		var elementType = element.Info.Type;
+
+		var rawArray = reader.GetString(i);
+		var jsonArray = JsonNode.Parse(rawArray)!.AsArray();
+		
+		if (elementType == ESchemaElementType.ComplexType)
+		{
+			for (var j = 0; j < jsonArray.Count; j++)
+			{
+				var r = jsonArray[j]?.ToString();
+
+				if (string.IsNullOrWhiteSpace(r))
+					state.AddRef(element, null);
+				else
+					state.AddRef(element, long.Parse(r));
+			}
+
+			if (jsonArray.Count > 0)
+				return;
+		}
+		var fieldType = element.FieldInfo.FieldType.GetElementType();
+		var array = Array.CreateInstance(fieldType, jsonArray.Count);
+
+		for (var j = 0; j < array.Length; j++)
+			array.SetValue(element.Info.Parse(jsonArray[j]?.ToString()), j);
+
+		state.ReadValues.Add(new(element, array));
 	}
 
 	public async Task<long> GetComponentIdAsync(IDbConnection dbConnection, Guid entityId, string componentName)

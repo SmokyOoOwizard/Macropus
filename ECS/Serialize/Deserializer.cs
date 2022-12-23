@@ -38,26 +38,28 @@ class Deserializer : IClearable
 				if (targetRef.Value.HasValue)
 					deserializeStack.Push(new DeserializeState(refSchema, targetRef.Key, targetRef.Value.Value));
 				else
-				{
 					target.AddReadRef(targetRef.Key, null);
-				}
 
 				continue;
 			}
 
-			if (deserializeStack.Count > 1)
+			switch (deserializeStack.Count)
 			{
-				deserializeStack.Pop();
-				var parent = deserializeStack.Peek();
+				case > 1:
+				{
+					deserializeStack.Pop();
+					var parent = deserializeStack.Peek();
 
-				parent.AddReadRef(target.Element.Value, Create(target));
+					parent.AddReadRef(target.Element.Value, Create(target));
 
-				target.Clear();
+					target.Clear();
+					break;
+				}
+				case 1:
+					rootComponent = (T)Create(deserializeStack.Pop());
+					break;
 			}
-			else if (deserializeStack.Count == 1)
-			{
-				rootComponent = (T)Create(deserializeStack.Pop());
-			}
+			
 		} while (deserializeStack.Count > 0);
 
 
@@ -69,9 +71,7 @@ class Deserializer : IClearable
 		var instance = Activator.CreateInstance(target.Schema.SchemaOf);
 
 		foreach (var readValue in target.ReadValues)
-		{
 			readValue.Key.FieldInfo.SetValue(instance, readValue.Value);
-		}
 
 		foreach (var readRef in target.ReadRefs)
 		{
@@ -79,17 +79,13 @@ class Deserializer : IClearable
 			{
 				var array = Array.CreateInstance(readRef.Key.FieldInfo.FieldType.GetElementType(), readRef.Value.Count);
 
-				for (int j = 0; j < readRef.Value.Count; j++)
-				{
-					array.SetValue(readRef.Value[j], j);
-				}
+				for (var i = 0; i < readRef.Value.Count; i++)
+					array.SetValue(readRef.Value[i], i);
 
 				readRef.Key.FieldInfo.SetValue(instance, array);
 			}
 			else
-			{
 				readRef.Key.FieldInfo.SetValue(instance, readRef.Value.First());
-			}
 		}
 
 		return instance!;
