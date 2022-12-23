@@ -31,6 +31,7 @@ struct SerializeState : IClearable
 		Value = value;
 
 		unprocessed = Pools.UnprocessedPool.Take();
+		processed = Pools.ProcessedPool.Take();
 
 		foreach (var element in schema.Elements)
 		{
@@ -41,13 +42,12 @@ struct SerializeState : IClearable
 
 			if (element.Info.CollectionType is ECollectionType.Array)
 			{
-				var array = element.FieldInfo.GetValue(value) as IList;
-				if (array == null)
-					continue;
-
-				for (var i = 0; i < array.Count; i++)
+				if (element.FieldInfo.GetValue(value) is IList array)
 				{
-					queue.Enqueue(array[i]);
+					for (var i = 0; i < array.Count; i++)
+					{
+						queue.Enqueue(array[i]);
+					}
 				}
 			}
 			else
@@ -55,10 +55,12 @@ struct SerializeState : IClearable
 				queue.Enqueue(element.FieldInfo.GetValue(value));
 			}
 
-			unprocessed.Push(new(element, queue));
+			if (queue.Count == 0)
+				processed.Add(element, new List<long?>());
+			else
+				unprocessed.Push(new(element, queue));
 		}
 
-		processed = Pools.ProcessedPool.Take();
 
 		ParentRef = null;
 	}
@@ -106,7 +108,6 @@ struct SerializeState : IClearable
 	{
 		return processed[target];
 	}
-
 
 	public void Clear()
 	{
