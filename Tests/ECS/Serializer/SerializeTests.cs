@@ -1,4 +1,5 @@
-﻿using Macropus.ECS.Serialize;
+﻿using System.Diagnostics;
+using Macropus.ECS.Serialize;
 using Macropus.Schema;
 using Tests.Schema;
 using Tests.Utils.Random;
@@ -27,19 +28,28 @@ public class SerializeTests : TestsWithDatabase
 			ComplexTypeArrayField = new DataSchemaSubSchemaComponent[0]
 		});
 
-		for (int i = 0; i < 1000; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			components.Add(RandomUtils.GetRandomDataSchemaTestTypeComponent());
 		}
+
+		var stopwatch = new Stopwatch();
 
 		foreach (var component in components)
 		{
 			var entityId = Guid.NewGuid();
 
+			stopwatch.Restart();
 			await serializer.SerializeAsync(schema, entityId, component);
+			stopwatch.Stop();
+			
+			Output.WriteLine($"Serialize: id: {entityId:N} time: {stopwatch.Elapsed.ToString("c")}");
 
-			var deserializedComponentNullable =
-				await serializer.DeserializeAsync<DataSchemaTestTypeComponent>(schema, entityId);
+			stopwatch.Restart();
+			var deserializedComponentNullable = await serializer.DeserializeAsync<DataSchemaTestTypeComponent>(schema, entityId);
+			stopwatch.Stop();
+			
+			Output.WriteLine($"Deserialize: id: {entityId:N} time: {stopwatch.Elapsed.ToString("c")}");
 
 			CheckDeserializedComponent(deserializedComponentNullable, component);
 		}

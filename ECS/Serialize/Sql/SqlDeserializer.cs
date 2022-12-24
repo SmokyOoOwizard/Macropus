@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Json.Nodes;
 using Macropus.CoolStuff;
+using Macropus.CoolStuff.Collections;
 using Macropus.Database.Adapter;
 using Macropus.ECS.Serialize.Extensions;
 using Macropus.Schema;
@@ -11,7 +12,6 @@ namespace Macropus.ECS.Serialize.Sql;
 class SqlDeserializer : IClearable
 {
 	private readonly StringBuilder sqlBuilder = new();
-
 
 	public async Task ReadComponentPart(IDbConnection dbConnection, DeserializeState state)
 	{
@@ -35,10 +35,21 @@ class SqlDeserializer : IClearable
 			throw new Exception();
 		}
 
+		ProcessUnreadedValues(state, unreadValues, reader);
+
+		state.MarkUnreadFieldsAsRead();
+	}
+
+	private static void ProcessUnreadedValues(
+		DeserializeState state,
+		IReadOnlyList<DataSchemaElement> unreadValues,
+		IDataReader reader
+	)
+	{
 		for (int i = 0; i < unreadValues.Count; i++)
 		{
 			var element = unreadValues[i];
-			
+
 			if (reader.IsDBNull(i))
 			{
 				state.ReadValues.Add(new(element, null));
@@ -48,7 +59,11 @@ class SqlDeserializer : IClearable
 			var elementType = element.Info.Type;
 			if (element.Info.CollectionType is ECollectionType.Array)
 			{
-				ReadArray(state, reader, i, element);
+				if (elementType == ESchemaElementType.ComplexType)
+					ReadComplexArray(state, reader, i, element);
+				else
+					ReadSimpleArray(state, reader, i, element);
+
 				continue;
 			}
 
@@ -61,42 +76,60 @@ class SqlDeserializer : IClearable
 			object value = elementType.Read(reader, i);
 			state.ReadValues.Add(new(element, value));
 		}
-
-		state.MarkUnreadFieldsAsRead();
 	}
 
-	private static void ReadArray(
+	private static void ReadSimpleArray(
 		DeserializeState state,
 		IDataReader reader,
 		int i,
 		DataSchemaElement element
 	)
 	{
-		var elementType = element.Info.Type;
-
 		var rawArray = reader.GetString(i);
 		var jsonArray = JsonNode.Parse(rawArray)!.AsArray();
-		
-		if (elementType == ESchemaElementType.ComplexType)
-		{
-			for (var j = 0; j < jsonArray.Count; j++)
-			{
-				var r = jsonArray[j]?.ToString();
 
-				if (string.IsNullOrWhiteSpace(r))
-					state.AddRef(element, null);
-				else
-					state.AddRef(element, long.Parse(r));
-			}
-
-			if (jsonArray.Count > 0)
-				return;
-		}
 		var fieldType = element.FieldInfo.FieldType.GetElementType();
+		if (fieldType == null)
+			// TODO
+			throw new Exception();
+
 		var array = Array.CreateInstance(fieldType, jsonArray.Count);
 
 		for (var j = 0; j < array.Length; j++)
 			array.SetValue(element.Info.Parse(jsonArray[j]?.ToString()), j);
+
+		state.ReadValues.Add(new(element, array));
+	}
+
+	private static void ReadComplexArray(
+		DeserializeState state,
+		IDataReader reader,
+		int i,
+		DataSchemaElement element
+	)
+	{
+		var rawArray = reader.GetString(i);
+		var jsonArray = JsonNode.Parse(rawArray)!.AsArray();
+
+		for (var j = 0; j < jsonArray.Count; j++)
+		{
+			var r = jsonArray[j]?.ToString();
+
+			if (string.IsNullOrWhiteSpace(r))
+				state.AddRef(element, null);
+			else
+				state.AddRef(element, long.Parse(r));
+		}
+
+		if (jsonArray.Count > 0)
+			return;
+
+		var fieldType = element.FieldInfo.FieldType.GetElementType();
+		if (fieldType == null)
+			// TODO
+			throw new Exception();
+		
+		var array = ArrayExtensions.Empty(fieldType);
 
 		state.ReadValues.Add(new(element, array));
 	}
@@ -113,8 +146,13 @@ class SqlDeserializer : IClearable
 
 		var cmd = dbConnection.CreateCommand();
 		cmd.CommandText = sqlBuilder.ToString();
+		
+		var rawId = await cmd.ExecuteScalarAsync();
+		if (rawId is not long id)
+			// TODO
+			throw new Exception();
 
-		return (long)await cmd.ExecuteScalarAsync();
+		return id;
 	}
 
 	public void Clear()
