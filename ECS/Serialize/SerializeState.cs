@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using Macropus.CoolStuff;
 using Macropus.CoolStuff.Collections.Pool;
 using Macropus.Schema;
 
@@ -7,30 +6,26 @@ namespace Macropus.ECS.Serialize;
 
 class SerializeStatePools
 {
-	public readonly StackPool<KeyValuePair<DataSchemaElement, Queue<object?>>> UnprocessedPool = new();
 	public readonly QueuePool<object?> UnprocessedQueuePool = new();
-	public readonly DictionaryPool<DataSchemaElement, List<long?>?> ProcessedPool = new();
 	public readonly ListPool<long?> ProcessedListPool = new();
 }
 
-struct SerializeState : IClearable
+class ComponentSerializeState : ISerializeState
 {
 	private static readonly SerializeStatePools Pools = new();
 
-	public readonly DataSchema Schema;
-	public readonly DataSchemaElement? ParentRef;
-	public readonly object? Value;
+	private readonly Dictionary<DataSchemaElement, List<long?>?> complexRefs = new();
+	private readonly Stack<KeyValuePair<DataSchemaElement, Queue<object?>>> unprocessedComplexFields = new();
+	
+	public DataSchema? Schema;
+	public DataSchemaElement? ParentRef;
+	public object? Value;
 
-	private readonly Dictionary<DataSchemaElement, List<long?>?> processed;
-	private readonly Stack<KeyValuePair<DataSchemaElement, Queue<object?>>> unprocessed;
 
-	public SerializeState(DataSchema schema, object value)
+	public ComponentSerializeState Init(DataSchema schema, object value)
 	{
 		Schema = schema;
 		Value = value;
-
-		unprocessed = Pools.UnprocessedPool.Take();
-		processed = Pools.ProcessedPool.Take();
 
 		foreach (var element in schema.Elements)
 		{
@@ -60,39 +55,40 @@ struct SerializeState : IClearable
 			{
 				Pools.UnprocessedQueuePool.Release(queue);
 				if (elementValue == null)
-				{
-					processed.Add(element, null);
-				}
+					complexRefs.Add(element, null);
 				else
-				{
-					processed.Add(element, Pools.ProcessedListPool.Take());
-				}
+					complexRefs.Add(element, Pools.ProcessedListPool.Take());
 			}
 			else
-				unprocessed.Push(new(element, queue));
+				unprocessedComplexFields.Push(new(element, queue));
 		}
 
 
 		ParentRef = null;
+
+		return this;
 	}
 
-	public SerializeState(DataSchema schema, object newTarget, DataSchemaElement parentRef) : this(schema, newTarget)
+	public ComponentSerializeState Init(DataSchema schema, object newTarget, DataSchemaElement parentRef)
 	{
+		Init(schema, newTarget);
 		ParentRef = parentRef;
+
+		return this;
 	}
 
 	public KeyValuePair<DataSchemaElement, Queue<object?>>? TryGetUnprocessed()
 	{
-		if (unprocessed.Count == 0)
+		if (unprocessedComplexFields.Count == 0)
 			return default;
 
-		while (unprocessed.Count > 0)
+		while (unprocessedComplexFields.Count > 0)
 		{
-			var target = unprocessed.Peek();
+			var target = unprocessedComplexFields.Peek();
 
 			if (target.Value.Count == 0)
 			{
-				unprocessed.Pop();
+				unprocessedComplexFields.Pop();
 
 				Pools.UnprocessedQueuePool.Release(target.Value);
 				continue;
@@ -106,35 +102,49 @@ struct SerializeState : IClearable
 
 	public void AddProcessed(DataSchemaElement target, long? componentId)
 	{
-		if (!processed.TryGetValue(target, out var list))
+		if (!complexRefs.TryGetValue(target, out var list))
 		{
 			list = Pools.ProcessedListPool.Take();
-			processed[target] = list;
+			complexRefs[target] = list;
 		}
 
 		list.Add(componentId);
 	}
+	public void AddRangeProcessed(DataSchemaElement target, long?[] componentsIds)
+	{
+		if (!complexRefs.TryGetValue(target, out var list))
+		{
+			list = Pools.ProcessedListPool.Take();
+			complexRefs[target] = list;
+		}
+
+		list.AddRange(componentsIds);
+	}
 
 	public List<long?>? GetProcessed(DataSchemaElement target)
 	{
-		return processed[target];
+		return complexRefs[target];
 	}
 
 	public void Clear()
 	{
-		foreach (var queue in unprocessed)
+		Schema = null;
+		ParentRef = null;
+		Value = null;
+		
+		foreach (var queue in unprocessedComplexFields)
 		{
 			Pools.UnprocessedQueuePool.Release(queue.Value);
 		}
+		
+		unprocessedComplexFields.Clear();
 
-		Pools.UnprocessedPool.Release(unprocessed);
-
-		foreach (var list in processed)
+		foreach (var list in complexRefs)
 		{
 			if (list.Value != null)
 				Pools.ProcessedListPool.Release(list.Value);
 		}
-
-		Pools.ProcessedPool.Release(processed);
+		
+		complexRefs.Clear();
 	}
 }

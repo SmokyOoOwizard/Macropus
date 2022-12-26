@@ -27,8 +27,12 @@ public class SerializeTests : TestsWithDatabase
 		{
 			ComplexTypeArrayField = new DataSchemaSubSchemaComponent[0]
 		});
+		components.Add(new DataSchemaTestTypeComponent
+		{
+			SimpleComplexTypeArrayField = new DataSchemaSubSchemaComponent2[1000]
+		});
 
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 300; i++)
 		{
 			components.Add(RandomUtils.GetRandomDataSchemaTestTypeComponent());
 		}
@@ -43,14 +47,14 @@ public class SerializeTests : TestsWithDatabase
 			await serializer.SerializeAsync(schema, entityId, component);
 			stopwatch.Stop();
 			
-			Output.WriteLine($"Serialize: id: {entityId:N} time: {stopwatch.Elapsed.ToString("c")}");
-
+			Output.WriteLine($"Serialize: id: {entityId:N} \ttime: {stopwatch.Elapsed.ToString("c")}");
+			
 			stopwatch.Restart();
 			var deserializedComponentNullable = await serializer.DeserializeAsync<DataSchemaTestTypeComponent>(schema, entityId);
 			stopwatch.Stop();
 			
-			Output.WriteLine($"Deserialize: id: {entityId:N} time: {stopwatch.Elapsed.ToString("c")}");
-
+			Output.WriteLine($"Deserialize: id: {entityId:N} \ttime: {stopwatch.Elapsed.ToString("c")}\n");
+			
 			CheckDeserializedComponent(deserializedComponentNullable, component);
 		}
 	}
@@ -95,6 +99,8 @@ public class SerializeTests : TestsWithDatabase
 
 		CheckArray(testComponent.NullableValueTypeArray, deserializedComponent.NullableValueTypeArray);
 		CheckArray(testComponent.ComplexNullableTypeArrayField, deserializedComponent.ComplexNullableTypeArrayField);
+		CheckArray(testComponent.SimpleComplexNullableTypeArrayField, deserializedComponent.SimpleComplexNullableTypeArrayField);
+		CheckArray(testComponent.SimpleComplexTypeArrayField, deserializedComponent.SimpleComplexTypeArrayField);
 
 		Assert.Equal(testComponent.NamedField, deserializedComponent.NamedField);
 	}

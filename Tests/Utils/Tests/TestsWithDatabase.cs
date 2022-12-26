@@ -19,6 +19,15 @@ public abstract class TestsWithDatabase : TestsWithFiles, IAsyncLifetime
 		
 		DbConnection = new SqliteConnection($"Data Source={Path.Combine(ExecutePath, "Test.db")}");
 		await DbConnection.OpenAsync();
+		
+		var cmd = DbConnection.CreateCommand();
+		cmd.CommandText = "PRAGMA journal_mode = WAL";
+		cmd.ExecuteNonQuery();
+
+		cmd.CommandText = "PRAGMA synchronous = NORMAL";
+		cmd.ExecuteNonQuery();
+		
+		cmd.Dispose();
 	}
 
 	public override async Task DisposeAsync()

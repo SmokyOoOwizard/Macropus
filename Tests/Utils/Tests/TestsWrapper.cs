@@ -26,7 +26,7 @@ public abstract class TestsWrapper : IAsyncLifetime
 			test.DisplayName, Guid.NewGuid().ToString("N"));
 
 
-		var converter = new ConsoleConverter(output, Path.Combine(ExecutePath, "log.txt"));
+		var converter = new ConsoleConverter(output);
 		Console.SetOut(converter);
 
 		Mock = AutoMock.GetLoose(Configure);
