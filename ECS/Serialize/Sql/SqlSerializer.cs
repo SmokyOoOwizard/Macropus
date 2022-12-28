@@ -19,10 +19,11 @@ class SqlSerializer : IClearable
 	private IDbCommand GetCmd(
 		IDbConnection dbConnection,
 		string tableName,
-		IReadOnlyCollection<DataSchemaElement> fields
+		IReadOnlyCollection<DataSchemaElement> fields,
+		int count = 1
 	)
 	{
-		if (existsCmd.TryGetValue(tableName, out var cmd))
+		if (existsCmd.TryGetValue(tableName + count, out var cmd))
 			return cmd;
 
 		cmd = dbConnection.CreateCommand();
@@ -30,19 +31,26 @@ class SqlSerializer : IClearable
 		sqlBuilder.Clear();
 		sqlBuilder.Append($"INSERT INTO '{tableName}' (");
 		sqlBuilder.Append(string.Join(',', fields.Select(e => e.Info.ToSqlName())));
-		sqlBuilder.Append(") VALUES(");
+		sqlBuilder.Append(") VALUES ");
 
-		foreach (var element in fields)
+		for (var i = 0; i < count; i++)
 		{
-			sqlBuilder.Append($"@{element.Info.FieldName}, ");
+			sqlBuilder.Append('(');
+			foreach (var element in fields)
+			{
+				sqlBuilder.Append($"@{i}_{element.Info.FieldName}, ");
+			}
+
+			sqlBuilder.Remove(sqlBuilder.Length - 2, 2);
+			sqlBuilder.Append("), ");
 		}
 
 		sqlBuilder.Remove(sqlBuilder.Length - 2, 2);
-		sqlBuilder.Append(") RETURNING Id;");
+		sqlBuilder.Append(" RETURNING Id;");
 
 		cmd.CommandText = sqlBuilder.ToString();
 
-		existsCmd[tableName] = cmd;
+		existsCmd[tableName + count] = cmd;
 
 		return cmd;
 	}
@@ -53,19 +61,32 @@ class SqlSerializer : IClearable
 		if (target.Schema == null)
 			// TODO
 			throw new Exception();
-		
+
 		var values = target.Values;
 		if (values == null)
 			throw new Exception();
 
 		var tableName = target.Schema.SchemaOf.FullName;
 		var fields = target.Schema.Elements;
-
-		var cmd = GetCmd(dbConnection, tableName, fields);
+		
+		if (tableName == null)
+			// TODO
+			throw new Exception();
 
 		count = Math.Min(count, values.Count);
 
-		List<long?> ids = new();
+		var notNullCount = values.Take(count).Count(w => w != null);
+		if (notNullCount == 0)
+		{
+			values.Clear();
+			return new long?[count];
+		}
+
+		var cmd = GetCmd(dbConnection, tableName, fields, notNullCount);
+		cmd.Parameters.Clear();
+
+		var ids = new List<long?>();
+		var y = 0;
 		for (var i = 0; i < count; i++)
 		{
 			var value = values.Dequeue();
@@ -75,14 +96,22 @@ class SqlSerializer : IClearable
 				continue;
 			}
 
-			cmd.Parameters.Clear();
+			FillCmd(cmd, fields, value, y + "_");
+			y++;
 
-			FillCmd(cmd, fields, value);
+			ids.Add(0);
+		}
 
-			using var reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false);
+		using var reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false);
+		await reader.ReadAsync().ConfigureAwait(false);
+
+		for (var i = 0; i < count; i++)
+		{
+			if (ids[i] == null)
+				continue;
+
+			ids[i] = reader.GetInt32(0);
 			await reader.ReadAsync().ConfigureAwait(false);
-
-			ids.Add(reader.GetInt32(0));
 		}
 
 		return ids.ToArray();
@@ -98,10 +127,14 @@ class SqlSerializer : IClearable
 		var tableName = target.Schema.SchemaOf.FullName;
 		var fields = target.Schema.Elements;
 
+		if (tableName == null)
+			// TODO
+			throw new Exception();
+
 		var cmd = GetCmd(dbConnection, tableName, fields);
 		cmd.Parameters.Clear();
 
-		FillCmd(cmd, fields, target);
+		FillCmd(cmd, fields, target, "0_");
 
 		using var reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false);
 
@@ -113,26 +146,20 @@ class SqlSerializer : IClearable
 	private void FillCmd(
 		IDbCommand cmd,
 		IReadOnlyCollection<DataSchemaElement> fields,
-		AnyOf<object, ComponentSerializeState> value
+		AnyOf<object, ComponentSerializeState> value,
+		string prefix = ""
 	)
 	{
 		foreach (var element in fields)
 		{
-			object? fieldValue;
-
-			if (value.IsFirst)
-				fieldValue = element.FieldInfo.GetValue(value.First);
-			else
-				fieldValue = element.FieldInfo.GetValue(value.Second.Value);
+			var fieldValue = element.FieldInfo.GetValue(value.IsFirst ? value.First : value.Second.Value);
 
 			object? valueToInsert;
-
 			if (element.Info.CollectionType is ECollectionType.Array)
 			{
-				if (value.IsFirst)
-					valueToInsert = InsertArray(element, fieldValue as IEnumerable);
-				else
-					valueToInsert = InsertArray(value.Second, element, fieldValue);
+				valueToInsert = value.IsFirst
+					? InsertArray(element, fieldValue as IEnumerable)
+					: InsertArray(value.Second, element, fieldValue);
 			}
 			else if (element.Info.Type is ESchemaElementType.ComplexType)
 			{
@@ -145,10 +172,8 @@ class SqlSerializer : IClearable
 			else
 				valueToInsert = element.ToSqlInsert(fieldValue);
 
-			if (valueToInsert == null)
-				cmd.Parameters.Add(new SqliteParameter($"@{element.Info.FieldName}", DBNull.Value));
-			else
-				cmd.Parameters.Add(new SqliteParameter($"@{element.Info.FieldName}", valueToInsert));
+			cmd.Parameters.Add(new SqliteParameter($"@{prefix}{element.Info.FieldName}",
+				valueToInsert ?? DBNull.Value));
 		}
 	}
 
