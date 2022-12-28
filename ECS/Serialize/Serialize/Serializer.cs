@@ -5,7 +5,7 @@ using Macropus.ECS.Component;
 using Macropus.ECS.Serialize.Sql;
 using Macropus.Schema;
 
-namespace Macropus.ECS.Serialize;
+namespace Macropus.ECS.Serialize.Serialize;
 
 class Serializer : IClearable
 {
@@ -57,10 +57,6 @@ class Serializer : IClearable
 		{
 			transaction.Rollback();
 			throw;
-		}
-		finally
-		{
-			Clear();
 		}
 	}
 
@@ -148,7 +144,6 @@ class Serializer : IClearable
 	{
 		foreach (var state in serializeStack)
 		{
-			state.Clear();
 			switch (state)
 			{
 				case ComponentSerializeState css:

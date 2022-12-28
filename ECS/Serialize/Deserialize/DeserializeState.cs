@@ -1,10 +1,8 @@
-﻿using Macropus.CoolStuff;
-using Macropus.CoolStuff.Collections;
-using Macropus.CoolStuff.Collections.Pool;
+﻿using Macropus.CoolStuff.Collections.Pool;
 using Macropus.Linq;
 using Macropus.Schema;
 
-namespace Macropus.ECS.Serialize;
+namespace Macropus.ECS.Serialize.Deserialize;
 
 class DeserializeStatePools
 {
@@ -16,20 +14,20 @@ class DeserializeStatePools
 	public readonly ListPool<object?> ReadRefsListPool = new();
 }
 
-struct DeserializeState : IClearable
+class ComponentDeserializeState : IDeserializeState
 {
 	private static readonly DeserializeStatePools Pools = new();
 
-	public readonly DataSchema Schema;
-	public readonly DataSchemaElement? Element;
-	public readonly long ComponentId;
+	public DataSchema Schema;
+	public DataSchemaElement? Element;
+	public long ComponentId;
 
-	public readonly Dictionary<DataSchemaElement, List<object?>> ReadRefs;
-	public readonly List<KeyValuePair<DataSchemaElement, object?>> ReadValues;
-	private readonly List<DataSchemaElement> unreadValues;
-	private readonly Stack<KeyValuePair<DataSchemaElement, long?>> refs;
-
-	public DeserializeState(DataSchema schema, long componentId)
+	public Dictionary<DataSchemaElement, List<object?>> ReadRefs;
+	public List<KeyValuePair<DataSchemaElement, object?>> ReadValues;
+	private List<DataSchemaElement> unreadValues;
+	private Stack<KeyValuePair<DataSchemaElement, long?>> refs;
+	
+	public ComponentDeserializeState Init(DataSchema schema, long componentId)
 	{
 		Schema = schema;
 		ComponentId = componentId;
@@ -43,12 +41,18 @@ struct DeserializeState : IClearable
 		ReadRefs = Pools.ReadRefsPool.Take();
 
 		Element = null;
+
+		return this;
 	}
 
-	public DeserializeState(DataSchema schema, DataSchemaElement element, long componentId) : this(schema, componentId)
+	public ComponentDeserializeState Init(DataSchema schema, DataSchemaElement element, long componentId)
 	{
+		Init(schema, componentId);
 		Element = element;
+
+		return this;
 	}
+
 
 	public void AddRef(DataSchemaElement target, long? id)
 	{
@@ -86,6 +90,10 @@ struct DeserializeState : IClearable
 
 	public void Clear()
 	{
+		Schema = null;
+		Element = null;
+		ComponentId = 0;
+		
 		Pools.ReadValuesPool.Release(ReadValues);
 		Pools.UnreadValues.Release(unreadValues);
 		Pools.RefsPool.Release(refs);

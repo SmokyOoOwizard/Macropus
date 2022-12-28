@@ -4,30 +4,58 @@ using System.Text.Json.Nodes;
 using Macropus.CoolStuff;
 using Macropus.CoolStuff.Collections;
 using Macropus.Database.Adapter;
+using Macropus.ECS.Serialize.Deserialize;
 using Macropus.ECS.Serialize.Extensions;
 using Macropus.Schema;
+using Microsoft.Data.Sqlite;
 
 namespace Macropus.ECS.Serialize.Sql;
 
 class SqlDeserializer : IClearable
 {
 	private readonly StringBuilder sqlBuilder = new();
+	private readonly Dictionary<string, IDbCommand> existsCmd = new();
 
-	public async Task ReadComponentPart(IDbConnection dbConnection, DeserializeState state)
+	private IDbCommand GetCmd(
+		IDbConnection dbConnection,
+		string tableName,
+		IReadOnlyCollection<DataSchemaElement> fields
+	)
 	{
-		var unreadValues = state.GetUnreadFields();
-		var elements = unreadValues.ToSqlName();
-		var tableName = state.Schema.SchemaOf.FullName;
+		if (existsCmd.TryGetValue(tableName, out var cmd))
+			return cmd;
+
+		cmd = dbConnection.CreateCommand();
 
 		sqlBuilder.Clear();
-		sqlBuilder.Append($"SELECT {string.Join(',', elements)} FROM '{tableName}' ");
-		sqlBuilder.Append($"WHERE Id = '{state.ComponentId}'");
+		sqlBuilder.Append("SELECT ");
+		sqlBuilder.Append(string.Join(',', fields.Select(e => e.Info.ToSqlName())));
+		sqlBuilder.Append($" FROM '{tableName}' ");
+		sqlBuilder.Append("WHERE Id in (@id)");
 		sqlBuilder.Append(';');
 
-		var cmd = dbConnection.CreateCommand();
 		cmd.CommandText = sqlBuilder.ToString();
 
-		var reader = await cmd.ExecuteReaderAsync();
+		existsCmd[tableName] = cmd;
+
+		return cmd;
+	}
+	
+
+	public async Task ReadComponentPart(IDbConnection dbConnection, ComponentDeserializeState state)
+	{
+		var unreadValues = state.GetUnreadFields();
+		var tableName = state.Schema.SchemaOf.FullName;
+		if (tableName == null)
+			// TODO
+			throw new Exception();
+
+
+		var cmd = GetCmd(dbConnection, tableName, unreadValues);
+		cmd.Parameters.Clear();
+		cmd.Parameters.Add(new SqliteParameter("@id", state.ComponentId));
+		
+		using var reader = await cmd.ExecuteReaderAsync();
 
 		if (!await reader.ReadAsync())
 		{
@@ -35,13 +63,13 @@ class SqlDeserializer : IClearable
 			throw new Exception();
 		}
 
-		ProcessUnreadedValues(state, unreadValues, reader);
+		ProcessUnreadValues(state, unreadValues, reader);
 
 		state.MarkUnreadFieldsAsRead();
 	}
 
-	private static void ProcessUnreadedValues(
-		DeserializeState state,
+	private static void ProcessUnreadValues(
+		ComponentDeserializeState state,
 		IReadOnlyList<DataSchemaElement> unreadValues,
 		IDataReader reader
 	)
@@ -59,10 +87,7 @@ class SqlDeserializer : IClearable
 			var elementType = element.Info.Type;
 			if (element.Info.CollectionType is ECollectionType.Array)
 			{
-				if (elementType == ESchemaElementType.ComplexType)
-					ReadComplexArray(state, reader, i, element);
-				else
-					ReadSimpleArray(state, reader, i, element);
+				ReadArray(state, reader, elementType, i, element);
 
 				continue;
 			}
@@ -78,8 +103,22 @@ class SqlDeserializer : IClearable
 		}
 	}
 
+	private static void ReadArray(
+		ComponentDeserializeState state,
+		IDataReader reader,
+		ESchemaElementType elementType,
+		int i,
+		DataSchemaElement element
+	)
+	{
+		if (elementType == ESchemaElementType.ComplexType)
+			ReadComplexArray(state, reader, i, element);
+		else
+			ReadSimpleArray(state, reader, i, element);
+	}
+
 	private static void ReadSimpleArray(
-		DeserializeState state,
+		ComponentDeserializeState state,
 		IDataReader reader,
 		int i,
 		DataSchemaElement element
@@ -102,7 +141,7 @@ class SqlDeserializer : IClearable
 	}
 
 	private static void ReadComplexArray(
-		DeserializeState state,
+		ComponentDeserializeState state,
 		IDataReader reader,
 		int i,
 		DataSchemaElement element
@@ -111,14 +150,14 @@ class SqlDeserializer : IClearable
 		var rawArray = reader.GetString(i);
 		var jsonArray = JsonNode.Parse(rawArray)!.AsArray();
 
-		for (var j = 0; j < jsonArray.Count; j++)
+		foreach (var arrayElement in jsonArray)
 		{
-			var r = jsonArray[j]?.ToString();
+			var rawElement = arrayElement?.ToString();
 
-			if (string.IsNullOrWhiteSpace(r))
+			if (string.IsNullOrWhiteSpace(rawElement))
 				state.AddRef(element, null);
 			else
-				state.AddRef(element, long.Parse(r));
+				state.AddRef(element, long.Parse(rawElement));
 		}
 
 		if (jsonArray.Count > 0)

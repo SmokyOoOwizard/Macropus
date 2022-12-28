@@ -5,6 +5,7 @@ using AnyOfTypes;
 using Macropus.CoolStuff;
 using Macropus.Database.Adapter;
 using Macropus.ECS.Serialize.Extensions;
+using Macropus.ECS.Serialize.Serialize;
 using Macropus.Linq;
 using Macropus.Schema;
 using Microsoft.Data.Sqlite;
@@ -183,6 +184,7 @@ class SqlSerializer : IClearable
 		if (element.Info.Type is ESchemaElementType.ComplexType)
 		{
 			if (state is not ComponentSerializeState css)
+				// TODO
 				throw new Exception();
 
 			var ids = css.GetProcessed(element);

@@ -2,7 +2,7 @@
 using Macropus.CoolStuff.Collections.Pool;
 using Macropus.Schema;
 
-namespace Macropus.ECS.Serialize;
+namespace Macropus.ECS.Serialize.Serialize;
 
 class SerializeStatePools
 {
