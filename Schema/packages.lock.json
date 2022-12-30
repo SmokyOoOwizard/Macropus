@@ -9,13 +9,13 @@
       },
       "AsyncKeyedLock": {
         "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "VNwafSaTXvIDEy2jWnJykEsucLO1Jqb0cghGXYIBd6Gqr+zalePxeJIaD9oU7RQfXYkvTCHIaAJJICt8dD+ueg=="
+        "resolved": "6.0.4",
+        "contentHash": "nrdMkm5lGysvBZ+5UzU415fb37Ng7GXzqQERbGmPE6U2JfFhhPNDkOFQX1gEyfUqc5A6kSq4HaGM087YoiF75A=="
       },
       "coolstuff": {
         "type": "Project",
         "dependencies": {
-          "AsyncKeyedLock": "[6.0.2, )"
+          "AsyncKeyedLock": "[6.0.4, )"
         }
       },
       "extensions": {
