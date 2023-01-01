@@ -6,18 +6,38 @@ public class ListPool<T> : APool<List<T>>
 	{
 		Interlocked.Increment(ref taken);
 
-		if (stack.TryPop(out var obj))
-			return obj;
+		Lock.EnterWriteLock();
 
-		return new List<T>();
+		try
+		{
+			var value = Bag.FirstOrDefault();
+
+			return value ?? new List<T>();
+		}
+		finally
+		{
+			if (Lock.IsWriteLockHeld) Lock.ExitWriteLock();
+		}
 	}
 
 	public override void Release(List<T> obj)
 	{
 		Interlocked.Decrement(ref taken);
 
-		obj.Clear();
+		Lock.EnterWriteLock();
 
-		stack.Push(obj);
+		try
+		{
+			if (Bag.Contains(obj))
+				return;
+
+			obj.Clear();
+
+			Bag.Add(obj);
+		}
+		finally
+		{
+			if (Lock.IsWriteLockHeld) Lock.ExitWriteLock();
+		}
 	}
 }

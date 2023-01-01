@@ -1,16 +1,15 @@
-﻿using System.Collections.Concurrent;
-
-namespace Macropus.CoolStuff.Collections.Pool;
+﻿namespace Macropus.CoolStuff.Collections.Pool;
 
 public abstract class APool<T> : IPool<T>
 {
-	protected readonly ConcurrentStack<T> stack = new();
+	protected readonly ReaderWriterLockSlim Lock = new(LockRecursionPolicy.SupportsRecursion);
+	protected readonly HashSet<T> Bag = new();
 
 	protected int taken = 0;
 
 	public int Taken => taken;
 
-	public int ObjectsInPool => stack.Count;
+	public int ObjectsInPool => Bag.Count;
 
 	object IPool.Take()
 	{

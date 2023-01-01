@@ -15,7 +15,7 @@ public static class ArrayExtensions
 				return emptyArray;
 
 			EmptyArrays[type] = Array.CreateInstance(type, 0);
-			
+
 			return EmptyArrays[type];
 		}
 	}

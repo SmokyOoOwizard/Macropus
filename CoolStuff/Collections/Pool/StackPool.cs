@@ -5,19 +5,39 @@ public class StackPool<T> : APool<Stack<T>>
 	public override Stack<T> Take()
 	{
 		Interlocked.Increment(ref taken);
+		
+		Lock.EnterWriteLock();
 
-		if (stack.TryPop(out var obj))
-			return obj;
+		try
+		{
+			var value = Bag.FirstOrDefault();
 
-		return new Stack<T>();
+			return value ?? new Stack<T>();
+		}
+		finally
+		{
+			if (Lock.IsWriteLockHeld) Lock.ExitWriteLock();
+		}
 	}
 
 	public override void Release(Stack<T> obj)
 	{
 		Interlocked.Decrement(ref taken);
+		
+		Lock.EnterWriteLock();
 
-		obj.Clear();
+		try
+		{
+			if (Bag.Contains(obj))
+				return;
 
-		stack.Push(obj);
+			obj.Clear();
+
+			Bag.Add(obj);
+		}
+		finally
+		{
+			if (Lock.IsWriteLockHeld) Lock.ExitWriteLock();
+		}
 	}
 }
