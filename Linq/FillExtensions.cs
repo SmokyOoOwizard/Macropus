@@ -30,4 +30,12 @@ public static class FillExtensions
 			target.Push(item);
 		}
 	}
+	
+	public static void Fill<T>(this IEnumerable<T> enumerable, Queue<T> target)
+	{
+		foreach (var item in enumerable)
+		{
+			target.Enqueue(item);
+		}
+	}
 }
