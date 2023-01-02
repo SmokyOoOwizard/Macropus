@@ -5,7 +5,8 @@ using AnyOfTypes;
 using Macropus.CoolStuff;
 using Macropus.Database.Adapter;
 using Macropus.ECS.Serialize.Extensions;
-using Macropus.ECS.Serialize.Serialize;
+using Macropus.ECS.Serialize.Serialize.State;
+using Macropus.ECS.Serialize.Serialize.State.Impl;
 using Macropus.Linq;
 using Macropus.Schema;
 using Microsoft.Data.Sqlite;
@@ -15,48 +16,7 @@ namespace Macropus.ECS.Serialize.Sql;
 class SqlSerializer : IClearable
 {
 	private readonly StringBuilder sqlBuilder = new();
-	private readonly Dictionary<string, IDbCommand> existsCmd = new();
-
-	private IDbCommand GetCmd(
-		IDbConnection dbConnection,
-		string tableName,
-		IReadOnlyCollection<DataSchemaElement> fields,
-		int count = 1
-	)
-	{
-		if (existsCmd.TryGetValue(tableName + count, out var cmd))
-			return cmd;
-
-		cmd = dbConnection.CreateCommand();
-
-		sqlBuilder.Clear();
-		sqlBuilder.Append($"INSERT INTO '{tableName}' (");
-		sqlBuilder.Append(string.Join(',', fields.Select(e => e.Info.ToSqlName())));
-		sqlBuilder.Append(") VALUES ");
-
-		for (var i = 0; i < count; i++)
-		{
-			sqlBuilder.Append('(');
-			foreach (var element in fields)
-			{
-				sqlBuilder.Append($"@{i}_{element.Info.FieldName}, ");
-			}
-
-			sqlBuilder.Remove(sqlBuilder.Length - 2, 2);
-			sqlBuilder.Append("), ");
-		}
-
-		sqlBuilder.Remove(sqlBuilder.Length - 2, 2);
-		sqlBuilder.Append(" RETURNING Id;");
-
-		cmd.CommandText = sqlBuilder.ToString();
-
-		existsCmd[tableName + count] = cmd;
-
-		return cmd;
-	}
-
-
+	
 	public async Task<long?[]> InsertComponent(IDbConnection dbConnection, ParallelSerializeState target, int count)
 	{
 		if (target.Schema == null)
@@ -83,8 +43,7 @@ class SqlSerializer : IClearable
 			return new long?[count];
 		}
 
-		var cmd = GetCmd(dbConnection, tableName, fields, notNullCount);
-		cmd.Parameters.Clear();
+		var cmd = DbCommandCache.GetInsertCmd(dbConnection, tableName, fields, notNullCount);
 
 		var ids = new List<long?>();
 		var y = 0;
@@ -132,8 +91,7 @@ class SqlSerializer : IClearable
 			// TODO
 			throw new Exception();
 
-		var cmd = GetCmd(dbConnection, tableName, fields);
-		cmd.Parameters.Clear();
+		var cmd = DbCommandCache.GetInsertCmd(dbConnection, tableName, fields);
 
 		FillCmd(cmd, fields, target, "0_");
 
@@ -245,12 +203,6 @@ class SqlSerializer : IClearable
 
 	public void Clear()
 	{
-		foreach (var dbCommand in existsCmd)
-		{
-			dbCommand.Value.Dispose();
-		}
-
-		existsCmd.Clear();
 		sqlBuilder.Clear();
 	}
 }

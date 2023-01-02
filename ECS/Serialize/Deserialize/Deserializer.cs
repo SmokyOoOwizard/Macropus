@@ -1,15 +1,16 @@
 ﻿using System.Data;
 using Macropus.CoolStuff;
-using Macropus.CoolStuff.Collections.Pool;
 using Macropus.Database.Adapter;
 using Macropus.ECS.Component;
+using Macropus.ECS.Serialize.Deserialize.State;
+using Macropus.ECS.Serialize.Deserialize.State.Impl;
 using Macropus.Schema;
 
 namespace Macropus.ECS.Serialize.Deserialize;
 
 class Deserializer : IClearable
 {
-	private static readonly Pool<ComponentDeserializeState> ComponentStatePool = new();
+	private static readonly StatePool StatePool = StatePool.Instance;
 
 	private readonly Stack<IDeserializeState> deserializeStack = new();
 
@@ -22,12 +23,15 @@ class Deserializer : IClearable
 		if (componentName == null)
 			throw new Exception();
 
-		var componentIdCmd = DbCommandCache.GetWWCmd(dbConnection, entityId, componentName);
-		using var componentIdReader = await componentIdCmd.ExecuteReaderAsync();
-		await componentIdReader.ReadAsync();
-		var rootComponentId = componentIdReader.GetInt64(0);
+		long rootComponentId;
+		var componentIdCmd = DbCommandCache.GetComponentIdCmd(dbConnection, entityId, componentName);
+		using (var componentIdReader = await componentIdCmd.ExecuteReaderAsync())
+		{
+			await componentIdReader.ReadAsync();
+			rootComponentId = componentIdReader.GetInt64(0);
+		}
 
-		deserializeStack.Push(ComponentStatePool.Take().Init(schema, rootComponentId));
+		deserializeStack.Push(StatePool.DeserializeStatePool.Take().Init(schema, rootComponentId));
 
 		do
 		{
@@ -40,7 +44,7 @@ class Deserializer : IClearable
 			}
 
 			deserializeStack.Pop();
-			
+
 			switch (target)
 			{
 				case ITargetDeserializeState tds:
@@ -63,6 +67,8 @@ class Deserializer : IClearable
 					break;
 				}
 			}
+
+			StatePool.Release(target);
 		} while (deserializeStack.Count > 0);
 
 
@@ -75,7 +81,7 @@ class Deserializer : IClearable
 	{
 		foreach (var state in deserializeStack)
 		{
-			//ComponentStatePool.Release(state);
+			StatePool.Release(state);
 		}
 
 		deserializeStack.Clear();

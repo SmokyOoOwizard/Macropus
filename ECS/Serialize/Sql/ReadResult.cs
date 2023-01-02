@@ -1,23 +1,43 @@
-﻿using Macropus.Schema;
+﻿using Macropus.CoolStuff;
+using Macropus.CoolStuff.Collections.Pool;
+using Macropus.Schema;
 
 namespace Macropus.ECS.Serialize.Sql;
 
-struct ReadResult
+class ReadResult : IClearable
 {
+	private static readonly DictionaryPool<DataSchemaElement, object?> ReadObjectsPool = DictionaryPool<DataSchemaElement, object?>.Instance;
+	private static readonly DictionaryPool<DataSchemaElement, long?> RefPool = DictionaryPool<DataSchemaElement, long?>.Instance;
+	private static readonly DictionaryPool<DataSchemaElement, List<long?>?> RefCollectionPool = DictionaryPool<DataSchemaElement, List<long?>?>.Instance;
+	private static readonly ListPool<long?> NullableIdsListPool = ListPool<long?>.Instance;
+
 	public Dictionary<DataSchemaElement, object?> SimpleValues;
 	public Dictionary<DataSchemaElement, object?> ReadRefs;
-	
+
 	public Dictionary<DataSchemaElement, long?> ComplexRefs;
 	public Dictionary<DataSchemaElement, List<long?>?> ComplexCollectionsRefs;
 
-	public static ReadResult Init()
+	public ReadResult Init()
 	{
-		return new()
+		SimpleValues = ReadObjectsPool.Take();
+		ReadRefs = ReadObjectsPool.Take();
+		ComplexRefs = RefPool.Take();
+		ComplexCollectionsRefs = RefCollectionPool.Take();
+
+		return this;
+	}
+
+	public void Clear()
+	{
+		ReadObjectsPool.Release(SimpleValues);
+		ReadObjectsPool.Release(ReadRefs);
+		RefPool.Release(ComplexRefs);
+
+		foreach (var (_, refs) in ComplexCollectionsRefs)
 		{
-			SimpleValues = new(),
-			ReadRefs =  new(),
-			ComplexRefs = new(),
-			ComplexCollectionsRefs = new()
-		};
+			if (refs != null)
+				NullableIdsListPool.Release(refs);
+		}
+		RefCollectionPool.Release(ComplexCollectionsRefs);
 	}
 }

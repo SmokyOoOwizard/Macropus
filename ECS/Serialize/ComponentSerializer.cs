@@ -44,7 +44,7 @@ public partial class ComponentSerializer : IDisposable
 		if (schema.Elements.Count == 0 || schema.SubSchemas.Any(s => s.Value.Elements.Count == 0))
 			// TODO
 			throw new Exception();
-		
+
 		var deserializer = deserilizers.Take();
 
 		try

@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Text.Json.Nodes;
+using Macropus.CoolStuff.Collections.Pool;
 using Macropus.ECS.Serialize.Extensions;
 using Macropus.Schema;
 using Macropus.Schema.Extensions;
@@ -8,13 +9,15 @@ namespace Macropus.ECS.Serialize.Sql;
 
 static class SqlComponentReader
 {
+	private static readonly Pool<ReadResult> ReadPool = Pool<ReadResult>.Instance; 
+	
 	// ReSharper disable once CognitiveComplexity
 	public static ReadResult ReadComponent(
 		IDataReader reader,
 		DataSchema schema
 	)
 	{
-		var result = ReadResult.Init();
+		var result = ReadPool.Take().Init();
 
 		for (var i = 0; i < schema.Elements.Count; i++)
 		{

@@ -1,7 +1,8 @@
 ﻿using System.Data;
 using Macropus.CoolStuff;
-using Macropus.CoolStuff.Collections.Pool;
 using Macropus.ECS.Component;
+using Macropus.ECS.Serialize.Serialize.State;
+using Macropus.ECS.Serialize.Serialize.State.Impl;
 using Macropus.ECS.Serialize.Sql;
 using Macropus.Schema;
 
@@ -9,9 +10,8 @@ namespace Macropus.ECS.Serialize.Serialize;
 
 class Serializer : IClearable
 {
-	private static readonly Pool<ComponentSerializeState> ComponentStatePool = new();
-	private static readonly Pool<ParallelSerializeState> ParallelStatePool = new();
-	
+	private static readonly StatePool StatePool = StatePool.Instance;
+
 	private readonly Stack<ISerializeState> serializeStack = new();
 	private readonly SqlSerializer serializer = new();
 
@@ -24,7 +24,7 @@ class Serializer : IClearable
 		{
 			var componentName = schema.SchemaOf.FullName;
 
-			serializeStack.Push(ComponentStatePool.Take().Init(schema, component));
+			serializeStack.Push(StatePool.ComponentSerializeStatePool.Take().Init(schema, component));
 
 			var componentId = 0L;
 			do
@@ -34,7 +34,7 @@ class Serializer : IClearable
 				{
 					case ComponentSerializeState css:
 					{
-						var tmp = await ProcessComponentSS(dbConnection, schema, css, target).ConfigureAwait(false);
+						var tmp = await ProcessComponentSS(dbConnection, schema, css).ConfigureAwait(false);
 						if (tmp == null)
 							continue;
 
@@ -58,6 +58,10 @@ class Serializer : IClearable
 			transaction.Rollback();
 			throw;
 		}
+		finally
+		{
+			DbCommandCache.Clear(dbConnection);
+		}
 	}
 
 	// ReSharper disable once InconsistentNaming
@@ -75,15 +79,14 @@ class Serializer : IClearable
 			parentCSS.AddRangeProcessed(pss.ParentRef.Value, r);
 		}
 
-		ParallelStatePool.Release(pss);
+		StatePool.Release(pss);
 	}
 
 	// ReSharper disable once InconsistentNaming
 	private async Task<long?> ProcessComponentSS(
 		IDbConnection dbConnection,
 		DataSchema schema,
-		ComponentSerializeState css,
-		ISerializeState target
+		ComponentSerializeState css
 	)
 	{
 		var unprocessedNullable = css.TryGetUnprocessed();
@@ -106,7 +109,7 @@ class Serializer : IClearable
 			parentCSS.AddProcessed(css.ParentRef.Value, componentId);
 		}
 
-		ComponentStatePool.Release(target);
+		StatePool.Release(css);
 
 		return componentId;
 	}
@@ -125,7 +128,7 @@ class Serializer : IClearable
 		var refSchema = schema.SubSchemas[unprocessed.Key.Info.SubSchemaId.Value];
 		if (refSchema.SubSchemas.Count == 0)
 		{
-			serializeStack.Push(ParallelStatePool.Take()
+			serializeStack.Push(StatePool.ParallelSerializeStatePool.Take()
 				.Init(refSchema, unprocessed.Value, unprocessed.Key));
 			return;
 		}
@@ -137,23 +140,13 @@ class Serializer : IClearable
 			return;
 		}
 
-		serializeStack.Push(ComponentStatePool.Take().Init(refSchema, newTarget, unprocessed.Key));
+		serializeStack.Push(StatePool.ComponentSerializeStatePool.Take().Init(refSchema, newTarget, unprocessed.Key));
 	}
 
 	public void Clear()
 	{
 		foreach (var state in serializeStack)
-		{
-			switch (state)
-			{
-				case ComponentSerializeState css:
-					ComponentStatePool.Release(css);
-					break;
-				case ParallelSerializeState pss:
-					ParallelStatePool.Release(pss);
-					break;
-			}
-		}
+			StatePool.Release(state);
 
 		serializeStack.Clear();
 		serializer.Clear();

@@ -2,21 +2,16 @@
 using Macropus.CoolStuff.Collections.Pool;
 using Macropus.Schema;
 
-namespace Macropus.ECS.Serialize.Serialize;
-
-class SerializeStatePools
-{
-	public readonly QueuePool<object?> UnprocessedQueuePool = new();
-	public readonly ListPool<long?> ProcessedListPool = new();
-}
+namespace Macropus.ECS.Serialize.Serialize.State.Impl;
 
 class ComponentSerializeState : ISerializeState
 {
-	private static readonly SerializeStatePools Pools = new();
+	private static readonly QueuePool<object?> NullableObjectQueuePool = QueuePool<object?>.Instance;
+	private static readonly ListPool<long?> NullableIdsListPool = ListPool<long?>.Instance;
 
 	private readonly Dictionary<DataSchemaElement, List<long?>?> complexRefs = new();
 	private readonly Stack<KeyValuePair<DataSchemaElement, Queue<object?>>> unprocessedComplexFields = new();
-	
+
 	public DataSchema? Schema;
 	public DataSchemaElement? ParentRef;
 	public object? Value;
@@ -32,32 +27,24 @@ class ComponentSerializeState : ISerializeState
 			if (element.Info.Type != ESchemaElementType.ComplexType)
 				continue;
 
-			var queue = Pools.UnprocessedQueuePool.Take();
+			var queue = NullableObjectQueuePool.Take();
 
 			var elementValue = element.FieldInfo.GetValue(value);
 
 			if (element.Info.CollectionType is ECollectionType.Array)
 			{
 				if (elementValue is IList array)
-				{
-					for (var i = 0; i < array.Count; i++)
-					{
-						queue.Enqueue(array[i]);
-					}
-				}
+					foreach (var t in array)
+						queue.Enqueue(t);
 			}
 			else
-			{
 				queue.Enqueue(element.FieldInfo.GetValue(value));
-			}
 
 			if (queue.Count == 0)
 			{
-				Pools.UnprocessedQueuePool.Release(queue);
-				if (elementValue == null)
-					complexRefs.Add(element, null);
-				else
-					complexRefs.Add(element, Pools.ProcessedListPool.Take());
+				NullableObjectQueuePool.Release(queue);
+
+				complexRefs.Add(element, elementValue == null ? null : new List<long?>());
 			}
 			else
 				unprocessedComplexFields.Push(new(element, queue));
@@ -90,7 +77,7 @@ class ComponentSerializeState : ISerializeState
 			{
 				unprocessedComplexFields.Pop();
 
-				Pools.UnprocessedQueuePool.Release(target.Value);
+				NullableObjectQueuePool.Release(target.Value);
 				continue;
 			}
 
@@ -102,19 +89,20 @@ class ComponentSerializeState : ISerializeState
 
 	public void AddProcessed(DataSchemaElement target, long? componentId)
 	{
-		if (!complexRefs.TryGetValue(target, out var list))
+		if (!complexRefs.TryGetValue(target, out var list) || list == null)
 		{
-			list = Pools.ProcessedListPool.Take();
+			list = NullableIdsListPool.Take();
 			complexRefs[target] = list;
 		}
 
 		list.Add(componentId);
 	}
+
 	public void AddRangeProcessed(DataSchemaElement target, long?[] componentsIds)
 	{
-		if (!complexRefs.TryGetValue(target, out var list))
+		if (!complexRefs.TryGetValue(target, out var list) || list == null)
 		{
-			list = Pools.ProcessedListPool.Take();
+			list = NullableIdsListPool.Take();
 			complexRefs[target] = list;
 		}
 
@@ -131,20 +119,20 @@ class ComponentSerializeState : ISerializeState
 		Schema = null;
 		ParentRef = null;
 		Value = null;
-		
-		foreach (var queue in unprocessedComplexFields)
+
+		foreach (var (_, value) in unprocessedComplexFields)
 		{
-			Pools.UnprocessedQueuePool.Release(queue.Value);
+			NullableObjectQueuePool.Release(value);
 		}
-		
+
 		unprocessedComplexFields.Clear();
 
-		foreach (var list in complexRefs)
+		foreach (var (_, value) in complexRefs)
 		{
-			if (list.Value != null)
-				Pools.ProcessedListPool.Release(list.Value);
+			if (value != null)
+				NullableIdsListPool.Release(value);
 		}
-		
+
 		complexRefs.Clear();
 	}
 }
