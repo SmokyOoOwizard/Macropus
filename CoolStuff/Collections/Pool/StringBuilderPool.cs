@@ -1,10 +1,12 @@
-﻿namespace Macropus.CoolStuff.Collections.Pool;
+﻿using System.Text;
 
-public class ListPool<T> : APool<List<T>>
+namespace Macropus.CoolStuff.Collections.Pool;
+
+public class StringBuilderPool : APool<StringBuilder>
 {
-	public static ListPool<T> Instance { get; } = new();
-
-	public override List<T> Take()
+	public static StringBuilderPool Instance { get; } = new();
+	
+	public override StringBuilder Take()
 	{
 		Interlocked.Increment(ref taken);
 
@@ -16,7 +18,7 @@ public class ListPool<T> : APool<List<T>>
 			if (value != null)
 				Bag.Remove(value);
 
-			return value ?? new List<T>();
+			return value ?? new StringBuilder();
 		}
 		finally
 		{
@@ -24,7 +26,7 @@ public class ListPool<T> : APool<List<T>>
 		}
 	}
 
-	public override void Release(List<T> obj)
+	public override void Release(StringBuilder obj)
 	{
 		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 		if (obj == null)

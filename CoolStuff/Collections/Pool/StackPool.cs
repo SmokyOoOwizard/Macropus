@@ -2,22 +2,50 @@
 
 public class StackPool<T> : APool<Stack<T>>
 {
+	public static StackPool<T> Instance { get; } = new();
+	
 	public override Stack<T> Take()
 	{
 		Interlocked.Increment(ref taken);
+		
+		Lock.EnterWriteLock();
 
-		if (stack.TryPop(out var obj))
-			return obj;
+		try
+		{
+			var value = Bag.FirstOrDefault();
+			if (value != null)
+				Bag.Remove(value);
 
-		return new Stack<T>();
+			return value ?? new Stack<T>();
+		}
+		finally
+		{
+			if (Lock.IsWriteLockHeld) Lock.ExitWriteLock();
+		}
 	}
 
 	public override void Release(Stack<T> obj)
 	{
+		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+		if (obj == null)
+			return;
+		
 		Interlocked.Decrement(ref taken);
+		
+		Lock.EnterWriteLock();
 
-		obj.Clear();
+		try
+		{
+			if (Bag.Contains(obj))
+				return;
 
-		stack.Push(obj);
+			obj.Clear();
+
+			Bag.Add(obj);
+		}
+		finally
+		{
+			if (Lock.IsWriteLockHeld) Lock.ExitWriteLock();
+		}
 	}
 }

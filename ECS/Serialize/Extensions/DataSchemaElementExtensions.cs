@@ -6,7 +6,7 @@ namespace Macropus.ECS.Serialize.Extensions;
 
 public static class DataSchemaElementExtensions
 {
-	public static string ToSqlInsert(this DataSchemaElement element, object? value)
+	public static string ToSqlArrayInsert(this DataSchemaElement element, object? value)
 	{
 		if (value == null)
 			return "null, ";
@@ -27,6 +27,30 @@ public static class DataSchemaElementExtensions
 				return $"'{value}', ";
 			default:
 				return $"{value}, ";
+		}
+	}
+
+	public static object? ToSqlInsert(this DataSchemaElement element, object? value)
+	{
+		if (value == null)
+			return null;
+
+		switch (element.Info.Type)
+		{
+			case ESchemaElementType.Guid:
+				return $"{(Guid)value:N}";
+
+			case ESchemaElementType.Int64:
+			case ESchemaElementType.UInt64:
+			case ESchemaElementType.Int128:
+			case ESchemaElementType.UInt128:
+			case ESchemaElementType.Float:
+			case ESchemaElementType.Double:
+			case ESchemaElementType.Decimal:
+			case ESchemaElementType.String:
+				return $"{value}";
+			default:
+				return value;
 		}
 	}
 

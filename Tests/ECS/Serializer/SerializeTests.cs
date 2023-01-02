@@ -1,4 +1,5 @@
-﻿using Macropus.ECS.Serialize;
+﻿using System.Diagnostics;
+using Macropus.ECS.Serialize;
 using Macropus.Schema;
 using Tests.Schema;
 using Tests.Utils.Random;
@@ -19,72 +20,105 @@ public class SerializeTests : TestsWithDatabase
 
 		using var serializer = new ComponentSerializer(DbConnection);
 		await serializer.CreateTablesBySchema(schema);
-		
-		for (int i = 0; i < 10; i++)
+
+		var components = new List<DataSchemaTestTypeComponent>();
+		components.Add(new DataSchemaTestTypeComponent());
+		components.Add(new DataSchemaTestTypeComponent
+		{
+			ComplexTypeArrayField = new DataSchemaSubSchemaComponent[0]
+		});
+		components.Add(new DataSchemaTestTypeComponent
+		{
+			SimpleComplexTypeArrayField = new DataSchemaSubSchemaComponent2[1000]
+		});
+
+		for (int i = 0; i < 300; i++)
+		{
+			components.Add(RandomUtils.GetRandomDataSchemaTestTypeComponent());
+		}
+
+		var stopwatch = new Stopwatch();
+
+		foreach (var component in components)
 		{
 			var entityId = Guid.NewGuid();
-			var testComponent = RandomUtils.GetRandomDataSchemaTestTypeComponent();
 
-			await serializer.SerializeAsync(schema, entityId, testComponent);
-
-			var deserializedComponentNullable =
-				await serializer.DeserializeAsync<DataSchemaTestTypeComponent>(schema, entityId);
-
-			Assert.NotNull(deserializedComponentNullable);
-
-			var deserializedComponent = deserializedComponentNullable.Value;
-
-			Assert.Equal(testComponent.ByteField, deserializedComponent.ByteField);
-			Assert.Equal(testComponent.SByteField, deserializedComponent.SByteField);
-
-			Assert.Equal(testComponent.UInt16Field, deserializedComponent.UInt16Field);
-			Assert.Equal(testComponent.Int16Field, deserializedComponent.Int16Field);
-
-			Assert.Equal(testComponent.UInt32Field, deserializedComponent.UInt32Field);
-			Assert.Equal(testComponent.Int32Field, deserializedComponent.Int32Field);
-
-			Assert.Equal(testComponent.UInt64Field, deserializedComponent.UInt64Field);
-			Assert.Equal(testComponent.Int64Field, deserializedComponent.Int64Field);
-
-			Assert.Equal(testComponent.UInt128Field, deserializedComponent.UInt128Field);
-			Assert.Equal(testComponent.Int128Field, deserializedComponent.Int128Field);
-
-			Assert.Equal(testComponent.FloatField, deserializedComponent.FloatField);
-			Assert.Equal(testComponent.DoubleField, deserializedComponent.DoubleField);
-			Assert.Equal(testComponent.DecimalField, deserializedComponent.DecimalField);
-
-			Assert.Equal(testComponent.StringField, deserializedComponent.StringField);
-			Assert.Equal(testComponent.GuidField, deserializedComponent.GuidField);
-
-			Assert.Equal(testComponent.ComplexField, deserializedComponent.ComplexField);
-
-			Assert.Equal(testComponent.ValueTypeArrayField.Length, deserializedComponent.ValueTypeArrayField.Length);
-			for (int j = 0; j < testComponent.ValueTypeArrayField.Length; j++)
-			{
-				Assert.Equal(testComponent.ValueTypeArrayField[j], deserializedComponent.ValueTypeArrayField[j]);
-			}
+			stopwatch.Restart();
+			await serializer.SerializeAsync(schema, entityId, component);
+			stopwatch.Stop();
 			
-			Assert.Equal(testComponent.ComplexTypeArrayField.Length, deserializedComponent.ComplexTypeArrayField.Length);
-			for (int j = 0; j < testComponent.ComplexTypeArrayField.Length; j++)
-			{
-				Assert.Equal(testComponent.ComplexTypeArrayField[j], deserializedComponent.ComplexTypeArrayField[j]);
-			}
+			Output.WriteLine($"Serialize: id: {entityId:N} \ttime: {stopwatch.Elapsed.ToString("c")}");
+			
+			stopwatch.Restart();
+			var deserializedComponentNullable = await serializer.DeserializeAsync<DataSchemaTestTypeComponent>(schema, entityId);
+			stopwatch.Stop();
+			
+			Output.WriteLine($"Deserialize: id: {entityId:N} \ttime: {stopwatch.Elapsed.ToString("c")}\n");
+			
+			CheckDeserializedComponent(deserializedComponentNullable, component);
+		}
+	}
 
-			Assert.Equal(testComponent.NullableValueType, deserializedComponent.NullableValueType);
-			
-			Assert.Equal(testComponent.NullableValueTypeArray.Length, deserializedComponent.NullableValueTypeArray.Length);
-			for (int j = 0; j < testComponent.NullableValueTypeArray.Length; j++)
+	private static void CheckDeserializedComponent(
+		DataSchemaTestTypeComponent? deserializedComponentNullable,
+		DataSchemaTestTypeComponent testComponent
+	)
+	{
+		Assert.NotNull(deserializedComponentNullable);
+
+		var deserializedComponent = deserializedComponentNullable.Value;
+
+		Assert.Equal(testComponent.ByteField, deserializedComponent.ByteField);
+		Assert.Equal(testComponent.SByteField, deserializedComponent.SByteField);
+
+		Assert.Equal(testComponent.UInt16Field, deserializedComponent.UInt16Field);
+		Assert.Equal(testComponent.Int16Field, deserializedComponent.Int16Field);
+
+		Assert.Equal(testComponent.UInt32Field, deserializedComponent.UInt32Field);
+		Assert.Equal(testComponent.Int32Field, deserializedComponent.Int32Field);
+
+		Assert.Equal(testComponent.UInt64Field, deserializedComponent.UInt64Field);
+		Assert.Equal(testComponent.Int64Field, deserializedComponent.Int64Field);
+
+		Assert.Equal(testComponent.UInt128Field, deserializedComponent.UInt128Field);
+		Assert.Equal(testComponent.Int128Field, deserializedComponent.Int128Field);
+
+		Assert.Equal(testComponent.FloatField, deserializedComponent.FloatField);
+		Assert.Equal(testComponent.DoubleField, deserializedComponent.DoubleField);
+		Assert.Equal(testComponent.DecimalField, deserializedComponent.DecimalField);
+
+		Assert.Equal(testComponent.StringField, deserializedComponent.StringField);
+		Assert.Equal(testComponent.GuidField, deserializedComponent.GuidField);
+
+		Assert.Equal(testComponent.ComplexField, deserializedComponent.ComplexField);
+
+		CheckArray(testComponent.ValueTypeArrayField, deserializedComponent.ValueTypeArrayField);
+		CheckArray(testComponent.ComplexTypeArrayField, deserializedComponent.ComplexTypeArrayField);
+
+		Assert.Equal(testComponent.NullableValueType, deserializedComponent.NullableValueType);
+
+		CheckArray(testComponent.NullableValueTypeArray, deserializedComponent.NullableValueTypeArray);
+		CheckArray(testComponent.ComplexNullableTypeArrayField, deserializedComponent.ComplexNullableTypeArrayField);
+		CheckArray(testComponent.SimpleComplexNullableTypeArrayField, deserializedComponent.SimpleComplexNullableTypeArrayField);
+		CheckArray(testComponent.SimpleComplexTypeArrayField, deserializedComponent.SimpleComplexTypeArrayField);
+
+		Assert.Equal(testComponent.NamedField, deserializedComponent.NamedField);
+	}
+
+	private static void CheckArray<T>(T[]? expected, T[]? actual)
+	{
+		if (expected == null)
+			Assert.Null(actual);
+		else
+			Assert.NotNull(actual);
+
+		if (expected != null && actual != null)
+		{
+			Assert.Equal(expected.Length, actual.Length);
+			for (int j = 0; j < expected.Length; j++)
 			{
-				Assert.Equal(testComponent.NullableValueTypeArray[j], deserializedComponent.NullableValueTypeArray[j]);
+				Assert.Equal(expected[j], actual[j]);
 			}
-			
-			Assert.Equal(testComponent.ComplexNullableTypeArrayField.Length, deserializedComponent.ComplexNullableTypeArrayField.Length);
-			for (int j = 0; j < testComponent.ComplexNullableTypeArrayField.Length; j++)
-			{
-				Assert.Equal(testComponent.ComplexNullableTypeArrayField[j], deserializedComponent.ComplexNullableTypeArrayField[j]);
-			}
-			
-			Assert.Equal(testComponent.NamedField, deserializedComponent.NamedField);
 		}
 	}
 }

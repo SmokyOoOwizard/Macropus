@@ -46,6 +46,9 @@ public struct DataSchemaTestTypeComponent : IComponent
 	public ulong? NullableValueType;
 	public ulong?[] NullableValueTypeArray;
 	public DataSchemaSubSchemaComponent?[] ComplexNullableTypeArrayField;
+	
+	public DataSchemaSubSchemaComponent2?[] SimpleComplexNullableTypeArrayField;
+	public DataSchemaSubSchemaComponent2[] SimpleComplexTypeArrayField;
 
 	[Name("IsCommonField")]
 	public float NamedField;

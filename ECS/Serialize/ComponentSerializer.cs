@@ -1,6 +1,8 @@
 ﻿using System.Data;
 using Macropus.CoolStuff.Collections.Pool;
 using Macropus.ECS.Component;
+using Macropus.ECS.Serialize.Deserialize;
+using Macropus.ECS.Serialize.Serialize;
 using Macropus.Schema;
 
 namespace Macropus.ECS.Serialize;
@@ -42,7 +44,7 @@ public partial class ComponentSerializer : IDisposable
 		if (schema.Elements.Count == 0 || schema.SubSchemas.Any(s => s.Value.Elements.Count == 0))
 			// TODO
 			throw new Exception();
-		
+
 		var deserializer = deserilizers.Take();
 
 		try

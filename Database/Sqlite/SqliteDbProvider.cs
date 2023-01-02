@@ -33,6 +33,18 @@ internal sealed class SqliteDbProvider : IDbProvider
 
 	public DbConnection CreateConnection()
 	{
-		return new SqliteConnection(connectionString);
+		var connection = new SqliteConnection(connectionString);
+		connection.Open();
+
+		var cmd = connection.CreateCommand();
+		cmd.CommandText = "PRAGMA journal_mode = WAL";
+		cmd.ExecuteNonQuery();
+
+		cmd.CommandText = "PRAGMA synchronous = NORMAL";
+		cmd.ExecuteNonQuery();
+		
+		cmd.Dispose();
+
+		return connection;
 	}
 }

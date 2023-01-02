@@ -39,6 +39,7 @@ public static partial class RandomUtils
 		{
 			component.ComplexTypeArrayField[i].InnerStructure.Name = RandomUtils.GetRandomString(64);
 		}
+		
 
 		if (RandomUtils.GetRandomBool())
 		{
@@ -49,10 +50,10 @@ public static partial class RandomUtils
 		component.NullableValueTypeArray = new ulong?[nullableValueTypeArrayLength];
 		for (int i = 0; i < nullableValueTypeArrayLength; i++)
 		{
-			if (RandomUtils.GetRandomBool())
-			{
-				component.NullableValueTypeArray[i] = RandomUtils.GetRandomUInt64();
-			}
+			if (!RandomUtils.GetRandomBool())
+				continue;
+			
+			component.NullableValueTypeArray[i] = RandomUtils.GetRandomUInt64();
 		}
 
 		var complexNullableTypeArrayFieldLength = RandomUtils.GetRandomByte();
@@ -60,12 +61,26 @@ public static partial class RandomUtils
 			new DataSchemaSubSchemaComponent?[complexNullableTypeArrayFieldLength];
 		for (int i = 0; i < complexNullableTypeArrayFieldLength; i++)
 		{
-			if (RandomUtils.GetRandomBool())
+			if (!RandomUtils.GetRandomBool())
+				continue;
+			
+			var st = new DataSchemaSubSchemaComponent();
+			st.InnerStructure.Name = RandomUtils.GetRandomString(64);
+			component.ComplexNullableTypeArrayField[i] = st;
+		}
+		
+		var simpleComplexNullableTypeArrayFieldLength = RandomUtils.GetRandomByte();
+		component.SimpleComplexNullableTypeArrayField = new DataSchemaSubSchemaComponent2?[simpleComplexNullableTypeArrayFieldLength];
+		for (int i = 0; i < simpleComplexNullableTypeArrayFieldLength; i++)
+		{
+			if (!RandomUtils.GetRandomBool())
+				continue;
+			
+			var st = new DataSchemaSubSchemaComponent2
 			{
-				var st = new DataSchemaSubSchemaComponent();
-				st.InnerStructure.Name = RandomUtils.GetRandomString(64);
-				component.ComplexNullableTypeArrayField[i] = st;
-			}
+				Name = RandomUtils.GetRandomString(64)
+			};
+			component.SimpleComplexNullableTypeArrayField[i] = st;
 		}
 
 		component.NamedField = RandomUtils.GetRandomFloat();
