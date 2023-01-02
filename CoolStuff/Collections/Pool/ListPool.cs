@@ -2,6 +2,8 @@
 
 public class ListPool<T> : APool<List<T>>
 {
+	public static ListPool<T> Instance { get; } = new();
+
 	public override List<T> Take()
 	{
 		Interlocked.Increment(ref taken);
@@ -11,6 +13,8 @@ public class ListPool<T> : APool<List<T>>
 		try
 		{
 			var value = Bag.FirstOrDefault();
+			if (value != null)
+				Bag.Remove(value);
 
 			return value ?? new List<T>();
 		}
@@ -22,6 +26,10 @@ public class ListPool<T> : APool<List<T>>
 
 	public override void Release(List<T> obj)
 	{
+		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+		if (obj == null)
+			return;
+		
 		Interlocked.Decrement(ref taken);
 
 		Lock.EnterWriteLock();

@@ -2,6 +2,8 @@
 
 public class Pool<T> : APool<T> where T : IClearable, new()
 {
+	public static Pool<T> Instance { get; } = new();
+	
 	public override T Take()
 	{
 		Interlocked.Increment(ref taken);
@@ -11,6 +13,8 @@ public class Pool<T> : APool<T> where T : IClearable, new()
 		try
 		{
 			var value = Bag.FirstOrDefault();
+			if (value != null)
+				Bag.Remove(value);
 
 			return value ?? new T();
 		}
@@ -22,6 +26,10 @@ public class Pool<T> : APool<T> where T : IClearable, new()
 
 	public override void Release(T obj)
 	{
+		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+		if (obj == null)
+			return;
+		
 		Interlocked.Decrement(ref taken);
 
 		Lock.EnterWriteLock();

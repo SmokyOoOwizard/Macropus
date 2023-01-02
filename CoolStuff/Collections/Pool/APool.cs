@@ -9,7 +9,22 @@ public abstract class APool<T> : IPool<T>
 
 	public int Taken => taken;
 
-	public int ObjectsInPool => Bag.Count;
+	public int ObjectsInPool
+	{
+		get
+		{
+			Lock.EnterReadLock();
+
+			try
+			{
+				return Bag.Count;
+			}
+			finally
+			{
+				Lock.ExitReadLock();
+			}
+		}
+	}
 
 	object IPool.Take()
 	{

@@ -2,6 +2,8 @@
 
 public class StackPool<T> : APool<Stack<T>>
 {
+	public static StackPool<T> Instance { get; } = new();
+	
 	public override Stack<T> Take()
 	{
 		Interlocked.Increment(ref taken);
@@ -11,6 +13,8 @@ public class StackPool<T> : APool<Stack<T>>
 		try
 		{
 			var value = Bag.FirstOrDefault();
+			if (value != null)
+				Bag.Remove(value);
 
 			return value ?? new Stack<T>();
 		}
@@ -22,6 +26,10 @@ public class StackPool<T> : APool<Stack<T>>
 
 	public override void Release(Stack<T> obj)
 	{
+		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+		if (obj == null)
+			return;
+		
 		Interlocked.Decrement(ref taken);
 		
 		Lock.EnterWriteLock();

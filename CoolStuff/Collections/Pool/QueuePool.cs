@@ -2,6 +2,8 @@
 
 public class QueuePool<T> : APool<Queue<T>>
 {
+	public static QueuePool<T> Instance { get; } = new();
+	
 	public override Queue<T> Take()
 	{
 		Interlocked.Increment(ref taken);
@@ -11,6 +13,8 @@ public class QueuePool<T> : APool<Queue<T>>
 		try
 		{
 			var value = Bag.FirstOrDefault();
+			if (value != null)
+				Bag.Remove(value);
 
 			return value ?? new Queue<T>();
 		}
@@ -22,6 +26,10 @@ public class QueuePool<T> : APool<Queue<T>>
 
 	public override void Release(Queue<T> obj)
 	{
+		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+		if (obj == null)
+			return;
+		
 		Interlocked.Decrement(ref taken);
 		
 		Lock.EnterWriteLock();

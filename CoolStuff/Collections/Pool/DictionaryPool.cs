@@ -2,6 +2,8 @@
 
 public class DictionaryPool<K, V> : APool<Dictionary<K, V>>
 {
+	public static DictionaryPool<K, V> Instance { get; } = new();
+	
 	public override Dictionary<K, V> Take()
 	{
 		Interlocked.Increment(ref taken);
@@ -11,6 +13,8 @@ public class DictionaryPool<K, V> : APool<Dictionary<K, V>>
 		try
 		{
 			var value = Bag.FirstOrDefault();
+			if (value != null)
+				Bag.Remove(value);
 
 			return value ?? new Dictionary<K, V>();
 		}
@@ -22,6 +26,10 @@ public class DictionaryPool<K, V> : APool<Dictionary<K, V>>
 
 	public override void Release(Dictionary<K, V> obj)
 	{
+		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+		if (obj == null)
+			return;
+		
 		Interlocked.Decrement(ref taken);
 		
 		Lock.EnterWriteLock();
