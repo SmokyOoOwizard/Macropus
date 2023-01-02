@@ -48,9 +48,6 @@ public sealed class SystemsExecutor
 
 	public void Execute(EntitiesContext context)
 	{
-		if (!context.HasChanges())
-			return;
-
 		foreach (var system in systems)
 		{
 			(system as IUpdateSystem)?.Update();
@@ -58,6 +55,9 @@ public sealed class SystemsExecutor
 			if (reactiveSystems.TryGetValue(system, out var systemContext))
 			{
 				var collector = systemContext.GetCollector();
+				if (collector.Count == 0)
+					continue;
+
 				systemContext.SwapCollector(context);
 
 				(system as IReactiveSystem)?.Execute(EntityWrapper.Wrap(collector.GetEntities(),

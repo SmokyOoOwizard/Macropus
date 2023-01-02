@@ -11,7 +11,7 @@ public sealed class EntitiesContext
 	private readonly List<IEntityCollector> collectors = new();
 
 	private readonly MergedComponentsStorage applyBufferMergedComponentsChanges = new();
-	
+
 	private readonly MergedComponentsStorage mergedHotComponentsStorage;
 
 
@@ -26,7 +26,7 @@ public sealed class EntitiesContext
 
 	public IReadOnlyComponentsStorage GetColdComponentsStorage()
 		=> componentsStorage;
-	
+
 	public IReadOnlyComponentsStorage GetHotComponentsStorage()
 		=> mergedHotComponentsStorage;
 
@@ -38,6 +38,9 @@ public sealed class EntitiesContext
 
 	public bool HasChanges()
 		=> changesComponent.EntitiesCount != 0;
+
+	public bool HasTriggeredCollectors()
+		=> collectors.Any(c => c.Count != 0);
 
 	public void AddCollector(IEntityCollector collector)
 	{
@@ -60,7 +63,7 @@ public sealed class EntitiesContext
 				if (collector.Filter.Filter(entity, applyBufferMergedComponentsChanges))
 					collector.AddEntity(entity);
 		}
-		
+
 		changesComponent.Apply(buffer);
 	}
 }
