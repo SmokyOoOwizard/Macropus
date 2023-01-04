@@ -3,7 +3,9 @@ using Macropus.Database;
 using Macropus.FileSystem;
 using Macropus.Project;
 using Macropus.Service.Impl;
+using Macropus.Web.Api;
 using Macropus.Web.Base;
+using Macropus.Web.Base.Extensions;
 using Macropus.Web.Front;
 
 namespace Macropus;
@@ -21,7 +23,13 @@ public class MacropusContainerBuilder : Module
 		builder.RegisterModule<DatabasesContainerBuilder>();
 		builder.RegisterModule<FileSystemContainerBuilder>();
 		
-		builder.RegisterModule<WebApiContainerBuilder>();
+		BindWeb(builder);
+	}
+
+	private static void BindWeb(ContainerBuilder builder)
+	{
+		builder.RegisterModule<WebBaseContainerBuilder>();
 		builder.RegisterModule<WebFrontContainerBuilder>();
+		builder.RegisterWebApiModule<WebApiContainerBuilder>("/api");
 	}
 }

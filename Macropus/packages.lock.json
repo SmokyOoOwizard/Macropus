@@ -679,6 +679,12 @@
           "Delogger": "[1.0.1, )"
         }
       },
+      "webapi": {
+        "type": "Project",
+        "dependencies": {
+          "WebBase": "[1.0.0, )"
+        }
+      },
       "webbase": {
         "type": "Project",
         "dependencies": {

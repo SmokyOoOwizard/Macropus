@@ -1877,6 +1877,7 @@
           "Schema": "[1.0.0, )",
           "Service": "[1.0.0, )",
           "System.Reactive": "[5.0.0, )",
+          "WebApi": "[1.0.0, )",
           "WebBase": "[1.0.0, )",
           "WebFront": "[1.0.0, )",
           "YamlDotNet": "[12.0.0, )"
@@ -1909,6 +1910,12 @@
         "type": "Project",
         "dependencies": {
           "Delogger": "[1.0.1, )"
+        }
+      },
+      "webapi": {
+        "type": "Project",
+        "dependencies": {
+          "WebBase": "[1.0.0, )"
         }
       },
       "webbase": {

@@ -4,7 +4,7 @@ using EmbedIO.WebApi;
 
 namespace Macropus.Web.Base.Extensions;
 
-public static class WebApiModuleExtensions
+internal static class WebApiModuleExtensions
 {
 	private static readonly Type FuncWebApiControllerType = typeof(Func<WebApiController>);
 

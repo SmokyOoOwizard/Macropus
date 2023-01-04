@@ -3,7 +3,7 @@ using Macropus.Web.Base.Service;
 
 namespace Macropus.Web.Base;
 
-public class WebApiContainerBuilder : Module
+public class WebBaseContainerBuilder : Module
 {
 	protected override void Load(ContainerBuilder builder)
 	{
