@@ -1925,6 +1925,8 @@
       "webfront": {
         "type": "Project",
         "dependencies": {
+          "Autofac": "[6.4.0, )",
+          "EmbedIO": "[3.5.2, )",
           "WebBase": "[1.0.0, )"
         }
       }
