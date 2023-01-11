@@ -4,9 +4,9 @@
     "net7.0": {
       "AsyncKeyedLock": {
         "type": "Direct",
-        "requested": "[6.0.4, )",
-        "resolved": "6.0.4",
-        "contentHash": "nrdMkm5lGysvBZ+5UzU415fb37Ng7GXzqQERbGmPE6U2JfFhhPNDkOFQX1gEyfUqc5A6kSq4HaGM087YoiF75A=="
+        "requested": "[6.0.5, )",
+        "resolved": "6.0.5",
+        "contentHash": "49ao7eyuinm32kP2qBWGc6vPpJmhiIiXbvSTJLobQIDRg4MicU5KNLthOhNBM/fG8B22v1+CTzz5bIs8PhueRQ=="
       }
     }
   }
