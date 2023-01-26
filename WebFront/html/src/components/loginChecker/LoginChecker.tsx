@@ -19,10 +19,6 @@ type Props = SliceProps & IProps & IDispatch;
 
 class LoginChecker extends React.Component<Props> {
 
-    constructor(props: Props) {
-        super(props);
-    }
-
     render() {
         return this.props.Token != undefined ? this.props.children : this.props.LoginPage
     }

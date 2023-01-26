@@ -1,0 +1,8 @@
+.pageSidebarWrapper {
+  display: flex;
+  flex-direction: row-reverse;
+
+  & > *:first-child {
+    flex-basis: 100%;
+  }
+}

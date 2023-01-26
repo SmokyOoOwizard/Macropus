@@ -1,0 +1,54 @@
+.sidebarOption {
+  user-select: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+
+  &.open > * {
+    width: 100vw !important;
+  }
+
+  .sidebarOptionTongue {
+    display: flex;
+    align-items: center;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    min-width: inherit;
+    min-height: inherit;
+    max-width: max-content;
+
+    width: 0;
+
+    white-space: nowrap;
+
+    background: aquamarine;
+
+    box-shadow: rgba(0, 0, 0, 0.05) 0 6px 24px 0, rgba(0, 0, 0, 0.08) 0 0 0 1px;
+    border-radius: 0.4em;
+
+    transition: width 0.3s ease;
+    overflow-x: hidden;
+
+    &:hover {
+      width: 100vw;
+    }
+
+    & > .openContent {
+      max-width: max-content;
+      width: inherit;
+
+      & > * {
+        padding: 10px;
+      }
+    }
+
+    & > .mainContent {
+      display: flex;
+      justify-content: center;
+      min-width: inherit;
+    }
+  }
+}
