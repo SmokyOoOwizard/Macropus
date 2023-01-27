@@ -9,8 +9,8 @@
       },
       "AsyncKeyedLock": {
         "type": "Transitive",
-        "resolved": "6.0.5",
-        "contentHash": "49ao7eyuinm32kP2qBWGc6vPpJmhiIiXbvSTJLobQIDRg4MicU5KNLthOhNBM/fG8B22v1+CTzz5bIs8PhueRQ=="
+        "resolved": "6.1.1",
+        "contentHash": "8Qlf6yVa0iaHhiI1UWrYdFoHQWN+MChEu/1N9ryU0nGbvr8OxkHu4UcII3d+0E74WMop8YL/7wxaybnRZMdqnw=="
       },
       "Autofac": {
         "type": "Transitive",
@@ -228,7 +228,7 @@
       "coolstuff": {
         "type": "Project",
         "dependencies": {
-          "AsyncKeyedLock": "[6.0.5, )"
+          "AsyncKeyedLock": "[6.1.1, )"
         }
       },
       "database": {
