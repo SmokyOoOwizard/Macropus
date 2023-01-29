@@ -1,0 +1,37 @@
+.topbar {
+  display: flex;
+  flex-direction: row;
+
+  gap: 10px;
+
+  & > * {
+    height: 40px;
+    min-width: 40px;
+    width: fit-content;
+
+    background: white;
+
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 0.4em;
+    box-shadow: rgba(0, 0, 0, 0.05) 0 6px 24px 0, rgba(0, 0, 0, 0.08) 0 0 0 1px;
+
+    & > input[type=text] {
+      box-sizing: border-box;
+      height: 100%;
+      width: auto;
+      margin: 0;
+      padding: 6px;
+      border: none;
+      outline: none;
+    }
+
+    & > svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}

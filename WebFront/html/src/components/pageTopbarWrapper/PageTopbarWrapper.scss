@@ -1,0 +1,21 @@
+.pageTopbarWrapper {
+  display: flex;
+  flex-direction: column-reverse;
+
+  & > *:first-child {
+    flex-basis: 100%;
+  }
+
+  & > .content {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    margin: {
+      left: 10px;
+      right: 6px;
+      top: 6px;
+      bottom: 6px;
+    };
+  }
+}

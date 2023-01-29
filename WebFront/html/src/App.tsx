@@ -1,9 +1,9 @@
 import React from 'react';
-import './App.css';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import LoginPage from "./Pages/LoginPage/LoginPage";
 import LoginChecker from "./components/loginChecker/LoginChecker";
 import PageSidebarWrapper from "./components/pageSidebarWrapper/PageSidebarWrapper";
+import PageTopbarWrapper from "./components/pageTopbarWrapper/PageTopbarWrapper";
 
 
 function App() {
@@ -12,9 +12,11 @@ function App() {
             <BrowserRouter>
                 <LoginChecker LoginPage={<LoginPage/>}>
                     <PageSidebarWrapper barEnable={true}>
-                        <Routes>
-                            <Route path="*" element={<h2>@@@@</h2>}/>
-                        </Routes>
+                        <PageTopbarWrapper>
+                            <Routes>
+                                <Route path="*" element={<h2>@@@@</h2>}/>
+                            </Routes>
+                        </PageTopbarWrapper>
                     </PageSidebarWrapper>
                 </LoginChecker>
             </BrowserRouter>
