@@ -23,7 +23,7 @@
 	
 	
 	<PropertyGroup>
-	  <HTMLPath>$(MSBuildProjectDirectory)\HTML</HTMLPath>
+	  <HTMLPath>$(MSBuildProjectDirectory)\html</HTMLPath>
 	  <HTMLBuildPath>$(HTMLPath)\build</HTMLBuildPath>
 	  <ResourcesFront>$(MSBuildProjectDirectory)\Resources\Front</ResourcesFront>
 	</PropertyGroup>
