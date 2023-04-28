@@ -1817,9 +1817,8 @@
       "ecs": {
         "type": "Project",
         "dependencies": {
-          "Database": "[1.0.0, )",
-          "Database.Interfaces": "[1.0.0, )",
-          "Linq": "[1.0.0, )",
+          "CoolStuff": "[1.0.0, )",
+          "Microsoft.Data.Sqlite.Core": "[6.0.9, )",
           "Schema": "[1.0.0, )"
         }
       },
@@ -1832,8 +1831,8 @@
       "filesystem": {
         "type": "Project",
         "dependencies": {
-          "CoolStuff": "[1.0.0, )",
           "Database": "[1.0.0, )",
+          "Database.Interfaces": "[1.0.0, )",
           "FileSystem.Interfaces": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore": "[6.0.9, )",
           "Microsoft.EntityFrameworkCore.Sqlite.Core": "[6.0.9, )",
@@ -1859,13 +1858,10 @@
           "Autofac": "[6.4.0, )",
           "Autofac.Extensions.DependencyInjection": "[8.0.0, )",
           "Database": "[1.0.0, )",
-          "Database.Interfaces": "[1.0.0, )",
           "Delogger": "[1.0.1, )",
           "Delogger.MicrosoftLogging": "[1.0.0, )",
-          "ECS": "[1.0.0, )",
           "Extensions": "[1.0.0, )",
           "FileSystem": "[1.0.0, )",
-          "FileSystem.Interfaces": "[1.0.0, )",
           "Interfaces": "[1.0.0, )",
           "Microsoft.Data.Sqlite.Core": "[6.0.9, )",
           "Microsoft.EntityFrameworkCore": "[6.0.9, )",
@@ -1909,6 +1905,13 @@
         "type": "Project",
         "dependencies": {
           "Delogger": "[1.0.1, )"
+        }
+      },
+      "tests.utils": {
+        "type": "Project",
+        "dependencies": {
+          "Autofac.Extras.Moq": "[6.1.0, )",
+          "xunit.extensibility.core": "[2.4.2, )"
         }
       },
       "webbase": {

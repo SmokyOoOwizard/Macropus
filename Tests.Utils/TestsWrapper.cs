@@ -1,9 +1,10 @@
 ﻿using System.Reflection;
 using Autofac;
 using Autofac.Extras.Moq;
+using Xunit;
 using Xunit.Abstractions;
 
-namespace Tests.Utils.Tests;
+namespace Tests.Utils;
 
 public abstract class TestsWrapper : IAsyncLifetime
 {

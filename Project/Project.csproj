@@ -18,8 +18,10 @@
     <ItemGroup>
       <ProjectReference Include="..\CoolStuff\CoolStuff.csproj" />
       <ProjectReference Include="..\Database.Interfaces\Database.Interfaces.csproj" />
+      <ProjectReference Include="..\Database\Database.Interfaces\Database.Interfaces.csproj" />
       <ProjectReference Include="..\Extensions\Extensions.csproj" />
       <ProjectReference Include="..\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
+      <ProjectReference Include="..\FileSystem\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
       <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
       <ProjectReference Include="..\Linq\Linq.csproj" />
     </ItemGroup>

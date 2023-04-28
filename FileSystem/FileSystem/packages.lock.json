@@ -34,11 +34,6 @@
         "resolved": "5.0.0",
         "contentHash": "erBZjkQHWL9jpasCE/0qKAryzVBJFxGHVBAvgRN1bzM0q2s1S4oYREEEL0Vb+1kA/6BKb5FjUZMp5VXmy+gzkQ=="
       },
-      "AsyncKeyedLock": {
-        "type": "Transitive",
-        "resolved": "6.1.1",
-        "contentHash": "8Qlf6yVa0iaHhiI1UWrYdFoHQWN+MChEu/1N9ryU0nGbvr8OxkHu4UcII3d+0E74WMop8YL/7wxaybnRZMdqnw=="
-      },
       "Autofac": {
         "type": "Transitive",
         "resolved": "6.4.0",
@@ -221,12 +216,6 @@
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "6.0.0",
           "System.Text.Encodings.Web": "6.0.0"
-        }
-      },
-      "coolstuff": {
-        "type": "Project",
-        "dependencies": {
-          "AsyncKeyedLock": "[6.1.1, )"
         }
       },
       "database": {

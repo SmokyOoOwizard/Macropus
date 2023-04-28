@@ -10,6 +10,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
+      <ProjectReference Include="..\..\FileSystem\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
       <ProjectReference Include="..\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
     </ItemGroup>
 

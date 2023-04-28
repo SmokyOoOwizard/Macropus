@@ -26,8 +26,14 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Database\Database.Interfaces\Database.Interfaces.csproj" />
+        <ProjectReference Include="..\Database\Database\Database.csproj" />
+        <ProjectReference Include="..\ECS\ECS\ECS.csproj" />
+        <ProjectReference Include="..\FileSystem\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
+        <ProjectReference Include="..\FileSystem\FileSystem\FileSystem.csproj" />
         <ProjectReference Include="..\Schema\Schema.csproj" />
         <ProjectReference Include="..\Macropus\Macropus.csproj" />
+        <ProjectReference Include="..\Tests.Utils\Tests.Utils.csproj" />
     </ItemGroup>
 
     <ItemGroup>
