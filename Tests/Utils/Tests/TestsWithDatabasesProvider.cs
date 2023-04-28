@@ -1,4 +1,5 @@
-﻿using Macropus.Database.Interfaces;
+﻿using Autofac;
+using Macropus.Database.Interfaces;
 using Xunit.Abstractions;
 
 #pragma warning disable CS8618
@@ -15,7 +16,7 @@ public abstract class TestsWithDatabasesProvider : TestsWithFileSystemProvider
 	{
 		await base.InitializeAsync();
 
-		DatabasesService = await Mock.Create<IDatabasesServiceFactory>()
+		DatabasesService = await Container.Resolve<IDatabasesServiceFactory>()
 			.Create(Path.Combine(ExecutePath, "db"), FileSystem);
 	}
 

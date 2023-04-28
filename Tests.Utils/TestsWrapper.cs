@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Autofac;
-using Autofac.Extras.Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -11,7 +10,8 @@ public abstract class TestsWrapper : IAsyncLifetime
 	public readonly string ExecutePath;
 
 	protected readonly ITestOutputHelper Output;
-	public readonly AutoMock Mock;
+
+	public readonly IContainer Container;
 
 	public TestsWrapper(ITestOutputHelper output)
 	{
@@ -30,7 +30,12 @@ public abstract class TestsWrapper : IAsyncLifetime
 		var converter = new ConsoleConverter(output);
 		Console.SetOut(converter);
 
-		Mock = AutoMock.GetLoose(Configure);
+		var containerBuilder = new ContainerBuilder();
+
+		// ReSharper disable once VirtualMemberCallInConstructor
+		Configure(containerBuilder);
+
+		Container = containerBuilder.Build();
 	}
 	
 	protected virtual void Configure(ContainerBuilder builder) { }
@@ -40,10 +45,8 @@ public abstract class TestsWrapper : IAsyncLifetime
 		return Task.CompletedTask;
 	}
 
-	public virtual Task DisposeAsync()
+	public virtual async Task DisposeAsync()
 	{
-		Mock.Dispose();
-		return Task.CompletedTask;
+		await Container.DisposeAsync();
 	}
-
 }

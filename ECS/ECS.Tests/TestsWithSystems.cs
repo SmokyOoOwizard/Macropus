@@ -12,16 +12,13 @@ public abstract class TestsWithSystems : TestsWrapper
 {
 	private readonly SystemsExecutor executor;
 
-	public readonly IComponentsStorage ExistsComponents;
-	public readonly EntitiesContext Context;
+	public readonly IComponentsStorage ExistsComponents = new ComponentsStorage();
+	public readonly EntityContext Context;
 
 	public TestsWithSystems(ITestOutputHelper output) : base(output)
 	{
-		ExistsComponents = new ComponentsStorage();
-
-		Context = new(ExistsComponents);
-
-		executor = Mock.Create<SystemsExecutor>();
+		executor = Container.Resolve<SystemsExecutor>();
+		Context = Container.Resolve<EntityContext>();
 
 		executor.SetCollectors(Context);
 	}
@@ -29,6 +26,9 @@ public abstract class TestsWithSystems : TestsWrapper
 	protected override void Configure(ContainerBuilder builder)
 	{
 		base.Configure(builder);
+		builder.RegisterInstance<EntityContext>(new("SomeContext", ExistsComponents))
+			.AsSelf()
+			.AsImplementedInterfaces();
 		builder.RegisterType<SystemsExecutor>().SingleInstance();
 	}
 

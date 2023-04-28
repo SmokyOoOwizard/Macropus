@@ -25,7 +25,7 @@ public abstract class TestsWithFileSystemProvider : TestsWithFiles
 	public override async Task InitializeAsync()
 	{
 		await base.InitializeAsync();
-		FileSystem = await Mock.Create<IFileSystemServiceFactory>()
+		FileSystem = await Container.Resolve<IFileSystemServiceFactory>()
 			.Create(ExecutePath, Path.Combine(ExecutePath, "fs.db"));
 	}
 
