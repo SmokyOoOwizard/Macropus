@@ -1,8 +1,8 @@
-﻿using Macropus.CoolStuff.Collections.Pool;
-using Macropus.ECS.Serialize.Deserialize.State.Impl;
-using Macropus.ECS.Serialize.Serialize.State.Impl;
+﻿using ECS.Serialize.Deserialize.State.Impl;
+using ECS.Serialize.Serialize.State.Impl;
+using Macropus.CoolStuff.Collections.Pool;
 
-namespace Macropus.ECS.Serialize;
+namespace ECS.Serialize;
 
 class StatePool
 {

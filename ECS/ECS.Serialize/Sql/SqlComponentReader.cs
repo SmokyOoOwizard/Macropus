@@ -1,11 +1,11 @@
 ﻿using System.Data;
 using System.Text.Json.Nodes;
+using ECS.Serialize.Extensions;
 using Macropus.CoolStuff.Collections.Pool;
-using Macropus.ECS.Serialize.Extensions;
 using Macropus.Schema;
 using Macropus.Schema.Extensions;
 
-namespace Macropus.ECS.Serialize.Sql;
+namespace ECS.Serialize.Sql;
 
 static class SqlComponentReader
 {

@@ -1,8 +1,7 @@
 ﻿using System.Data;
-using Macropus.CoolStuff;
 using Macropus.Schema;
 
-namespace Macropus.ECS.Serialize.Deserialize.State;
+namespace ECS.Serialize.Deserialize.State;
 
 public interface IDeserializeState : IState
 {

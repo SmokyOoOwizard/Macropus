@@ -1,6 +1,6 @@
 ﻿using Macropus.Schema;
 
-namespace Macropus.ECS.Serialize.Deserialize.State.Impl;
+namespace ECS.Serialize.Deserialize.State.Impl;
 
 class RefComponentDeserializeState : ComponentDeserializeState, ITargetDeserializeState
 {

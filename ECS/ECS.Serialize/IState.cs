@@ -1,6 +1,6 @@
 ﻿using Macropus.CoolStuff;
 
-namespace Macropus.ECS.Serialize;
+namespace ECS.Serialize;
 
 public interface IState : IClearable
 {

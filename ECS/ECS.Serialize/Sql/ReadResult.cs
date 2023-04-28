@@ -2,7 +2,7 @@
 using Macropus.CoolStuff.Collections.Pool;
 using Macropus.Schema;
 
-namespace Macropus.ECS.Serialize.Sql;
+namespace ECS.Serialize.Sql;
 
 class ReadResult : IClearable
 {

@@ -1,10 +1,9 @@
 ﻿using System.Data;
+using ECS.Serialize.Extensions;
 using Macropus.CoolStuff.Collections.Pool;
-using Macropus.ECS.Serialize.Extensions;
 using Macropus.Schema;
-using Microsoft.Data.Sqlite;
 
-namespace Macropus.ECS.Serialize;
+namespace ECS.Serialize;
 
 public static class DbCommandCache
 {

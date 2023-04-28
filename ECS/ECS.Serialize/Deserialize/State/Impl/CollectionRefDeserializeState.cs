@@ -2,9 +2,10 @@
 using Macropus.CoolStuff.Collections.Pool;
 using Macropus.Linq;
 using Macropus.Schema;
+
 // ReSharper disable ParameterHidesMember
 
-namespace Macropus.ECS.Serialize.Deserialize.State.Impl;
+namespace ECS.Serialize.Deserialize.State.Impl;
 
 class CollectionRefDeserializeState : ITargetDeserializeState
 {

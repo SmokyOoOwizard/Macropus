@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\CoolStuff\CoolStuff.csproj" />
+      <ProjectReference Include="..\..\Database\Database\Database.csproj" />
+      <ProjectReference Include="..\..\Linq\Linq.csproj" />
+      <ProjectReference Include="..\..\Schema\Schema.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.9" />
+    </ItemGroup>
+
+</Project>

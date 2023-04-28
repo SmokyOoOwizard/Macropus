@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Macropus.Schema;
 
-namespace Macropus.ECS.Serialize.Extensions;
+namespace ECS.Serialize.Extensions;
 
 public static class ESchemaElementTypeExtensions
 {

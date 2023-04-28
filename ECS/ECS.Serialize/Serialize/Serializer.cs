@@ -1,12 +1,12 @@
-﻿using System.Data;
+﻿using System.ComponentModel;
+using System.Data;
+using ECS.Serialize.Serialize.State;
+using ECS.Serialize.Serialize.State.Impl;
+using ECS.Serialize.Sql;
 using Macropus.CoolStuff;
-using Macropus.ECS.Component;
-using Macropus.ECS.Serialize.Serialize.State;
-using Macropus.ECS.Serialize.Serialize.State.Impl;
-using Macropus.ECS.Serialize.Sql;
 using Macropus.Schema;
 
-namespace Macropus.ECS.Serialize.Serialize;
+namespace ECS.Serialize.Serialize;
 
 class Serializer : IClearable
 {

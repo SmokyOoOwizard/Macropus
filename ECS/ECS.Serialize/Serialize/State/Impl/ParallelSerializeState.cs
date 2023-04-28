@@ -1,6 +1,6 @@
 ﻿using Macropus.Schema;
 
-namespace Macropus.ECS.Serialize.Serialize.State.Impl;
+namespace ECS.Serialize.Serialize.State.Impl;
 
 class ParallelSerializeState : ISerializeState
 {

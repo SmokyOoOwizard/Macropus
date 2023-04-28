@@ -1,12 +1,12 @@
-﻿using System.Data;
+﻿using System.ComponentModel;
+using System.Data;
+using ECS.Serialize.Deserialize.State;
+using ECS.Serialize.Deserialize.State.Impl;
 using Macropus.CoolStuff;
 using Macropus.Database.Adapter;
-using Macropus.ECS.Component;
-using Macropus.ECS.Serialize.Deserialize.State;
-using Macropus.ECS.Serialize.Deserialize.State.Impl;
 using Macropus.Schema;
 
-namespace Macropus.ECS.Serialize.Deserialize;
+namespace ECS.Serialize.Deserialize;
 
 class Deserializer : IClearable
 {

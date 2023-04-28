@@ -1,11 +1,11 @@
-﻿using System.Data;
+﻿using System.ComponentModel;
+using System.Data;
+using ECS.Serialize.Deserialize;
+using ECS.Serialize.Serialize;
 using Macropus.CoolStuff.Collections.Pool;
-using Macropus.ECS.Component;
-using Macropus.ECS.Serialize.Deserialize;
-using Macropus.ECS.Serialize.Serialize;
 using Macropus.Schema;
 
-namespace Macropus.ECS.Serialize;
+namespace ECS.Serialize;
 
 public partial class ComponentSerializer : IDisposable
 {

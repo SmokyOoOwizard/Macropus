@@ -1,10 +1,10 @@
 ﻿using System.Text;
+using ECS.Serialize.Extensions;
 using Macropus.Database.Adapter;
 using Macropus.Database.Extensions;
-using Macropus.ECS.Serialize.Extensions;
 using Macropus.Schema;
 
-namespace Macropus.ECS.Serialize;
+namespace ECS.Serialize;
 
 public partial class ComponentSerializer
 {

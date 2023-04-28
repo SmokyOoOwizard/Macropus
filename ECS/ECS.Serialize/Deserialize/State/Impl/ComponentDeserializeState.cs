@@ -1,14 +1,13 @@
 ﻿using System.Data;
+using ECS.Serialize.Sql;
 using Macropus.CoolStuff.Collections.Pool;
 using Macropus.Database.Adapter;
-using Macropus.ECS.Serialize.Sql;
 using Macropus.Linq;
 using Macropus.Schema;
-using Microsoft.Data.Sqlite;
 
 // ReSharper disable ParameterHidesMember
 
-namespace Macropus.ECS.Serialize.Deserialize.State.Impl;
+namespace ECS.Serialize.Deserialize.State.Impl;
 
 class ComponentDeserializeState : IDeserializeState
 {
