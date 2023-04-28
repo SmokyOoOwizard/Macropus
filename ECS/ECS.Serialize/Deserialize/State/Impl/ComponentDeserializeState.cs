@@ -4,6 +4,7 @@ using Macropus.CoolStuff.Collections.Pool;
 using Macropus.Database.Adapter;
 using Macropus.Linq;
 using Macropus.Schema;
+using Microsoft.Data.Sqlite;
 
 // ReSharper disable ParameterHidesMember
 

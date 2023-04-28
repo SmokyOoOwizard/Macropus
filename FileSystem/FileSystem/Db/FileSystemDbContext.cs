@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using Macropus.Database;
+﻿using Macropus.Database;
 using Macropus.FileSystem.Db.Models.File;
 using Microsoft.EntityFrameworkCore;
 
