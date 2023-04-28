@@ -60,7 +60,7 @@ public sealed class EntitiesContext
 		{
 			// TODO expression tree? maybe it's faster 
 			foreach (var collector in collectors)
-				if (collector.Filter.Filter(entity, applyBufferMergedComponentsChanges))
+				if (collector.Trigger.Filter(entity, applyBufferMergedComponentsChanges))
 					collector.AddEntity(entity);
 		}
 

@@ -1,4 +1,4 @@
-﻿using Macropus.ECS.Component.Filter;
+﻿using Macropus.ECS.Component.Trigger;
 
 namespace Macropus.ECS.Entity.Collector.Impl;
 
@@ -6,14 +6,14 @@ public class EntityCollector : IEntityCollector
 {
 	private readonly List<Guid> entities = new();
 
-	public ComponentsFilter Filter { get; }
+	public ComponentsTrigger Trigger { get; }
 
 	public int Count => entities.Count;
 
 
-	public EntityCollector(ComponentsFilter filter)
+	public EntityCollector(ComponentsTrigger trigger)
 	{
-		Filter = filter;
+		Trigger = trigger;
 	}
 
 	public IEnumerable<Guid> GetEntities()

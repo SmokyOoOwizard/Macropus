@@ -1,4 +1,4 @@
-﻿using Macropus.ECS.Component.Filter;
+﻿using Macropus.ECS.Component.Trigger;
 using Macropus.ECS.Entity.Collector;
 using Macropus.ECS.Entity.Collector.Impl;
 using Macropus.ECS.Entity.Context;
@@ -10,10 +10,10 @@ public sealed class ReactiveSystemContext
 	private IEntityCollector coldCollector;
 	private IEntityCollector hotCollector;
 
-	public ReactiveSystemContext(ComponentsFilter filter)
+	public ReactiveSystemContext(ComponentsTrigger trigger)
 	{
-		coldCollector = new EntityCollector(filter);
-		hotCollector = new EntityCollector(filter);
+		coldCollector = new EntityCollector(trigger);
+		hotCollector = new EntityCollector(trigger);
 	}
 
 	public IEntityCollector GetCollector()

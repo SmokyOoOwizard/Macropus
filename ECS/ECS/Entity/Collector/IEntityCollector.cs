@@ -1,10 +1,10 @@
-﻿using Macropus.ECS.Component.Filter;
+﻿using Macropus.ECS.Component.Trigger;
 
 namespace Macropus.ECS.Entity.Collector;
 
 public interface IEntityCollector
 {
-	ComponentsFilter Filter { get; }
+	ComponentsTrigger Trigger { get; }
 	int Count { get; }
 
 	IEnumerable<Guid> GetEntities();

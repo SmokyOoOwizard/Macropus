@@ -20,7 +20,7 @@ public sealed class SystemsExecutor
 	{
 		foreach (var system in systems)
 		{
-			var filter = system.GetFilter();
+			var filter = system.GetTrigger();
 			if (filter != null)
 			{
 				reactiveSystems[system] = new(filter.Value);
@@ -60,7 +60,7 @@ public sealed class SystemsExecutor
 
 				systemContext.SwapCollector(context);
 
-				(system as IReactiveSystem)?.Execute(EntityWrapper.Wrap(collector.GetEntities(),
+				(system as AReactiveSystem)?.Execute(EntityWrapper.Wrap(collector.GetEntities(),
 					context.GetHotComponentsStorage(), changes));
 				collector.Clear();
 

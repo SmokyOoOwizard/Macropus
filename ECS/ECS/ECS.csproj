@@ -10,6 +10,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\CoolStuff\CoolStuff.csproj" />
+      <ProjectReference Include="..\..\Database\Database.csproj" />
+      <ProjectReference Include="..\..\Linq\Linq.csproj" />
+      <ProjectReference Include="..\..\Schema\Schema.csproj" />
       <ProjectReference Include="..\Database.Interfaces\Database.Interfaces.csproj" />
       <ProjectReference Include="..\Database\Database.csproj" />
       <ProjectReference Include="..\Linq\Linq.csproj" />
