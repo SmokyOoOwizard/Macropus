@@ -9,6 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Database\Database.Interfaces\Database.Interfaces.csproj" />
+      <ProjectReference Include="..\..\Database\Database\Database.csproj" />
       <ProjectReference Include="..\CoolStuff\CoolStuff.csproj" />
       <ProjectReference Include="..\Database\Database.csproj" />
       <ProjectReference Include="..\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />

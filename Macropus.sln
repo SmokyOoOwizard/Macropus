@@ -21,9 +21,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Linq", "Linq\Linq.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoolStuff", "CoolStuff\CoolStuff.csproj", "{DAE55C8B-B10F-4DA3-AD9C-533A211E1E55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSystem", "FileSystem\FileSystem.csproj", "{8838F523-0541-44C3-A674-F9F5BD0CE9FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSystem", "FileSystem\FileSystem\FileSystem.csproj", "{8838F523-0541-44C3-A674-F9F5BD0CE9FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSystem.Interfaces", "FileSystem.Interfaces\FileSystem.Interfaces.csproj", "{01731961-91C9-4126-93AA-85D7D1ACF682}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSystem.Interfaces", "FileSystem\FileSystem.Interfaces\FileSystem.Interfaces.csproj", "{01731961-91C9-4126-93AA-85D7D1ACF682}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database.Interfaces", "Database\Database.Interfaces\Database.Interfaces.csproj", "{2493456D-5366-4A8F-BF3D-3C5653B4BB00}"
 EndProject
