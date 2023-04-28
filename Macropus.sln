@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Macropus", "Macropus\Macrop
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interfaces", "Interfaces\Interfaces.csproj", "{4E0FE93B-F960-4766-811E-2DB42E1D2F51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database", "Database\Database.csproj", "{E39F32E4-4A7B-43AE-9A8C-8A60D096B492}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database", "Database\Database\Database.csproj", "{E39F32E4-4A7B-43AE-9A8C-8A60D096B492}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{0DE04E8A-8941-4279-933C-4EC3D560F8CE}"
 EndProject
@@ -25,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSystem", "FileSystem\Fi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSystem.Interfaces", "FileSystem.Interfaces\FileSystem.Interfaces.csproj", "{01731961-91C9-4126-93AA-85D7D1ACF682}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database.Interfaces", "Database.Interfaces\Database.Interfaces.csproj", "{2493456D-5366-4A8F-BF3D-3C5653B4BB00}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database.Interfaces", "Database\Database.Interfaces\Database.Interfaces.csproj", "{2493456D-5366-4A8F-BF3D-3C5653B4BB00}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{04AD8001-566B-4287-8952-478D6B0B3244}"
 EndProject

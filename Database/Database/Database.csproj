@@ -18,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
       <ProjectReference Include="..\Database.Interfaces\Database.Interfaces.csproj" />
       <ProjectReference Include="..\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
     </ItemGroup>
