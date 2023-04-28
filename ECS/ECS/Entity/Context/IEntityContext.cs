@@ -5,7 +5,7 @@ namespace Macropus.ECS.Entity.Context;
 
 public interface IEntityContext
 {
-	string ContextName();
+	string ContextName { get; }
 	IEntityGroup GetGroup(ComponentsFilter filter);
 
 	bool HasChanges();

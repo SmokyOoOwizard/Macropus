@@ -30,7 +30,7 @@ public sealed class SystemsExecutor
 		this.systems = systems;
 	}
 
-	public void SetCollectors(EntitiesContext context)
+	public void SetCollectors(EntityContext context)
 	{
 		foreach (var system in reactiveSystems)
 		{
@@ -38,7 +38,7 @@ public sealed class SystemsExecutor
 		}
 	}
 
-	public void RemoveCollectors(EntitiesContext context)
+	public void RemoveCollectors(EntityContext context)
 	{
 		foreach (var system in reactiveSystems)
 		{
@@ -46,7 +46,7 @@ public sealed class SystemsExecutor
 		}
 	}
 
-	public void Execute(EntitiesContext context)
+	public void Execute(EntityContext context)
 	{
 		foreach (var system in systems)
 		{
@@ -60,11 +60,16 @@ public sealed class SystemsExecutor
 
 				systemContext.SwapCollector(context);
 
-				(system as AReactiveSystem)?.Execute(EntityWrapper.Wrap(collector.GetEntities(),
-					context.GetHotComponentsStorage(), changes));
-				collector.Clear();
+				if (system is AReactiveSystem reactiveSystem)
+				{
+					var entities = EntityWrapper.Wrap(collector.GetEntities(), context.cold, changes);
 
-				context.ApplyBuffer(changes);
+					reactiveSystem.Execute(entities);
+				}
+
+				collector.Clear();
+				context.ApplyChanges(changes);
+				context.SaveChanges();
 				changes.Clear();
 			}
 		}

@@ -19,7 +19,7 @@ public sealed class ReactiveSystemContext
 	public IEntityCollector GetCollector()
 		=> hotCollector;
 
-	public void SwapCollector(EntitiesContext context)
+	public void SwapCollector(EntityContext context)
 	{
 		var tmp = hotCollector;
 

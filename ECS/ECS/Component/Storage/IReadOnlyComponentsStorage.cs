@@ -1,5 +1,4 @@
 ﻿using Macropus.ECS.Component.Filter;
-using Macropus.ECS.Component.Storage.Impl;
 
 namespace Macropus.ECS.Component.Storage;
 

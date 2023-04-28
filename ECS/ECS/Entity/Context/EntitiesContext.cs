@@ -4,6 +4,7 @@ using Macropus.ECS.Entity.Collector;
 
 namespace Macropus.ECS.Entity.Context;
 
+// TODO remove. old style
 public sealed class EntitiesContext
 {
 	private readonly IComponentsStorage componentsStorage;
