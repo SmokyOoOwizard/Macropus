@@ -6,6 +6,11 @@ public readonly struct ComponentsTriggerBuilder
 
 	public ComponentsTriggerBuilder(EComponentsTriggerType type, params ComponentsTriggerBuilder[] subFilters) { }
 
+	public ComponentsTrigger Build()
+	{
+		throw new NotImplementedException();
+	}
+
 	public static ComponentsTriggerBuilder AllOf(params ComponentsTriggerBuilder[] filters)
 		=> new(EComponentsTriggerType.All, filters);
 

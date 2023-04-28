@@ -176,6 +176,6 @@ public readonly struct ComponentsFilterBuilder
 		}
 
 		if (nonComponents.Count > 0)
-			throw new FilterHasTypesWhichAreNotComponentsException(nonComponents.ToArray());
+			throw new TypesAreNotComponentsException(nonComponents.ToArray());
 	}
 }

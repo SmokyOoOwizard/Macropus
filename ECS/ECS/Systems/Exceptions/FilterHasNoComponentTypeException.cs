@@ -1,10 +1,10 @@
 ﻿namespace Macropus.ECS.Systems.Exceptions;
 
-public class FilterHasTypesWhichAreNotComponentsException : Exception
+public class TypesAreNotComponentsException : Exception
 {
 	public readonly Type[] NotComponentTypes;
 
-	public FilterHasTypesWhichAreNotComponentsException(Type[] notComponentTypes)
+	public TypesAreNotComponentsException(Type[] notComponentTypes)
 	{
 		NotComponentTypes = notComponentTypes;
 	}
