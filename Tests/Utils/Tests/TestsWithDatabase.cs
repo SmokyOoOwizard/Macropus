@@ -8,7 +8,7 @@ using Xunit.Abstractions;
 
 namespace Tests.Utils.Tests;
 
-public abstract class TestsWithDatabase : TestsWithFiles, IAsyncLifetime
+public abstract class TestsWithDatabase : TestsWithFiles
 {
 	public IDbConnection DbConnection { get; private set; }
 	public TestsWithDatabase(ITestOutputHelper output) : base(output) { }

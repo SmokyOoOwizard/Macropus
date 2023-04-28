@@ -4,12 +4,15 @@ namespace Macropus.ECS.Component.Filter;
 
 public readonly struct ComponentsFilter
 {
+	public static ComponentsFilter Empty => new();
+
 	private readonly Func<Guid, IReadOnlyComponentsStorage, bool> filter;
 
 	internal ComponentsFilter(Func<Guid, IReadOnlyComponentsStorage, bool> filter)
 	{
 		this.filter = filter;
 	}
+
 
 	public bool Filter(Guid entityId, IReadOnlyComponentsStorage storage)
 	{

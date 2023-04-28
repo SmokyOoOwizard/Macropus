@@ -1,12 +1,9 @@
-﻿using System.Diagnostics;
-using Macropus.ECS.Serialize;
+﻿using System.Data.Common;
+using System.Diagnostics;
 using Macropus.Schema;
-using Tests.Schema;
-using Tests.Utils.Random;
-using Tests.Utils.Tests;
 using Xunit.Abstractions;
 
-namespace Tests.ECS.Serializer;
+namespace ECS.Serialize.Tests;
 
 public class SerializeTests : TestsWithDatabase
 {

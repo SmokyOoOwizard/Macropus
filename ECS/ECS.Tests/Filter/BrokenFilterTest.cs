@@ -3,7 +3,7 @@ using Macropus.ECS.Systems.Exceptions;
 using Tests.Utils;
 using Xunit.Abstractions;
 
-namespace ECS.Tests;
+namespace ECS.Tests.Filter;
 
 public class BrokenFilterTest : TestsWrapper
 {

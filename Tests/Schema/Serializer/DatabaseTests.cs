@@ -1,10 +1,9 @@
-﻿using Macropus.ECS.Serialize;
+﻿using ECS.Serialize;
 using Macropus.Schema;
-using Tests.Schema;
 using Tests.Utils.Tests;
 using Xunit.Abstractions;
 
-namespace Tests.ECS.Serializer;
+namespace Tests.Schema.Serializer;
 
 public class DatabaseTests : TestsWithDatabase
 {

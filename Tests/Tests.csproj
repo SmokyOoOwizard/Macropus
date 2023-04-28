@@ -28,6 +28,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Database\Database.Interfaces\Database.Interfaces.csproj" />
         <ProjectReference Include="..\Database\Database\Database.csproj" />
+        <ProjectReference Include="..\ECS\ECS.Serialize\ECS.Serialize.csproj" />
         <ProjectReference Include="..\ECS\ECS\ECS.csproj" />
         <ProjectReference Include="..\FileSystem\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
         <ProjectReference Include="..\FileSystem\FileSystem\FileSystem.csproj" />
@@ -37,6 +38,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="ECS" />
         <Folder Include="Schema" />
     </ItemGroup>
 
