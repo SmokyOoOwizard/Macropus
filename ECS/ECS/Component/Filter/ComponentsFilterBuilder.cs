@@ -71,7 +71,7 @@ public readonly struct ComponentsFilterBuilder
 				mergeFunc = Expression.OrElse;
 				break;
 			default:
-				throw new Exception();
+				throw new ArgumentOutOfRangeException();
 		}
 
 		if (filterComponents.Length > 0)
@@ -124,7 +124,7 @@ public readonly struct ComponentsFilterBuilder
 	{
 		var expression = BuildHasComponent(filterComponents[0], entityIdParameter, componentsParameter);
 
-		for (int i = 1; i < filterComponents.Length; i++)
+		for (var i = 1; i < filterComponents.Length; i++)
 		{
 			expression = mergeFunc(expression,
 				BuildHasComponent(filterComponents[i], entityIdParameter, componentsParameter));
@@ -147,24 +147,6 @@ public readonly struct ComponentsFilterBuilder
 
 		return expression;
 	}
-
-	public static ComponentsFilterBuilder AllOf(params ComponentsFilterBuilder[] filters)
-		=> new(EComponentsFilterType.All, filters);
-
-	public static ComponentsFilterBuilder AllOf(params Type[] components)
-		=> new(EComponentsFilterType.All, components);
-
-	public static ComponentsFilterBuilder AnyOf(params ComponentsFilterBuilder[] filters)
-		=> new(EComponentsFilterType.Any, filters);
-
-	public static ComponentsFilterBuilder AnyOf(params Type[] components)
-		=> new(EComponentsFilterType.Any, components);
-
-	public static ComponentsFilterBuilder NoneOf(params ComponentsFilterBuilder[] filters)
-		=> new(EComponentsFilterType.None, filters);
-
-	public static ComponentsFilterBuilder NoneOf(params Type[] components)
-		=> new(EComponentsFilterType.None, components);
 
 	private static void CheckComponents(Type[] components)
 	{

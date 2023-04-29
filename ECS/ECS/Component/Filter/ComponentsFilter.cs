@@ -20,20 +20,20 @@ public readonly struct ComponentsFilter
 	}
 
 	public static ComponentsFilterBuilder AllOf(params ComponentsFilterBuilder[] filters)
-		=> ComponentsFilterBuilder.AllOf(filters);
+		=> new(EComponentsFilterType.All, filters);
 
 	public static ComponentsFilterBuilder AllOf(params Type[] components)
-		=> ComponentsFilterBuilder.AllOf(components);
+		=> new(EComponentsFilterType.All, components);
 
 	public static ComponentsFilterBuilder AnyOf(params ComponentsFilterBuilder[] filters)
-		=> ComponentsFilterBuilder.AnyOf(filters);
+		=> new(EComponentsFilterType.Any, filters);
 
 	public static ComponentsFilterBuilder AnyOf(params Type[] components)
-		=> ComponentsFilterBuilder.AnyOf(components);
+		=> new(EComponentsFilterType.Any, components);
 
 	public static ComponentsFilterBuilder NoneOf(params ComponentsFilterBuilder[] filters)
-		=> ComponentsFilterBuilder.NoneOf(filters);
+		=> new(EComponentsFilterType.None, filters);
 
 	public static ComponentsFilterBuilder NoneOf(params Type[] components)
-		=> ComponentsFilterBuilder.NoneOf(components);
+		=> new(EComponentsFilterType.None, components);
 }
