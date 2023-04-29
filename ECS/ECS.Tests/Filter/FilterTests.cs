@@ -73,5 +73,6 @@ public class FilterTests : TestsWithSystems
 		}
 
 		Context.ApplyChanges(buffer);
+		Context.SaveChanges();
 	}
 }

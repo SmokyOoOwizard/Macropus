@@ -30,6 +30,7 @@ public class RemoveReadOnlyComponentTest : TestsWithSystems
 		var buffer = new ComponentsStorage();
 		buffer.ReplaceComponent(entityId, new ReadOnlyComponent());
 		Context.ApplyChanges(buffer);
+		Context.SaveChanges();
 
 		try
 		{

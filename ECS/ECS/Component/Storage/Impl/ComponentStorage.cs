@@ -74,7 +74,7 @@ public class ComponentStorage<T> : ComponentStorage where T : struct, IComponent
 
 	public override void RemoveComponent(Guid entity)
 	{
-		if (isReadOnlyComponent && components.ContainsKey(entity))
+		if (isReadOnlyComponent)
 			throw new IsReadOnlyComponentException();
 
 		components[entity] = null;

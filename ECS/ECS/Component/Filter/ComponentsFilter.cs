@@ -4,7 +4,7 @@ namespace Macropus.ECS.Component.Filter;
 
 public readonly struct ComponentsFilter
 {
-	public static ComponentsFilter Empty => new();
+	public static ComponentsFilter Empty => new((_, _) => true);
 
 	private readonly Func<Guid, IReadOnlyComponentsStorage, bool> filter;
 

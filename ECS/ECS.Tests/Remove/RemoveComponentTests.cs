@@ -44,6 +44,11 @@ public class RemoveComponentTests : TestsWithSystems
 	{
 		var entityId = Guid.NewGuid();
 
+		var buffer = new ComponentsStorage();
+		buffer.ReplaceComponent(entityId, new EmptyTestComponent2());
+		Context.ApplyChanges(buffer);
+		Context.SaveChanges();
+
 		Assert.False(Context.cold.HasComponent<EmptyTestComponent1>(entityId));
 
 		ExecuteSystems();
