@@ -2,8 +2,6 @@
 using Macropus.ECS.Systems;
 using Macropus.ECS.Systems.Extensions;
 
-// ReSharper disable SuspiciousTypeConversion.Global
-
 namespace Macropus.ECS;
 
 public sealed class SystemsExecutor
@@ -37,25 +35,28 @@ public sealed class SystemsExecutor
 	{
 		foreach (var system in systems)
 		{
-			(system as IUpdateSystem)?.Update();
-
-			if (reactiveSystems.TryGetValue(system, out var systemContext))
+			switch (system)
 			{
-				var collector = systemContext.GetCollector();
-				if (collector.Count == 0)
-					continue;
-
-				systemContext.SwapCollector(context);
-
-				if (system is IReactiveSystem reactiveSystem)
+				case IUpdateSystem updateSystem:
+					updateSystem.Update();
+					break;
+				case IReactiveSystem reactiveSystem when reactiveSystems.TryGetValue(system, out var systemContext):
 				{
+					var collector = systemContext.GetCollector();
+					if (collector.Count == 0)
+						break;
+
+					systemContext.SwapCollector(context);
+
 					var entities = context.GetGroup(collector);
 					reactiveSystem.Execute(entities.AsEnumerable());
-				}
 
-				collector.Clear();
-				context.SaveChanges();
+					collector.Clear();
+					break;
+				}
 			}
+
+			context.SaveChanges();
 		}
 	}
 }
