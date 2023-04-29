@@ -14,7 +14,6 @@ public class EntityContext : IEntityContext
 	private readonly IComponentsStorage changes;
 
 	private readonly List<IEntityCollector> collectors = new();
-	private readonly MergedComponentsStorage applyBufferMergedComponentsChanges = new();
 
 	public EntityContext(string contextName, IComponentsStorage cold, IComponentsStorage changes)
 	{
@@ -28,14 +27,14 @@ public class EntityContext : IEntityContext
 	public IEntityGroup GetGroup(ComponentsFilter filter)
 	{
 		var entities = EntityWrapper.Wrap(cold.GetEntities(filter), cold, changes);
-		// TODO changes does not apply to collectors
+
 		return new EntityGroup(entities);
 	}
 
 	public IEntityGroup GetGroup(IEntityCollector collector)
 	{
 		var entities = EntityWrapper.Wrap(collector.GetEntities(), cold, changes);
-		// TODO changes does not apply to collectors
+
 		return new EntityGroup(entities);
 	}
 
@@ -53,21 +52,19 @@ public class EntityContext : IEntityContext
 
 	public void ApplyChanges(IReadOnlyComponentsStorage buffer)
 	{
-		applyBufferMergedComponentsChanges.SetStorages(buffer, changes);
-
-		foreach (var entity in buffer.GetEntities())
-		{
-			// TODO expression tree? maybe it's faster
-			foreach (var collector in collectors)
-				if (collector.Trigger.Filter(entity, applyBufferMergedComponentsChanges))
-					collector.AddEntity(entity);
-		}
-
 		changes.Apply(buffer);
 	}
 
 	public void SaveChanges()
 	{
+		foreach (var entity in changes.GetEntities())
+		{
+			// TODO expression tree? maybe it's faster
+			foreach (var collector in collectors)
+				if (collector.Trigger.Filter(entity, changes))
+					collector.AddEntity(entity);
+		}
+
 		cold.Apply(changes);
 		changes.Clear();
 	}
