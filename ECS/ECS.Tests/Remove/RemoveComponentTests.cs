@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using ECS.Tests.Filter.Components;
 using ECS.Tests.Remove.Systems;
+using Macropus.ECS.Component.Filter;
 using Macropus.ECS.Component.Storage.Impl;
 using Macropus.ECS.Systems;
 using Xunit.Abstractions;
@@ -17,7 +18,7 @@ public class RemoveComponentTests : TestsWithSystems
 		builder.RegisterType<RemoveTestComponentSystem>()
 			.AsImplementedInterfaces()
 			.AsSelf()
-			.As<ASystem>()
+			.As<ISystem>()
 			.SingleInstance();
 	}
 
@@ -31,12 +32,13 @@ public class RemoveComponentTests : TestsWithSystems
 		Context.ApplyChanges(buffer);
 		Context.SaveChanges();
 
-		Assert.True(Context.cold.HasComponent<EmptyTestComponent1>(entityId));
+		var group = Context.GetGroup(ComponentsFilter.AllOf(typeof(EmptyTestComponent1)).Build());
+		Assert.True(group.Count == 1);
 
 		ExecuteSystems();
 		Context.SaveChanges();
 
-		Assert.False(Context.cold.HasComponent<EmptyTestComponent1>(entityId));
+		Assert.True(group.Count == 0);
 	}
 
 	[Fact]
@@ -49,10 +51,11 @@ public class RemoveComponentTests : TestsWithSystems
 		Context.ApplyChanges(buffer);
 		Context.SaveChanges();
 
-		Assert.False(Context.cold.HasComponent<EmptyTestComponent1>(entityId));
+		var group = Context.GetGroup(ComponentsFilter.AllOf(typeof(EmptyTestComponent1)).Build());
+		Assert.True(group.Count == 0);
 
 		ExecuteSystems();
 
-		Assert.False(Context.cold.HasComponent<EmptyTestComponent1>(entityId));
+		Assert.True(group.Count == 0);
 	}
 }

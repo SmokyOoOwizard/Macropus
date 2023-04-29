@@ -18,7 +18,7 @@ public class RemoveReadOnlyComponentTest : TestsWithSystems
 		builder.RegisterType<RemoveReadOnlyComponentSystem>()
 			.AsImplementedInterfaces()
 			.AsSelf()
-			.As<ASystem>()
+			.As<ISystem>()
 			.SingleInstance();
 	}
 

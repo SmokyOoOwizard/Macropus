@@ -1,7 +1,4 @@
-﻿using Macropus.ECS.Component.Storage;
-using Macropus.ECS.Component.Storage.Impl;
-using Macropus.ECS.Entity;
-using Macropus.ECS.Entity.Context;
+﻿using Macropus.ECS.Entity.Context;
 using Macropus.ECS.Systems;
 using Macropus.ECS.Systems.Extensions;
 
@@ -11,38 +8,28 @@ namespace Macropus.ECS;
 
 public sealed class SystemsExecutor
 {
-	private readonly ASystem[] systems;
-	private readonly Dictionary<ASystem, ReactiveSystemContext> reactiveSystems = new();
+	private readonly ISystem[] systems;
+	private readonly Dictionary<ISystem, ReactiveSystemContext> reactiveSystems = new();
 
-	private readonly IComponentsStorage changes = new ComponentsStorage();
-
-	public SystemsExecutor(params ASystem[] systems)
+	public SystemsExecutor(params ISystem[] systems)
 	{
 		foreach (var system in systems)
 		{
-			var filter = system.GetTrigger();
-			if (filter != null)
+			var trigger = system.GetTrigger();
+			if (trigger != null)
 			{
-				reactiveSystems[system] = new(filter.Value);
+				reactiveSystems[system] = new(trigger.Value);
 			}
 		}
 
 		this.systems = systems;
 	}
 
-	public void SetCollectors(EntityContext context)
+	public void SetContext(EntityContext context)
 	{
-		foreach (var system in reactiveSystems)
+		foreach (var (_, rContext) in reactiveSystems)
 		{
-			context.AddCollector(system.Value.GetCollector());
-		}
-	}
-
-	public void RemoveCollectors(EntityContext context)
-	{
-		foreach (var system in reactiveSystems)
-		{
-			context.RemoveCollector(system.Value.GetCollector());
+			context.AddCollector(rContext.GetCollector());
 		}
 	}
 
@@ -60,17 +47,14 @@ public sealed class SystemsExecutor
 
 				systemContext.SwapCollector(context);
 
-				if (system is AReactiveSystem reactiveSystem)
+				if (system is IReactiveSystem reactiveSystem)
 				{
-					var entities = EntityWrapper.Wrap(collector.GetEntities(), context.cold, changes);
-
-					reactiveSystem.Execute(entities);
+					var entities = context.GetGroup(collector);
+					reactiveSystem.Execute(entities.AsEnumerable());
 				}
 
 				collector.Clear();
-				context.ApplyChanges(changes);
 				context.SaveChanges();
-				changes.Clear();
 			}
 		}
 	}

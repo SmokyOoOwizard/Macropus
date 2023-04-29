@@ -20,7 +20,7 @@ public abstract class TestsWithSystems : TestsWrapper
 		executor = Container.Resolve<SystemsExecutor>();
 		Context = Container.Resolve<EntityContext>();
 
-		executor.SetCollectors(Context);
+		executor.SetContext(Context);
 	}
 
 	protected override void Configure(ContainerBuilder builder)

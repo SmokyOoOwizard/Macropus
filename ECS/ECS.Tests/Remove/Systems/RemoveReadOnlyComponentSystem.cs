@@ -5,7 +5,7 @@ using Macropus.ECS.Systems;
 
 namespace ECS.Tests.Remove.Systems;
 
-public class RemoveReadOnlyComponentSystem : ASystem, IUpdateSystem
+public class RemoveReadOnlyComponentSystem : ISystem, IUpdateSystem
 {
 	private readonly IEntityContext context;
 
@@ -24,9 +24,9 @@ public class RemoveReadOnlyComponentSystem : ASystem, IUpdateSystem
 		var filter = GetFilter();
 		var entities = context.GetGroup(filter);
 
-		Assert.NotEmpty(entities);
+		Assert.NotEmpty(entities.AsEnumerable());
 
-		foreach (var entity in entities)
+		foreach (var entity in entities.AsEnumerable())
 			entity.RemoveComponent<ReadOnlyComponent>();
 	}
 }

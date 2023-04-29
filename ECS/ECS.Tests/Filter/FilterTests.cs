@@ -17,7 +17,7 @@ public class FilterTests : TestsWithSystems
 		builder.RegisterType<FilterComponentUpdateSystem>()
 			.AsImplementedInterfaces()
 			.AsSelf()
-			.As<ASystem>()
+			.As<ISystem>()
 			.SingleInstance();
 	}
 

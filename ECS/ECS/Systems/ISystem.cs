@@ -1,6 +1,6 @@
 ﻿namespace Macropus.ECS.Systems;
 
-public abstract class ASystem
+public interface ISystem
 {
 	
 }

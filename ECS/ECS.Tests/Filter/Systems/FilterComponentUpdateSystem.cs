@@ -5,7 +5,7 @@ using Macropus.ECS.Systems;
 
 namespace ECS.Tests.Filter.Systems;
 
-public class FilterComponentUpdateSystem : ASystem, IUpdateSystem
+public class FilterComponentUpdateSystem : ISystem, IUpdateSystem
 {
 	private readonly IEntityContext context;
 
@@ -27,9 +27,9 @@ public class FilterComponentUpdateSystem : ASystem, IUpdateSystem
 		var filter = GetFilter();
 		var entities = context.GetGroup(filter);
 
-		Assert.NotEmpty(entities);
+		Assert.NotEmpty(entities.AsEnumerable());
 
-		foreach (var entity in entities)
+		foreach (var entity in entities.AsEnumerable())
 		{
 			if (entity.HasComponent<EmptyTestComponent2>()
 			    && entity.HasComponent<EmptyTestComponent4>()
