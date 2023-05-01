@@ -3,7 +3,7 @@ using Macropus.ECS.Systems.Exceptions;
 using Tests.Utils;
 using Xunit.Abstractions;
 
-namespace ECS.Tests;
+namespace ECS.Tests.Trigger;
 
 public class BrokenTriggerTest : TestsWrapper
 {
@@ -18,10 +18,10 @@ public class BrokenTriggerTest : TestsWrapper
 		}
 		catch (Exception e)
 		{
-			if (e is not TypesAreNotComponentsException)
-				throw;
+			if (e is TypesAreNotComponentsException)
+				return;
 
-			return;
+			throw;
 		}
 
 		Assert.Fail("Components trigger must throw exception if types if not components");
