@@ -8,23 +8,23 @@ using Macropus.Linq;
 
 namespace Macropus.ECS.Component.Storage.Impl;
 
-public class ComponentsStorage : IComponentsStorage
+public class ComponentsChangesStorage : IComponentsChangesStorage
 {
 	private readonly Dictionary<string, ComponentStorage> storage = new();
 	private readonly HashSet<Guid> existsEntities = new();
 
-	public uint ComponentsCount => (uint)storage.Count;
-	public uint EntitiesCount => (uint)existsEntities.Count;
+	public uint ComponentsCount => (uint) storage.Count;
+	public uint EntitiesCount => (uint) existsEntities.Count;
 
 	public bool HasComponent<T>(Guid entityId) where T : struct, IComponent
 	{
 		if (!TryGetStorage<T>(out var entities))
 			return false;
 
-		if (!entities.GetGenericComponent(entityId, out _))
+		if (!entities.GetGenericComponent(entityId, out var component))
 			return false;
 
-		return true;
+		return component != null;
 	}
 
 	public bool HasComponent(Guid entityId, string name)
@@ -40,6 +40,30 @@ public class ComponentsStorage : IComponentsStorage
 		return component != null;
 	}
 
+	public bool HadComponent<T>(Guid entityId) where T : struct, IComponent
+	{
+		if (!TryGetStorage<T>(out var entities))
+			return false;
+
+		if (!entities.GetGenericComponent(entityId, out var component))
+			return false;
+
+		return component == null;
+	}
+
+	public bool HadComponent(Guid entityId, string name)
+	{
+		if (string.IsNullOrWhiteSpace(name))
+			return false;
+
+		if (!TryGetStorage(name, out var entities))
+			return false;
+
+		var component = entities.GetComponent(entityId);
+
+		return component == null;
+	}
+
 	public T GetComponent<T>(Guid entityId) where T : struct, IComponent
 	{
 		if (!TryGetStorage<T>(out var entities))
@@ -48,7 +72,10 @@ public class ComponentsStorage : IComponentsStorage
 		if (!entities.GetGenericComponent(entityId, out var component))
 			throw new ComponentNotFoundException();
 
-		return component;
+		if (component == null)
+			throw new ComponentNotFoundException();
+
+		return (T) component;
 	}
 
 	public IComponent GetComponent(Guid entityId, string name)
@@ -134,7 +161,7 @@ public class ComponentsStorage : IComponentsStorage
 		existsEntities.Clear();
 	}
 
-	private bool TryGetStorage<T>(out ComponentStorage<T> componentStorage) where T : struct, IComponent
+	private bool TryGetStorage<T>(out ComponentChangesStorage<T> componentStorage) where T : struct, IComponent
 	{
 		var componentName = typeof(T).FullName;
 		if (string.IsNullOrWhiteSpace(componentName))
@@ -146,7 +173,7 @@ public class ComponentsStorage : IComponentsStorage
 			return false;
 		}
 
-		componentStorage = (cStorage as ComponentStorage<T>)!;
+		componentStorage = (cStorage as ComponentChangesStorage<T>)!;
 		return true;
 	}
 
@@ -155,7 +182,7 @@ public class ComponentsStorage : IComponentsStorage
 		return storage.TryGetValue(componentName, out componentStorage!);
 	}
 
-	private void AddStorage<T>(out ComponentStorage<T> componentStorage) where T : struct, IComponent
+	private void AddStorage<T>(out ComponentChangesStorage<T> componentStorage) where T : struct, IComponent
 	{
 		var componentName = typeof(T).FullName;
 		if (string.IsNullOrWhiteSpace(componentName))
@@ -163,14 +190,13 @@ public class ComponentsStorage : IComponentsStorage
 
 		if (storage.TryGetValue(componentName, out var cStorage))
 		{
-			componentStorage = (cStorage as ComponentStorage<T>)!;
+			componentStorage = (cStorage as ComponentChangesStorage<T>)!;
 			return;
 		}
 
 		componentStorage = new();
 		storage[componentName] = componentStorage;
 	}
-
 
 	private void AddStorage(Type componentType, out ComponentStorage componentStorage)
 	{
