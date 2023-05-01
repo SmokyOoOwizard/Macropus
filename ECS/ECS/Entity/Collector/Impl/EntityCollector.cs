@@ -1,4 +1,6 @@
-﻿using Macropus.ECS.Component.Trigger;
+﻿using System;
+using System.Collections.Generic;
+using Macropus.ECS.Component.Trigger;
 
 namespace Macropus.ECS.Entity.Collector.Impl;
 

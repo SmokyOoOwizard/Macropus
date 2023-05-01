@@ -1,4 +1,5 @@
-﻿using Macropus.ECS.Component;
+﻿using System;
+using Macropus.ECS.Component;
 
 namespace Macropus.ECS.Entity;
 

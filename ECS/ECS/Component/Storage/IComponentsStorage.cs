@@ -1,4 +1,6 @@
-﻿namespace Macropus.ECS.Component.Storage;
+﻿using System;
+
+namespace Macropus.ECS.Component.Storage;
 
 public interface IComponentsStorage : IReadOnlyComponentsStorage
 {

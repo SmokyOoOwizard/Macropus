@@ -1,4 +1,6 @@
-﻿using Macropus.ECS.Component.Exceptions;
+﻿using System;
+using System.Collections.Generic;
+using Macropus.ECS.Component.Exceptions;
 using Macropus.ECS.Component.Filter;
 using Macropus.Linq;
 

@@ -1,4 +1,5 @@
-﻿using Macropus.ECS.Component;
+﻿using System;
+using Macropus.ECS.Component;
 using Macropus.ECS.Component.Storage;
 
 namespace Macropus.ECS.Entity.Impl;

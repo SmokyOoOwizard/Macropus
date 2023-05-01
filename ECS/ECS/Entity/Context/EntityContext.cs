@@ -1,8 +1,9 @@
-﻿using Macropus.ECS.Component.Filter;
+﻿using System.Collections.Generic;
+using Macropus.ECS.Component.Filter;
 using Macropus.ECS.Component.Storage;
 using Macropus.ECS.Component.Storage.Impl;
 using Macropus.ECS.Entity.Collector;
-using Macropus.ECS.Entity.Context.Group;
+using Macropus.ECS.Entity.Group;
 
 namespace Macropus.ECS.Entity.Context;
 

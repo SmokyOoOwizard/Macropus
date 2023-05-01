@@ -1,4 +1,7 @@
-﻿namespace Macropus.ECS.Systems.Exceptions;
+﻿using System;
+using System.Linq;
+
+namespace Macropus.ECS.Systems.Exceptions;
 
 public class TypesAreNotComponentsException : Exception
 {

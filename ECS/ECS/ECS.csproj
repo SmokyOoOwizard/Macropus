@@ -10,7 +10,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="LinqKit" Version="1.2.4" />
       <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.9" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Linq\Linq.csproj" />
     </ItemGroup>
 
 </Project>

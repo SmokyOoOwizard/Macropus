@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using Macropus.ECS.Component.Storage;
 using Macropus.ECS.Systems.Exceptions;
 
@@ -76,7 +78,7 @@ public readonly struct ComponentsFilterBuilder
 
 		if (filterComponents.Length > 0)
 		{
-			expression = BuildSelfFilter(mergeFunc, entityIdParameter, componentsParameter);
+			expression = BuildSelf(mergeFunc, entityIdParameter, componentsParameter);
 		}
 
 		if (subFilters.Length > 0)
@@ -116,7 +118,7 @@ public readonly struct ComponentsFilterBuilder
 		return subExpression;
 	}
 
-	private Expression BuildSelfFilter(
+	private Expression BuildSelf(
 		Func<Expression, Expression, BinaryExpression> mergeFunc,
 		ParameterExpression entityIdParameter,
 		ParameterExpression componentsParameter

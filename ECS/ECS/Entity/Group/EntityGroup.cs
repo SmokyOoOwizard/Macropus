@@ -1,4 +1,7 @@
-﻿namespace Macropus.ECS.Entity.Context.Group;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Macropus.ECS.Entity.Group;
 
 public class EntityGroup : IEntityGroup
 {

@@ -1,4 +1,6 @@
-﻿using Macropus.ECS.Component.Storage;
+﻿using System;
+using System.Collections.Generic;
+using Macropus.ECS.Component.Storage;
 
 namespace Macropus.ECS.Entity;
 

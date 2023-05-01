@@ -1,4 +1,6 @@
-﻿using Macropus.ECS.Entity.Context;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Macropus.ECS.Entity.Context;
 using Macropus.ECS.Systems;
 using Macropus.ECS.Systems.Extensions;
 
