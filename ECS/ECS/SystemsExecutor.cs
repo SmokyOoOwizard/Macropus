@@ -11,9 +11,10 @@ public sealed class SystemsExecutor
 	private readonly ISystem[] systems;
 	private readonly Dictionary<ISystem, ReactiveSystemContext> reactiveSystems = new();
 
-	public SystemsExecutor(params ISystem[] systems)
+	public SystemsExecutor(IEnumerable<ISystem> systems)
 	{
-		foreach (var system in systems)
+		this.systems = systems.ToArray();
+		foreach (var system in this.systems)
 		{
 			var trigger = system.GetTrigger();
 			if (trigger != null)
@@ -21,8 +22,6 @@ public sealed class SystemsExecutor
 				reactiveSystems[system] = new(trigger.Value);
 			}
 		}
-
-		this.systems = systems;
 	}
 
 	public void SetContext(EntityContext context)

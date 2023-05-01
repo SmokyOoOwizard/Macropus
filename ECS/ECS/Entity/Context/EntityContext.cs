@@ -12,18 +12,18 @@ public class EntityContext : IEntityContext
 	public string ContextName { get; }
 
 	private readonly IComponentsStorage cold;
-	private readonly IComponentsStorage changes;
+	private readonly IComponentsChangesStorage changes;
 
 	private readonly List<IEntityCollector> collectors = new();
 
-	public EntityContext(string contextName, IComponentsStorage cold, IComponentsStorage changes)
+	public EntityContext(string contextName, IComponentsStorage cold, IComponentsChangesStorage changes)
 	{
 		ContextName = contextName;
 		this.cold = cold;
 		this.changes = changes;
 	}
 
-	public EntityContext(string contextName, IComponentsStorage cold) : this(contextName, cold, new ComponentsStorage()) { }
+	public EntityContext(string contextName, IComponentsStorage cold) : this(contextName, cold, new ComponentsChangesStorage()) { }
 
 	public IEntityGroup GetGroup(ComponentsFilter filter)
 	{
@@ -62,7 +62,7 @@ public class EntityContext : IEntityContext
 		{
 			// TODO expression tree? maybe it's faster
 			foreach (var collector in collectors)
-				if (collector.Trigger.Filter(entity, changes))
+				if (collector.Trigger.Filter(entity, cold, changes))
 					collector.AddEntity(entity);
 		}
 
