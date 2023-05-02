@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Autofac;
+using Tests.Utils.Mock.Delogger;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -37,8 +38,21 @@ public abstract class TestsWrapper : IAsyncLifetime
 
 		Container = containerBuilder.Build();
 	}
-	
-	protected virtual void Configure(ContainerBuilder builder) { }
+
+	protected virtual void Configure(ContainerBuilder builder)
+	{
+		builder.RegisterType<DLogger>()
+			.AsSelf()
+			.AsImplementedInterfaces();
+
+		builder.RegisterType<DScope>()
+			.AsSelf()
+			.AsImplementedInterfaces();
+
+		builder.RegisterType<DPerfMonitor>()
+			.AsSelf()
+			.AsImplementedInterfaces();
+	}
 
 	public virtual Task InitializeAsync()
 	{

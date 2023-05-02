@@ -176,6 +176,9 @@
         "dependencies": {
           "System.Drawing.Common": "4.6.0"
         }
+      },
+      "linq": {
+        "type": "Project"
       }
     }
   }
