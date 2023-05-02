@@ -33,10 +33,10 @@
 	  <UpToDateCheckInput Include="@(HTMLFiles)" />
 	</ItemGroup>
 	
-    <Target Name="Build HTML" BeforeTargets="PrepareForBuild">
-	  <Exec Command="yarn --cwd $(HTMLPath) install" />
+    <!--<Target Name="Build HTML" BeforeTargets="PrepareForBuild">
+	  <Exec Command="yarn -cwd $(HTMLPath) install" />
 	  <RemoveDir Directories="$(HTMLBuildPath)" />
-	  <Exec Command="yarn --cwd $(HTMLPath) build" />
+	  <Exec Command="yarn -cwd $(HTMLPath) build" />
 	  
 	  <ItemGroup>
 	    <HTMLBuildFiles Include="$(HTMLBuildPath)\**\*" />
@@ -44,6 +44,6 @@
 	  
 	  <RemoveDir Directories="$(ResourcesFront)" />
 	  <Copy SourceFiles="@(HTMLBuildFiles)" DestinationFiles="@(HTMLBuildFiles->'$(ResourcesFront)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    </Target>
+    </Target>-->
 
 </Project>
