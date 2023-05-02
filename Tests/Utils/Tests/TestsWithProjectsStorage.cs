@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Macropus.Project;
 using Macropus.Project.Storage.Impl;
 using Xunit.Abstractions;
 
@@ -19,5 +20,12 @@ public abstract class TestsWithProjectsStorage : TestsWithFileSystemProvider
 		var storage = Container.Resolve<ProjectsStorageLocalFactory>().Create(ExecutePath);
 		ProjectStorage.AddStorage(storage);
 		ProjectStorage.SetDefaultStorage(storage);
+	}
+
+	protected override void Configure(ContainerBuilder builder)
+	{
+		base.Configure(builder);
+
+		builder.RegisterModule<ProjectContainerBuilder>();
 	}
 }
