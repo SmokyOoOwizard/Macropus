@@ -1,5 +1,6 @@
 ﻿using Macropus.Schema;
 using Macropus.Schema.Extensions;
+using Tests.Utils;
 using Tests.Utils.Schema;
 using Tests.Utils.Tests;
 using Xunit.Abstractions;

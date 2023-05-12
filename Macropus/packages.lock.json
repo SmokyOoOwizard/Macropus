@@ -612,15 +612,6 @@
           "FileSystem.Interfaces": "[1.0.0, )"
         }
       },
-      "ecs": {
-        "type": "Project",
-        "dependencies": {
-          "Database": "[1.0.0, )",
-          "Database.Interfaces": "[1.0.0, )",
-          "Linq": "[1.0.0, )",
-          "Schema": "[1.0.0, )"
-        }
-      },
       "extensions": {
         "type": "Project",
         "dependencies": {
@@ -630,8 +621,8 @@
       "filesystem": {
         "type": "Project",
         "dependencies": {
-          "CoolStuff": "[1.0.0, )",
           "Database": "[1.0.0, )",
+          "Database.Interfaces": "[1.0.0, )",
           "FileSystem.Interfaces": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore": "[6.0.9, )",
           "Microsoft.EntityFrameworkCore.Sqlite.Core": "[6.0.9, )",
@@ -693,6 +684,8 @@
       "webfront": {
         "type": "Project",
         "dependencies": {
+          "Autofac": "[6.4.0, )",
+          "EmbedIO": "[3.5.2, )",
           "WebBase": "[1.0.0, )"
         }
       }

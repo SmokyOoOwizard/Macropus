@@ -1,4 +1,6 @@
-﻿using Macropus.Project.Storage.Impl;
+﻿using Autofac;
+using Macropus.Project;
+using Macropus.Project.Storage.Impl;
 using Xunit.Abstractions;
 
 namespace Tests.Utils.Tests;
@@ -13,10 +15,17 @@ public abstract class TestsWithProjectsStorage : TestsWithFileSystemProvider
 	{
 		await base.InitializeAsync();
 
-		ProjectStorage = Mock.Create<ProjectsStorageMaster>();
+		ProjectStorage = Container.Resolve<ProjectsStorageMaster>();
 
-		var storage = Mock.Create<ProjectsStorageLocalFactory>().Create(ExecutePath);
+		var storage = Container.Resolve<ProjectsStorageLocalFactory>().Create(ExecutePath);
 		ProjectStorage.AddStorage(storage);
 		ProjectStorage.SetDefaultStorage(storage);
+	}
+
+	protected override void Configure(ContainerBuilder builder)
+	{
+		base.Configure(builder);
+
+		builder.RegisterModule<ProjectContainerBuilder>();
 	}
 }

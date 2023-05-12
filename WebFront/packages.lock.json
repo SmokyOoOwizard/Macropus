@@ -3,11 +3,21 @@
   "dependencies": {
     "net7.0": {
       "Autofac": {
-        "type": "Transitive",
+        "type": "Direct",
+        "requested": "[6.4.0, )",
         "resolved": "6.4.0",
         "contentHash": "tkFxl6wAPuwVhrlN8wuNADnd+k2tv4ReP7ZZSL0vjfcN0RcfC9v25ogxK6b03HC7D4NwWjSLf1G/zTG8Bw43wQ==",
         "dependencies": {
           "System.Diagnostics.DiagnosticSource": "4.7.1"
+        }
+      },
+      "EmbedIO": {
+        "type": "Direct",
+        "requested": "[3.5.2, )",
+        "resolved": "3.5.2",
+        "contentHash": "YU4j+3XvuO8/VPkNf7KWOF1TpMhnyVhXnPsG1mvnDhTJ9D5BZOFXVDvCpE/SkQ1AJ0Aa+dXOVSW3ntgmLL7aJg==",
+        "dependencies": {
+          "Unosquare.Swan.Lite": "3.1.0"
         }
       },
       "Autofac.WebApi2": {
@@ -24,14 +34,6 @@
         "type": "Transitive",
         "resolved": "1.0.1",
         "contentHash": "BxvhCRBkpnGYikUEDiJwQgpIuGt5Ili9kyauwu8p7SrnF4XidKI+/TGeZut/CIasQOU9k4Eon0kG9urOfA7m1A=="
-      },
-      "EmbedIO": {
-        "type": "Transitive",
-        "resolved": "3.5.2",
-        "contentHash": "YU4j+3XvuO8/VPkNf7KWOF1TpMhnyVhXnPsG1mvnDhTJ9D5BZOFXVDvCpE/SkQ1AJ0Aa+dXOVSW3ntgmLL7aJg==",
-        "dependencies": {
-          "Unosquare.Swan.Lite": "3.1.0"
-        }
       },
       "Microsoft.AspNet.WebApi.Client": {
         "type": "Transitive",
@@ -80,24 +82,24 @@
       "interfaces": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "[6.0.0, )"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0"
         }
       },
       "service": {
         "type": "Project",
         "dependencies": {
-          "Delogger": "[1.0.1, )"
+          "Delogger": "1.0.1"
         }
       },
       "webbase": {
         "type": "Project",
         "dependencies": {
-          "Autofac": "[6.4.0, )",
-          "Autofac.WebApi2": "[6.1.1, )",
-          "Delogger": "[1.0.1, )",
-          "EmbedIO": "[3.5.2, )",
-          "Interfaces": "[1.0.0, )",
-          "Service": "[1.0.0, )"
+          "Autofac": "6.4.0",
+          "Autofac.WebApi2": "6.1.1",
+          "Delogger": "1.0.1",
+          "EmbedIO": "3.5.2",
+          "Interfaces": "1.0.0",
+          "Service": "1.0.0"
         }
       }
     }
