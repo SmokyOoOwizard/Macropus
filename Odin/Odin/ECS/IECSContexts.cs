@@ -1,8 +1,10 @@
-﻿using Macropus.ECS.Entity.Context;
+﻿using Macropus.ECS;
 
 namespace Odin.ECS;
 
-public interface IECSContexts : IDisposable, IAsyncDisposable
+public interface IECSContexts : IDisposable
 {
-	IEntityContext? GetContext(string contextName);
+	IECSContext? GetContext(string contextName);
+	IECSContext? CreateContext(string contextName);
+	void RemoveContext(string contextName);
 }
