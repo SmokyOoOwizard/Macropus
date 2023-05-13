@@ -4,6 +4,7 @@ using Macropus.ECS.Component.Filter;
 
 namespace Macropus.ECS.Component.Storage;
 
+// TODO disposable
 public interface IReadOnlyComponentsStorage
 {
 	uint ComponentsCount { get; }

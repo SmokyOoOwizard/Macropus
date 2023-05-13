@@ -19,8 +19,6 @@ public abstract class TestsWithSystems : TestsWrapper
 	{
 		executor = Container.Resolve<SystemsExecutor>();
 		Context = Container.Resolve<EntityContext>();
-
-		executor.SetContext(Context);
 	}
 
 	protected override void Configure(ContainerBuilder builder)
@@ -28,13 +26,15 @@ public abstract class TestsWithSystems : TestsWrapper
 		base.Configure(builder);
 		builder.RegisterInstance<EntityContext>(new("SomeContext", ExistsComponents))
 			.AsSelf()
-			.AsImplementedInterfaces();
-		builder.RegisterType<SystemsExecutor>().SingleInstance();
+			.AsImplementedInterfaces()
+			.SingleInstance();
+		builder.RegisterType<SystemsExecutor>()
+			.SingleInstance();
 	}
 
 	// ReSharper disable once InconsistentNaming
 	public void ExecuteSystems()
 	{
-		executor.Execute(Context);
+		executor.Execute();
 	}
 }

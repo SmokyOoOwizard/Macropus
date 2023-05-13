@@ -1,38 +1,35 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Macropus.ECS.Entity.Context;
+﻿using Macropus.ECS.Entity.Context;
 using Macropus.ECS.Systems;
-using Macropus.ECS.Systems.Extensions;
 
 namespace Macropus.ECS;
 
 public sealed class SystemsExecutor
 {
+	private readonly EntityContext context;
+
 	private readonly ISystem[] systems;
 	private readonly Dictionary<ISystem, ReactiveSystemContext> reactiveSystems = new();
 
-	public SystemsExecutor(IEnumerable<ISystem> systems)
+	public SystemsExecutor(EntityContext context, IEnumerable<ISystem> systems)
 	{
+		this.context = context;
 		this.systems = systems.ToArray();
+
 		foreach (var system in this.systems)
 		{
-			var trigger = system.GetTrigger();
-			if (trigger != null)
+			if (system is IReactiveSystem reactiveSystem)
 			{
-				reactiveSystems[system] = new(trigger.Value);
+				var trigger = reactiveSystem.GetTrigger();
+
+				var reactive = new ReactiveSystemContext(trigger);
+				reactiveSystems[system] = reactive;
+
+				context.AddCollector(reactive.GetCollector());
 			}
 		}
 	}
 
-	public void SetContext(EntityContext context)
-	{
-		foreach (var (_, rContext) in reactiveSystems)
-		{
-			context.AddCollector(rContext.GetCollector());
-		}
-	}
-
-	public void Execute(EntityContext context)
+	public void Execute()
 	{
 		foreach (var system in systems)
 		{
