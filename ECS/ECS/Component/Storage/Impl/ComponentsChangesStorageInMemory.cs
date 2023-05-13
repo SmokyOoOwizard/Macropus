@@ -198,14 +198,18 @@ public class ComponentsChangesStorageInMemory : IComponentsChangesStorage
 	private void AddStorage(Type componentType, out ComponentStorageInMemory componentStorageInMemory)
 	{
 		var method = GetType()
-			.GetMethods( BindingFlags.NonPublic | BindingFlags.Instance)
-			.Where(m => m.Name == nameof(AddStorage) && m.IsGenericMethod)
-			.First()
+			.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
+			.First(m => m.Name == nameof(AddStorage) && m.IsGenericMethod)
 			.MakeGenericMethod(componentType);
 
 		var arguments = new object[1];
 		method.Invoke(this, arguments);
 
 		componentStorageInMemory = (ComponentStorageInMemory) arguments[0];
+	}
+
+	public void Dispose()
+	{
+
 	}
 }

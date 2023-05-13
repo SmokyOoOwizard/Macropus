@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Macropus.ECS.Component.Filter;
+﻿using Macropus.ECS.Component.Filter;
 using Macropus.ECS.Component.Storage;
 using Macropus.ECS.Component.Storage.Impl;
 using Macropus.ECS.Entity.Collector;
@@ -68,5 +67,11 @@ public class EntityContext : IEntityContext
 
 		cold.Apply(changes);
 		changes.Clear();
+	}
+
+	public void Dispose()
+	{
+		cold.Dispose();
+		changes.Dispose();
 	}
 }

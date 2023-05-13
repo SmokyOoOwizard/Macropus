@@ -23,6 +23,11 @@ public abstract class ComponentStorageInMemory : IReadOnlyComponentStorage
 	{
 		return GetEnumerator();
 	}
+
+	public void Dispose()
+	{
+
+	}
 }
 
 public class ComponentStorageInMemory<T> : ComponentStorageInMemory where T : struct, IComponent

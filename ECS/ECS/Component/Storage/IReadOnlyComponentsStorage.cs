@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Macropus.ECS.Component.Filter;
+﻿using Macropus.ECS.Component.Filter;
 
 namespace Macropus.ECS.Component.Storage;
 
 // TODO disposable
-public interface IReadOnlyComponentsStorage
+public interface IReadOnlyComponentsStorage : IDisposable
 {
 	uint ComponentsCount { get; }
 	uint EntitiesCount { get; }
