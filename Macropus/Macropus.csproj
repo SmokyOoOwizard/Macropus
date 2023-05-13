@@ -26,13 +26,8 @@
   </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Database.Interfaces\Database.Interfaces.csproj" />
-        <ProjectReference Include="..\Database\Database.csproj" />
         <ProjectReference Include="..\Database\Database\Database.csproj" />
-        <ProjectReference Include="..\ECS\ECS.csproj" />
         <ProjectReference Include="..\Extensions\Extensions.csproj" />
-        <ProjectReference Include="..\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
-        <ProjectReference Include="..\FileSystem\FileSystem.csproj" />
         <ProjectReference Include="..\FileSystem\FileSystem\FileSystem.csproj" />
         <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
         <ProjectReference Include="..\Project\Project.csproj" />

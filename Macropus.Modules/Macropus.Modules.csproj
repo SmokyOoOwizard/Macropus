@@ -8,8 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Database\Database.csproj" />
-      <ProjectReference Include="..\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
       <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
     </ItemGroup>
 
