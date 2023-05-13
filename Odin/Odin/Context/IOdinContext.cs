@@ -1,22 +1,17 @@
-﻿namespace Odin;
-
-
-
+﻿namespace Odin.Context;
 
 public interface IOdinContext : IDisposable, IAsyncDisposable
 {
+	EContextStatus Status { get; }
+
 	/// <summary>
 	/// Load raw dependencies
 	/// </summary>
-	/// <param name="ctx"></param>
-	/// <returns></returns>
 	Task InitAsync(CancellationToken ctx = default);
 
 	/// <summary>
 	/// Initialize inner services and run it
 	/// </summary>
-	/// <param name="ctx"></param>
-	/// <returns></returns>
 	Task StartAsync(CancellationToken ctx = default);
 
 	/// <summary>
@@ -24,7 +19,5 @@ public interface IOdinContext : IDisposable, IAsyncDisposable
 	///
 	/// You can just dispose context. stop method need only for reuse already initialized context
 	/// </summary>
-	/// <param name="ctx"></param>
-	/// <returns></returns>
-	Task StopAsync(CancellationToken ctx = default);
+	Task StopAsync();
 }
