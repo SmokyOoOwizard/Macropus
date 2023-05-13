@@ -5,7 +5,7 @@ using Macropus.ECS.Component.Exceptions;
 
 namespace Macropus.ECS.Component.Storage.Impl;
 
-public class ComponentChangesStorage<T> : ComponentStorage where T : struct, IComponent
+public class ComponentChangesStorageInMemory<T> : ComponentStorageInMemory where T : struct, IComponent
 {
 	private readonly Dictionary<Guid, T?> components;
 	private readonly bool isReadOnlyComponent;
@@ -13,7 +13,7 @@ public class ComponentChangesStorage<T> : ComponentStorage where T : struct, ICo
 	public sealed override string ComponentName { get; protected set; }
 	public sealed override Type ComponentType => typeof(T);
 
-	public ComponentChangesStorage()
+	public ComponentChangesStorageInMemory()
 	{
 		components = new();
 		var type = typeof(T);
@@ -21,7 +21,7 @@ public class ComponentChangesStorage<T> : ComponentStorage where T : struct, ICo
 		ComponentName = type.FullName!;
 	}
 
-	private ComponentChangesStorage(Dictionary<Guid, T?> components)
+	private ComponentChangesStorageInMemory(Dictionary<Guid, T?> components)
 	{
 		this.components = components;
 		var type = typeof(T);
@@ -72,10 +72,10 @@ public class ComponentChangesStorage<T> : ComponentStorage where T : struct, ICo
 		return components.Keys;
 	}
 
-	public override ComponentStorage DeepClone()
+	public override ComponentStorageInMemory DeepClone()
 	{
 		// TODO it's not deep clone. copy components collection
-		return new ComponentChangesStorage<T>(new(components));
+		return new ComponentChangesStorageInMemory<T>(new(components));
 	}
 
 	public override IEnumerator<KeyValuePair<Guid, IComponent?>> GetEnumerator()

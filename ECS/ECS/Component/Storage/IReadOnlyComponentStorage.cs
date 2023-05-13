@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Macropus.ECS.Component.Storage.Impl;
-
-namespace Macropus.ECS.Component.Storage;
+﻿namespace Macropus.ECS.Component.Storage;
 
 public interface IReadOnlyComponentStorage : IEnumerable<KeyValuePair<Guid, IComponent?>>
 {
@@ -11,5 +7,5 @@ public interface IReadOnlyComponentStorage : IEnumerable<KeyValuePair<Guid, ICom
 	bool HasEntity(Guid entity);
 	IComponent? GetComponent(Guid entity);
 	IReadOnlyCollection<Guid> GetEntities();
-	ComponentStorage DeepClone();
+	IReadOnlyComponentStorage DeepClone();
 }

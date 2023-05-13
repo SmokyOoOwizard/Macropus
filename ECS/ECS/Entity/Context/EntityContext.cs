@@ -23,7 +23,7 @@ public class EntityContext : IEntityContext
 		this.changes = changes;
 	}
 
-	public EntityContext(string contextName, IComponentsStorage cold) : this(contextName, cold, new ComponentsChangesStorage()) { }
+	public EntityContext(string contextName, IComponentsStorage cold) : this(contextName, cold, new ComponentsChangesStorageInMemory()) { }
 
 	public IEntityGroup GetGroup(ComponentsFilter filter)
 	{

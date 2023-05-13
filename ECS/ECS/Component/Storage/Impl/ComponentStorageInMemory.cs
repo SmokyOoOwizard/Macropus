@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
 using Macropus.ECS.Component.Exceptions;
 
 namespace Macropus.ECS.Component.Storage.Impl;
 
-public abstract class ComponentStorage : IReadOnlyComponentStorage
+public abstract class ComponentStorageInMemory : IReadOnlyComponentStorage
 {
 	public abstract string ComponentName { get; protected set; }
 	public abstract Type ComponentType { get; }
@@ -18,7 +15,7 @@ public abstract class ComponentStorage : IReadOnlyComponentStorage
 	public abstract IReadOnlyCollection<Guid> GetEntities();
 
 	public abstract void Apply(IReadOnlyComponentStorage changes);
-	public abstract ComponentStorage DeepClone();
+	public abstract IReadOnlyComponentStorage DeepClone();
 
 	public abstract IEnumerator<KeyValuePair<Guid, IComponent?>> GetEnumerator();
 
@@ -28,7 +25,7 @@ public abstract class ComponentStorage : IReadOnlyComponentStorage
 	}
 }
 
-public class ComponentStorage<T> : ComponentStorage where T : struct, IComponent
+public class ComponentStorageInMemory<T> : ComponentStorageInMemory where T : struct, IComponent
 {
 	private readonly Dictionary<Guid, T> components;
 	private readonly bool isReadOnlyComponent;
@@ -36,7 +33,7 @@ public class ComponentStorage<T> : ComponentStorage where T : struct, IComponent
 	public sealed override string ComponentName { get; protected set; }
 	public sealed override Type ComponentType => typeof(T);
 
-	public ComponentStorage()
+	public ComponentStorageInMemory()
 	{
 		components = new();
 		var type = typeof(T);
@@ -44,7 +41,7 @@ public class ComponentStorage<T> : ComponentStorage where T : struct, IComponent
 		ComponentName = type.FullName!;
 	}
 
-	private ComponentStorage(Dictionary<Guid, T> components)
+	private ComponentStorageInMemory(Dictionary<Guid, T> components)
 	{
 		this.components = components;
 		var type = typeof(T);
@@ -95,10 +92,10 @@ public class ComponentStorage<T> : ComponentStorage where T : struct, IComponent
 		return components.Keys;
 	}
 
-	public override ComponentStorage DeepClone()
+	public override ComponentStorageInMemory DeepClone()
 	{
 		// TODO it's not deep clone. copy components collection
-		return new ComponentStorage<T>(new(components));
+		return new ComponentStorageInMemory<T>(new(components));
 	}
 
 	public override IEnumerator<KeyValuePair<Guid, IComponent?>> GetEnumerator()

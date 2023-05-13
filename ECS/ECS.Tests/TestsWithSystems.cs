@@ -12,7 +12,7 @@ public abstract class TestsWithSystems : TestsWrapper
 {
 	private readonly SystemsExecutor executor;
 
-	public readonly IComponentsStorage ExistsComponents = new ComponentsStorage();
+	public readonly IComponentsStorage ExistsComponents = new ComponentsStorageInMemory();
 	public readonly EntityContext Context;
 
 	public TestsWithSystems(ITestOutputHelper output) : base(output)

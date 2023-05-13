@@ -26,7 +26,7 @@ public class AnyOfTriggerTests : TestsWithSystems
 	public void RemoveComponent()
 	{
 
-		var buffer = new ComponentsStorage();
+		var buffer = new ComponentsStorageInMemory();
 		var entityId = Guid.NewGuid();
 		buffer.ReplaceComponent(entityId, new EmptyTestComponent1());
 		buffer.ReplaceComponent(entityId, new EmptyTestComponent3());
@@ -51,7 +51,7 @@ public class AnyOfTriggerTests : TestsWithSystems
 	{
 		var entityId = Guid.NewGuid();
 
-		var buffer = new ComponentsStorage();
+		var buffer = new ComponentsStorageInMemory();
 		buffer.ReplaceComponent(entityId, new EmptyTestComponent3());
 		Context.ApplyChanges(buffer);
 		Context.SaveChanges();
