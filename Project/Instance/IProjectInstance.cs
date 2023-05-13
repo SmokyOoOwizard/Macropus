@@ -1,6 +1,4 @@
-﻿using Macropus.Interfaces;
-using Macropus.Interfaces.Project;
-using Macropus.Project.Instance.Impl;
+﻿using Macropus.CoolStuff;
 
 namespace Macropus.Project.Instance;
 

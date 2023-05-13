@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Odin.ECS;
 using Odin.ECS.Impl;
 
 namespace Odin.Context.Builder;

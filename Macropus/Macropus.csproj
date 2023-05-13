@@ -27,14 +27,13 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Database\Database\Database.csproj" />
-        <ProjectReference Include="..\Extensions\Extensions.csproj" />
+        <ProjectReference Include="..\CoolStuff\Extensions\Extensions.csproj" />
         <ProjectReference Include="..\FileSystem\FileSystem\FileSystem.csproj" />
-        <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
         <ProjectReference Include="..\Project\Project.csproj" />
         <ProjectReference Include="..\Schema\Schema.csproj" />
         <ProjectReference Include="..\Service\Service.csproj" />
-        <ProjectReference Include="..\WebBase\WebBase.csproj" />
-        <ProjectReference Include="..\WebFront\WebFront.csproj" />
+        <ProjectReference Include="..\Web\WebBase\WebBase.csproj" />
+        <ProjectReference Include="..\Web\WebFront\WebFront.csproj" />
     </ItemGroup>
 
 </Project>

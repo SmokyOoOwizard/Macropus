@@ -51,11 +51,6 @@
           "Microsoft.AspNet.WebApi.Client": "5.2.0"
         }
       },
-      "Microsoft.Extensions.DependencyInjection.Abstractions": {
-        "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "xlzi2IYREJH3/m6+lUrQlujzX8wDitm4QGnUu6kUXTQAWPuZY8i+ticFJbzfqaetLA6KR/rO6Ew/HuYD+bxifg=="
-      },
       "Newtonsoft.Json": {
         "type": "Transitive",
         "resolved": "13.0.1",
@@ -79,27 +74,20 @@
           "System.ValueTuple": "4.5.0"
         }
       },
-      "interfaces": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0"
-        }
-      },
       "service": {
         "type": "Project",
         "dependencies": {
-          "Delogger": "1.0.1"
+          "Delogger": "[1.0.1, )"
         }
       },
       "webbase": {
         "type": "Project",
         "dependencies": {
-          "Autofac": "6.4.0",
-          "Autofac.WebApi2": "6.1.1",
-          "Delogger": "1.0.1",
-          "EmbedIO": "3.5.2",
-          "Interfaces": "1.0.0",
-          "Service": "1.0.0"
+          "Autofac": "[6.4.0, )",
+          "Autofac.WebApi2": "[6.1.1, )",
+          "Delogger": "[1.0.1, )",
+          "EmbedIO": "[3.5.2, )",
+          "Service": "[1.0.0, )"
         }
       }
     }

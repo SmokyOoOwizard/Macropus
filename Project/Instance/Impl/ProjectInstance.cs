@@ -4,7 +4,6 @@ using Autofac;
 using Delogger.Scope;
 using Delogger.Scope.Perf;
 using Macropus.CoolStuff;
-using Macropus.Interfaces.Project;
 using Macropus.Project.Raw;
 
 namespace Macropus.Project.Instance.Impl;

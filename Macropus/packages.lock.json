@@ -632,12 +632,6 @@
       "filesystem.interfaces": {
         "type": "Project"
       },
-      "interfaces": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "[6.0.0, )"
-        }
-      },
       "linq": {
         "type": "Project"
       },
@@ -650,7 +644,6 @@
           "Delogger": "[1.0.1, )",
           "Extensions": "[1.0.0, )",
           "FileSystem.Interfaces": "[1.0.0, )",
-          "Interfaces": "[1.0.0, )",
           "Linq": "[1.0.0, )",
           "System.Reactive": "[5.0.0, )",
           "YamlDotNet": "[12.0.0, )"
@@ -677,7 +670,6 @@
           "Autofac.WebApi2": "[6.1.1, )",
           "Delogger": "[1.0.1, )",
           "EmbedIO": "[3.5.2, )",
-          "Interfaces": "[1.0.0, )",
           "Service": "[1.0.0, )"
         }
       },

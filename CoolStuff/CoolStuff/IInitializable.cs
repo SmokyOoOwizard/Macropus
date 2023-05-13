@@ -1,4 +1,4 @@
-﻿namespace Macropus.Interfaces;
+﻿namespace Macropus.CoolStuff;
 
 public interface IInitializableAsync<in T>
 {
