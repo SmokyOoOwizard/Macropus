@@ -3,6 +3,7 @@ using AsyncKeyedLock;
 using Autofac;
 using Macropus.CoolStuff;
 using Macropus.Project.Storage.Impl;
+using Macropus.Project.Storage.Raw;
 
 namespace Macropus.Project.Raw.Impl;
 

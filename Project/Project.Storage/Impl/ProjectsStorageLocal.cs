@@ -1,5 +1,7 @@
 ﻿using Macropus.Project.Raw;
 using Macropus.Project.Raw.Impl;
+using Macropus.Project.Storage.Raw;
+using Macropus.Project.Storage.Raw.Impl;
 using Macropus.Project.Storage.Utils;
 
 namespace Macropus.Project.Storage.Impl;

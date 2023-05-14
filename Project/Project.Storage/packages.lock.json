@@ -2,6 +2,12 @@
   "version": 1,
   "dependencies": {
     "net7.0": {
+      "AsyncKeyedLock": {
+        "type": "Direct",
+        "requested": "[6.2.1, )",
+        "resolved": "6.2.1",
+        "contentHash": "WUvN3Q7aL3wARMcVi/KYTHjOC+0Ld+/ikKU6UGr4aOl7TuK1I2MNKeUkmfr7y4S3UNjQbpzNQCV2OcJq1S/yXg=="
+      },
       "Autofac": {
         "type": "Direct",
         "requested": "[6.4.0, )",
@@ -33,11 +39,6 @@
         "type": "Transitive",
         "resolved": "0.3.0",
         "contentHash": "2jerEsjkCQ8o8w6CZRch3GnrdEw0fIDzMcalMx+JYfr0A+JtZwIhknlZ3xs+xdXHbTzRhi/7zpc3A1lawCUvTg=="
-      },
-      "AsyncKeyedLock": {
-        "type": "Transitive",
-        "resolved": "6.2.1",
-        "contentHash": "WUvN3Q7aL3wARMcVi/KYTHjOC+0Ld+/ikKU6UGr4aOl7TuK1I2MNKeUkmfr7y4S3UNjQbpzNQCV2OcJq1S/yXg=="
       },
       "System.Diagnostics.DiagnosticSource": {
         "type": "Transitive",
@@ -71,22 +72,6 @@
       "project.shared": {
         "type": "Project",
         "dependencies": {
-          "YamlDotNet": "[12.0.0, )"
-        }
-      },
-      "project.storage": {
-        "type": "Project",
-        "dependencies": {
-          "AsyncKeyedLock": "[6.2.1, )",
-          "Autofac": "[6.4.0, )",
-          "CoolStuff": "[1.0.0, )",
-          "Database.Interfaces": "[1.0.0, )",
-          "Delogger": "[1.0.1, )",
-          "Extensions": "[1.0.0, )",
-          "FileSystem.Interfaces": "[1.0.0, )",
-          "Linq": "[1.0.0, )",
-          "Project.Shared": "[1.0.0, )",
-          "System.Reactive": "[5.0.0, )",
           "YamlDotNet": "[12.0.0, )"
         }
       }

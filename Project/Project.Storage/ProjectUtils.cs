@@ -1,10 +1,9 @@
 ﻿using Macropus.Extensions;
 using Macropus.Project.Impl;
-using Macropus.Project.Storage;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace Macropus.Project;
+namespace Macropus.Project.Storage;
 
 internal static class ProjectUtils
 {

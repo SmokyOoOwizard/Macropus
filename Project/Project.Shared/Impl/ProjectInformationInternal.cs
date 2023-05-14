@@ -2,7 +2,7 @@
 
 namespace Macropus.Project.Impl;
 
-internal class ProjectInformationInternal : IProjectInformationInternal
+public class ProjectInformationInternal : IProjectInformationInternal
 {
 	public Guid Id { get; set; }
 	public string Name { get; set; }

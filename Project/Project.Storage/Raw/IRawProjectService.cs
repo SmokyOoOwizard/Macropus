@@ -1,4 +1,6 @@
-﻿namespace Macropus.Project.Raw;
+﻿using Macropus.Project.Storage.Raw;
+
+namespace Macropus.Project.Raw;
 
 public interface IRawProjectService
 {

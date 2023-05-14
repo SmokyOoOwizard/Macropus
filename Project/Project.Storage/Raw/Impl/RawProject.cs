@@ -2,6 +2,7 @@
 using Macropus.CoolStuff;
 using Macropus.Database.Interfaces;
 using Macropus.FileSystem.Interfaces;
+using Macropus.Project.Storage.Raw;
 
 namespace Macropus.Project.Raw.Impl;
 

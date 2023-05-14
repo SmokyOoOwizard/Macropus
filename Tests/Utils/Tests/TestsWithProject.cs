@@ -1,6 +1,7 @@
 ﻿using Macropus.Project.Raw;
 using Macropus.Project.Storage;
 using Macropus.Project.Storage.Impl;
+using Macropus.Project.Storage.Raw;
 using Xunit.Abstractions;
 
 namespace Tests.Utils.Tests;

@@ -1,4 +1,4 @@
-﻿namespace Macropus.Project;
+﻿namespace Macropus.Project.Storage;
 
 internal static class ProjectPaths
 {

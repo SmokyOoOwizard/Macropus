@@ -3,6 +3,7 @@ using Delogger.Scope;
 using Delogger.Scope.Log;
 using Macropus.Linq;
 using Macropus.Project.Raw;
+using Macropus.Project.Storage.Raw;
 
 namespace Macropus.Project.Storage.Impl;
 

@@ -645,6 +645,29 @@
           "Extensions": "[1.0.0, )",
           "FileSystem.Interfaces": "[1.0.0, )",
           "Linq": "[1.0.0, )",
+          "Project.Storage": "[1.0.0, )",
+          "System.Reactive": "[5.0.0, )",
+          "YamlDotNet": "[12.0.0, )"
+        }
+      },
+      "project.shared": {
+        "type": "Project",
+        "dependencies": {
+          "YamlDotNet": "[12.0.0, )"
+        }
+      },
+      "project.storage": {
+        "type": "Project",
+        "dependencies": {
+          "AsyncKeyedLock": "[6.2.1, )",
+          "Autofac": "[6.4.0, )",
+          "CoolStuff": "[1.0.0, )",
+          "Database.Interfaces": "[1.0.0, )",
+          "Delogger": "[1.0.1, )",
+          "Extensions": "[1.0.0, )",
+          "FileSystem.Interfaces": "[1.0.0, )",
+          "Linq": "[1.0.0, )",
+          "Project.Shared": "[1.0.0, )",
           "System.Reactive": "[5.0.0, )",
           "YamlDotNet": "[12.0.0, )"
         }

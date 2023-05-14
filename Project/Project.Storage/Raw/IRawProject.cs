@@ -1,7 +1,7 @@
 ﻿using Macropus.Database.Interfaces;
 using Macropus.FileSystem.Interfaces;
 
-namespace Macropus.Project.Raw;
+namespace Macropus.Project.Storage.Raw;
 
 public interface IRawProject : IDisposable, IAsyncDisposable
 {

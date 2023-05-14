@@ -4,8 +4,9 @@ using Macropus.CoolStuff;
 using Macropus.Database.Interfaces;
 using Macropus.Extensions;
 using Macropus.FileSystem.Interfaces;
+using Macropus.Project.Raw.Impl;
 
-namespace Macropus.Project.Raw.Impl;
+namespace Macropus.Project.Storage.Raw.Impl;
 
 public class RawProjectFactory
 {
