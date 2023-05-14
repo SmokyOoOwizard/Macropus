@@ -2,6 +2,5 @@
 
 public interface IProjectConnection : IDisposable
 {
-    IObservable<EConnectionState> State{ get; }
     IProjectInformation ProjectInformation { get; }
 }
