@@ -46,7 +46,7 @@ public class ConnectionEmulator : IAsyncService
 			};
 		}
 
-		connection = await scope.Resolve<IConnectionService>().Connect(null, ids[0]).ConfigureAwait(false);
+		connection = await scope.Resolve<IConnectionService>().Connect(ids[0]).ConfigureAwait(false);
 	}
 
 	public Task StopAsync()

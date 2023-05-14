@@ -5,7 +5,7 @@ using Macropus.ECS.Entity.Group;
 
 namespace Macropus.ECS.Entity.Context;
 
-public interface IEntityContext
+public interface IEntityContext : IDisposable
 {
 	string ContextName { get; }
 	IEntityGroup GetGroup(ComponentsFilter filter);

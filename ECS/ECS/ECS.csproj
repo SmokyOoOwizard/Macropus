@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Linq\Linq.csproj" />
+      <ProjectReference Include="..\..\CoolStuff\Linq\Linq.csproj" />
     </ItemGroup>
 
 </Project>

@@ -27,7 +27,7 @@ public class RemoveReadOnlyComponentTest : TestsWithSystems
 	{
 		var entityId = Guid.NewGuid();
 
-		var buffer = new ComponentsStorage();
+		var buffer = new ComponentsStorageInMemory();
 		buffer.ReplaceComponent(entityId, new ReadOnlyComponent());
 		Context.ApplyChanges(buffer);
 		Context.SaveChanges();

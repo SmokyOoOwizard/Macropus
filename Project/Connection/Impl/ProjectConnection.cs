@@ -3,7 +3,6 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Autofac;
 using Macropus.Extensions;
-using Macropus.Interfaces.Project;
 using Macropus.Project.Instance;
 using Macropus.Project.Instance.Impl;
 

@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net7.0": {
+      "Autofac": {
+        "type": "Direct",
+        "requested": "[6.4.0, )",
+        "resolved": "6.4.0",
+        "contentHash": "tkFxl6wAPuwVhrlN8wuNADnd+k2tv4ReP7ZZSL0vjfcN0RcfC9v25ogxK6b03HC7D4NwWjSLf1G/zTG8Bw43wQ==",
+        "dependencies": {
+          "System.Diagnostics.DiagnosticSource": "4.7.1"
+        }
+      },
+      "EmbedIO": {
+        "type": "Direct",
+        "requested": "[3.5.2, )",
+        "resolved": "3.5.2",
+        "contentHash": "YU4j+3XvuO8/VPkNf7KWOF1TpMhnyVhXnPsG1mvnDhTJ9D5BZOFXVDvCpE/SkQ1AJ0Aa+dXOVSW3ntgmLL7aJg==",
+        "dependencies": {
+          "Unosquare.Swan.Lite": "3.1.0"
+        }
+      },
+      "Autofac.WebApi2": {
+        "type": "Transitive",
+        "resolved": "6.1.1",
+        "contentHash": "geZXZy5fI1a3OArllCieAGhYgm3iaFs0tgpqYXjrTST9pFpfS5zt7R8thNJP0ZEWT20HZLJGh3uvJJNpi0iqoA==",
+        "dependencies": {
+          "Autofac": "6.4.0",
+          "Microsoft.AspNet.WebApi.Core": "[5.2.0, 6.0.0)",
+          "Newtonsoft.Json": "13.0.1"
+        }
+      },
+      "Delogger": {
+        "type": "Transitive",
+        "resolved": "1.0.1",
+        "contentHash": "BxvhCRBkpnGYikUEDiJwQgpIuGt5Ili9kyauwu8p7SrnF4XidKI+/TGeZut/CIasQOU9k4Eon0kG9urOfA7m1A=="
+      },
+      "Microsoft.AspNet.WebApi.Client": {
+        "type": "Transitive",
+        "resolved": "5.2.0",
+        "contentHash": "aoS8o4BPb1Wc0A3W5xX0iHiqgnk9xmP4iSxZdNlEbtu5SgTgDyKya5FGq4GzjRw7FlQDBQ5t9s4p/saa0OFA4A==",
+        "dependencies": {
+          "Newtonsoft.Json": "4.5.11"
+        }
+      },
+      "Microsoft.AspNet.WebApi.Core": {
+        "type": "Transitive",
+        "resolved": "5.2.0",
+        "contentHash": "OndfBxMYy/rFi86YAtzV2P815P09ZQnJNjDdCwN5v9cutN6GdI0YVcdlMlNw/WpVg9iN1yLkUxMx433tIQ15ZA==",
+        "dependencies": {
+          "Microsoft.AspNet.WebApi.Client": "5.2.0"
+        }
+      },
+      "Newtonsoft.Json": {
+        "type": "Transitive",
+        "resolved": "13.0.1",
+        "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
+      },
+      "System.Diagnostics.DiagnosticSource": {
+        "type": "Transitive",
+        "resolved": "4.7.1",
+        "contentHash": "j81Lovt90PDAq8kLpaJfJKV/rWdWuEk6jfV+MBkee33vzYLEUsy4gXK8laa9V2nZlLM9VM9yA/OOQxxPEJKAMw=="
+      },
+      "System.ValueTuple": {
+        "type": "Transitive",
+        "resolved": "4.5.0",
+        "contentHash": "okurQJO6NRE/apDIP23ajJ0hpiNmJ+f0BwOlB/cSqTLQlw5upkf+5+96+iG2Jw40G1fCVCyPz/FhIABUjMR+RQ=="
+      },
+      "Unosquare.Swan.Lite": {
+        "type": "Transitive",
+        "resolved": "3.1.0",
+        "contentHash": "X3s5QE/KMj3WAPFqFve7St+Ds10BB50u8kW8PmKIn7FVkn7yEXe9Yxr2htt1WV85DRqfFR0MN/BUNHkGHtL4OQ==",
+        "dependencies": {
+          "System.ValueTuple": "4.5.0"
+        }
+      },
+      "service": {
+        "type": "Project",
+        "dependencies": {
+          "Delogger": "[1.0.1, )"
+        }
+      },
+      "webbase": {
+        "type": "Project",
+        "dependencies": {
+          "Autofac": "[6.4.0, )",
+          "Autofac.WebApi2": "[6.1.1, )",
+          "Delogger": "[1.0.1, )",
+          "EmbedIO": "[3.5.2, )",
+          "Service": "[1.0.0, )"
+        }
+      }
+    }
+  }
+}

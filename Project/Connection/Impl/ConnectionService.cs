@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using Delogger.Scope;
 using Delogger.Scope.Log;
-using Macropus.Interfaces.User;
 using Macropus.Project.Instance;
 
 namespace Macropus.Project.Connection.Impl;
@@ -22,14 +21,13 @@ internal class ConnectionService : IConnectionService
 		logger = dScope.CreateLogger(new LoggerCreateOptions() { Tags = new[] { nameof(ConnectionService) } });
 	}
 
-	public async Task<IProjectConnection> Connect(IUser user, Guid projectId)
+	public async Task<IProjectConnection> Connect(Guid projectId)
 	{
 		logger.Log("New project connection",
 			new[] { "Connect" }, null,
 			new KeyValuePair<string, object>[]
 			{
 				new("Project Id", projectId),
-				new("User", user)
 			});
 
 		var project = await projectService.GetOrLoadAsync(projectId).ConfigureAwait(false);

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Macropus.ECS.Component.Filter;
+﻿using Macropus.ECS.Component.Filter;
 using Macropus.ECS.Component.Storage;
 using Macropus.ECS.Component.Storage.Impl;
 using Macropus.ECS.Entity.Collector;
@@ -23,7 +22,7 @@ public class EntityContext : IEntityContext
 		this.changes = changes;
 	}
 
-	public EntityContext(string contextName, IComponentsStorage cold) : this(contextName, cold, new ComponentsChangesStorage()) { }
+	public EntityContext(string contextName, IComponentsStorage cold) : this(contextName, cold, new ComponentsChangesStorageInMemory()) { }
 
 	public IEntityGroup GetGroup(ComponentsFilter filter)
 	{
@@ -68,5 +67,11 @@ public class EntityContext : IEntityContext
 
 		cold.Apply(changes);
 		changes.Clear();
+	}
+
+	public void Dispose()
+	{
+		cold.Dispose();
+		changes.Dispose();
 	}
 }

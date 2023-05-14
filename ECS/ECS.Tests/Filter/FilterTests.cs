@@ -31,7 +31,7 @@ public class FilterTests : TestsWithSystems
 
 	private void Fill()
 	{
-		var buffer = new ComponentsStorage();
+		var buffer = new ComponentsStorageInMemory();
 
 		var counter = 0;
 

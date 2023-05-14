@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Macropus.ECS.Component.Filter;
+﻿using Macropus.ECS.Component.Filter;
 
 namespace Macropus.ECS.Component.Storage.Impl;
 
@@ -125,5 +123,11 @@ public class MergedComponentsStorage : IReadOnlyComponentsStorage
 			foreach (var storage in mainStorage.GetComponents())
 				yield return storage;
 		}
+	}
+
+	public void Dispose()
+	{
+		mainStorage?.Dispose();
+		additionalStorage?.Dispose();
 	}
 }

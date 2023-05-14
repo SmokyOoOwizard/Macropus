@@ -1,6 +1,4 @@
-﻿using Macropus.Interfaces.Project;
-
-namespace Macropus.Project.Connection;
+﻿namespace Macropus.Project.Connection;
 
 public interface IProjectConnection : IDisposable
 {

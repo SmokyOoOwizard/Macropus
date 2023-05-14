@@ -27,7 +27,7 @@ public class RemoveComponentTests : TestsWithSystems
 	{
 		var entityId = Guid.NewGuid();
 
-		var buffer = new ComponentsStorage();
+		var buffer = new ComponentsStorageInMemory();
 		buffer.ReplaceComponent(entityId, new EmptyTestComponent1());
 		Context.ApplyChanges(buffer);
 		Context.SaveChanges();
@@ -46,7 +46,7 @@ public class RemoveComponentTests : TestsWithSystems
 	{
 		var entityId = Guid.NewGuid();
 
-		var buffer = new ComponentsStorage();
+		var buffer = new ComponentsStorageInMemory();
 		buffer.ReplaceComponent(entityId, new EmptyTestComponent2());
 		Context.ApplyChanges(buffer);
 		Context.SaveChanges();
