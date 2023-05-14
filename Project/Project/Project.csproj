@@ -16,11 +16,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CoolStuff\CoolStuff\CoolStuff.csproj" />
-      <ProjectReference Include="..\Database\Database.Interfaces\Database.Interfaces.csproj" />
-      <ProjectReference Include="..\CoolStuff\Extensions\Extensions.csproj" />
-      <ProjectReference Include="..\FileSystem\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
-      <ProjectReference Include="..\CoolStuff\Linq\Linq.csproj" />
+      <ProjectReference Include="..\..\CoolStuff\CoolStuff\CoolStuff.csproj" />
+      <ProjectReference Include="..\..\Database\Database.Interfaces\Database.Interfaces.csproj" />
+      <ProjectReference Include="..\..\CoolStuff\Extensions\Extensions.csproj" />
+      <ProjectReference Include="..\..\FileSystem\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
+      <ProjectReference Include="..\..\CoolStuff\Linq\Linq.csproj" />
     </ItemGroup>
 
 </Project>
