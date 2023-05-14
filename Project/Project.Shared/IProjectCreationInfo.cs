@@ -1,4 +1,4 @@
-﻿namespace Macropus.Project.Storage;
+﻿namespace Macropus.Project;
 
 public interface IProjectCreationInfo
 {

@@ -4,9 +4,12 @@ using Macropus.CoolStuff;
 using Macropus.Database.Interfaces;
 using Macropus.Extensions;
 using Macropus.FileSystem.Interfaces;
-using Macropus.Project.Raw.Impl;
+using Macropus.Project.Impl;
+using Macropus.Project.Raw.Raw.Impl;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
-namespace Macropus.Project.Storage.Raw.Impl;
+namespace Macropus.Project.Raw.Impl;
 
 public class RawProjectFactory
 {
@@ -25,16 +28,60 @@ public class RawProjectFactory
 		this.databasesServiceFactory = databasesServiceFactory;
 	}
 
-	public async Task<IRawProject> Create(string path, CancellationToken cancellationToken = default)
+	public static async Task<IProjectInformationInternal?> TryGetProjectInfo(
+		string path,
+		CancellationToken cancellationToken = default
+	)
+	{
+		if (!Directory.Exists(path))
+			return null;
+
+		if (!File.Exists(Path.Combine(path, ProjectPaths.PROJECT_FILE_NAME)))
+			return null;
+
+		var deserializer = new DeserializerBuilder()
+			.WithNamingConvention(UnderscoredNamingConvention.Instance)
+			.Build();
+
+		await using var fs = new FileStream(Path.Combine(path, ProjectPaths.PROJECT_FILE_NAME), FileMode.Open);
+		using var sr = new StreamReader(fs);
+
+		var projInfo =
+			deserializer.Deserialize<ProjectInformationInternal>(await sr.ReadToEndAsync(cancellationToken)
+				.WithCancellation(cancellationToken));
+
+		projInfo.Path = path;
+
+		return projInfo;
+	}
+
+	public async Task<Guid> CreateProjectAsync(
+		string path,
+		IProjectCreationInfo creationInfo,
+		CancellationToken cancellationToken = default
+	)
+	{
+		var newPath = Path.Combine(path, creationInfo.Name);
+
+		await RawProjectUtils.CreateProject(newPath, creationInfo, cancellationToken);
+
+		var projectInfo = await TryGetProjectInfo(newPath, cancellationToken);
+
+		if (projectInfo == null)
+			throw new(); // TODO throw failed read project info
+
+		return projectInfo.Id;
+	}
+
+	public async Task<IRawProject> Open(string path, CancellationToken cancellationToken = default)
 	{
 		if (!Directory.Exists(path))
 			// TODO throw directory not exists
 			throw new Exception();
 
-		var projectInfo = await ProjectUtils.TryGetProjectInfo(path, cancellationToken).ConfigureAwait(false);
+		var projectInfo = await TryGetProjectInfo(path, cancellationToken).ConfigureAwait(false);
 		if (projectInfo == null)
-			// TODO throw it's not project directory
-			throw new Exception();
+			throw new(); // TODO throw it's not project directory
 
 		var disposable = new CompositeDisposable(Disposable.Empty);
 

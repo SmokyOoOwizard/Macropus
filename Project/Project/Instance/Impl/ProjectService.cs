@@ -2,7 +2,7 @@
 using AsyncKeyedLock;
 using Autofac;
 using Macropus.CoolStuff;
-using Macropus.Project.Raw;
+using Macropus.Project.Storage.Impl;
 
 namespace Macropus.Project.Instance.Impl;
 
@@ -12,12 +12,12 @@ public class ProjectService : IProjectService, IDisposable
 	private readonly AsyncKeyedLocker<Guid> keyedLock = new();
 
 	private readonly ILifetimeScope scope;
-	private readonly IRawProjectService rawProjectService;
+	private readonly ProjectsStorageMaster projectsStorage;
 
-	public ProjectService(ILifetimeScope scope, IRawProjectService rawProjectService)
+	public ProjectService(ILifetimeScope scope, ProjectsStorageMaster projectsStorage)
 	{
 		this.scope = scope;
-		this.rawProjectService = rawProjectService;
+		this.projectsStorage = projectsStorage;
 	}
 
 	public async Task<IProjectInstance> GetOrLoadAsync(Guid projectId, CancellationToken cancellationToken = default)
@@ -42,7 +42,7 @@ public class ProjectService : IProjectService, IDisposable
 
 	private async Task<IProjectInstance> LoadAsync(Guid projectId, CancellationToken cancellationToken)
 	{
-		var projectProvider = await rawProjectService.GetOrLoadAsync(projectId, cancellationToken);
+		var projectProvider = await projectsStorage.OpenProjectAsync(projectId, cancellationToken);
 		var projectScope = scope.BeginLifetimeScope(b =>
 		{
 			b.RegisterInstance(projectProvider).AsSelf().AsImplementedInterfaces();

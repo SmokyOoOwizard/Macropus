@@ -1,9 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using AsyncKeyedLock;
-using Autofac;
 using Macropus.CoolStuff;
-using Macropus.Project.Storage.Impl;
-using Macropus.Project.Storage.Raw;
+using Macropus.Project.Raw.Raw;
 
 namespace Macropus.Project.Raw.Impl;
 
@@ -12,17 +10,21 @@ public class RawProjectService : IRawProjectService
 	private readonly ConcurrentDictionary<Guid, IRawProject> projects = new();
 	private readonly AsyncKeyedLocker<Guid> keyedLock = new();
 
-	private readonly ILifetimeScope scope;
-	private readonly ProjectsStorageMaster storageMaster;
+	private readonly RawProjectFactory rawProjectFactory;
 
-	public RawProjectService(ILifetimeScope scope, ProjectsStorageMaster storageMaster)
+	public RawProjectService(RawProjectFactory rawProjectFactory)
 	{
-		this.scope = scope;
-		this.storageMaster = storageMaster;
+		this.rawProjectFactory = rawProjectFactory;
 	}
 
-	public async Task<IRawProject> GetOrLoadAsync(Guid projectId, CancellationToken cancellationToken = default)
+	public async Task<IRawProject> GetOrLoadAsync(string path, CancellationToken cancellationToken = default)
 	{
+		var projectInfo = await RawProjectFactory.TryGetProjectInfo(path, cancellationToken);
+		if (projectInfo == null)
+			throw new(); // TODO
+
+		var projectId = projectInfo.Id;
+
 		using (await keyedLock.LockAsync(projectId, cancellationToken).ConfigureAwait(false))
 		{
 			IRawProject project;
@@ -31,7 +33,7 @@ public class RawProjectService : IRawProjectService
 				project = projects[projectId];
 			else
 			{
-				project = await storageMaster.OpenProjectAsync(projectId, cancellationToken);
+				project = await rawProjectFactory.Open(path, cancellationToken);
 				projects.TryAdd(projectId, project);
 			}
 

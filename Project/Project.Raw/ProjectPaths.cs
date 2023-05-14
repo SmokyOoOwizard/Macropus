@@ -1,6 +1,6 @@
-﻿namespace Macropus.Project.Storage;
+﻿namespace Macropus.Project.Raw;
 
-internal static class ProjectPaths
+public static class ProjectPaths
 {
 	public const string PROJECT_FILE_NAME = ".macropus";
 

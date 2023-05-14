@@ -1,4 +1,4 @@
-﻿namespace Macropus.Project.Storage.Impl;
+﻿namespace Macropus.Project.Impl;
 
 public readonly struct ProjectCreationInfo : IProjectCreationInfo
 {

@@ -5,7 +5,6 @@ using Delogger.Scope;
 using Delogger.Scope.Perf;
 using Macropus.CoolStuff;
 using Macropus.Project.Raw;
-using Macropus.Project.Storage.Raw;
 
 namespace Macropus.Project.Instance.Impl;
 

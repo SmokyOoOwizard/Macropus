@@ -69,6 +69,18 @@
       "linq": {
         "type": "Project"
       },
+      "project.raw": {
+        "type": "Project",
+        "dependencies": {
+          "Autofac": "[6.4.0, )",
+          "CoolStuff": "[1.0.0, )",
+          "Database.Interfaces": "[1.0.0, )",
+          "Extensions": "[1.0.0, )",
+          "FileSystem.Interfaces": "[1.0.0, )",
+          "Project.Shared": "[1.0.0, )",
+          "System.Reactive": "[5.0.0, )"
+        }
+      },
       "project.shared": {
         "type": "Project",
         "dependencies": {

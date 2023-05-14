@@ -1,7 +1,5 @@
 ﻿using Macropus.Project.Raw;
 using Macropus.Project.Raw.Impl;
-using Macropus.Project.Storage.Raw;
-using Macropus.Project.Storage.Raw.Impl;
 using Macropus.Project.Storage.Utils;
 
 namespace Macropus.Project.Storage.Impl;
@@ -13,7 +11,7 @@ public class ProjectsStorageLocal : IProjectsStorage
 
 	public ProjectsStorageLocal(string path, RawProjectFactory rawProjectFactory)
 	{
-		this.storagePath = path;
+		storagePath = path;
 		this.rawProjectFactory = rawProjectFactory;
 	}
 
@@ -23,17 +21,7 @@ public class ProjectsStorageLocal : IProjectsStorage
 		CancellationToken cancellationToken = default
 	)
 	{
-		var path = GetPath(creationInfo.Name);
-
-		await ProjectUtils.CreateProject(path, creationInfo, cancellationToken);
-
-		var projectInfo = await ProjectUtils.TryGetProjectInfo(path, cancellationToken);
-
-		if (projectInfo == null)
-			// TODO throw failed read project info
-			throw new Exception();
-
-		return projectInfo.Id;
+		return await rawProjectFactory.CreateProjectAsync(storagePath, creationInfo, cancellationToken);
 	}
 
 	public Task<bool> DeleteProjectAsync(
@@ -60,15 +48,10 @@ public class ProjectsStorageLocal : IProjectsStorage
 		CancellationToken cancellationToken = default
 	)
 	{
-		var path = await ProjectsLocalUtils.FindProjectAsync(GetPath(string.Empty), id,
+		var path = await ProjectsLocalUtils.FindProjectAsync(storagePath, id,
 			cancellationToken);
 
-		return await rawProjectFactory.Create(path, cancellationToken);
-	}
-
-	private string GetPath(string name)
-	{
-		return Path.Combine(storagePath, name);
+		return await rawProjectFactory.Open(path, cancellationToken);
 	}
 
 	public void Dispose() { }

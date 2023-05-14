@@ -3,7 +3,6 @@ using Macropus.Project.Connection.Impl;
 using Macropus.Project.Instance.Impl;
 using Macropus.Project.Raw.Impl;
 using Macropus.Project.Storage.Impl;
-using Macropus.Project.Storage.Raw.Impl;
 
 namespace Macropus.Project;
 
