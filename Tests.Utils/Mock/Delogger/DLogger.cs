@@ -34,7 +34,7 @@ public class DLogger : IDLogger
 		var subSb = new StringBuilder();
 		subSb.Append('\n');
 
-		if (attachments.Length > 0)
+		if (attachments is {Length: > 0})
 		{
 			subSb.AppendJoin('\n', attachments.Select(x => $"{x.Key}: {x.Value}"));
 			subSb.AppendLine();

@@ -1,4 +1,4 @@
-﻿namespace Macropus.Project;
+﻿namespace Macropus.Project.Raw;
 
 public interface IProjectInformationInternal : IProjectInformation
 {

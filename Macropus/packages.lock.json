@@ -602,7 +602,7 @@
           "Delogger": "[1.0.1, )",
           "FileSystem.Interfaces": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore": "[6.0.9, )",
-          "Microsoft.EntityFrameworkCore.Sqlite.Core": "[6.0.9, )",
+          "Microsoft.EntityFrameworkCore.Sqlite": "[6.0.9, )",
           "System.Reactive": "[5.0.0, )"
         }
       },

@@ -1,5 +1,6 @@
 ﻿using Macropus.Extensions;
 using Macropus.Project.Impl;
+using Macropus.Project.Raw.Impl;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 

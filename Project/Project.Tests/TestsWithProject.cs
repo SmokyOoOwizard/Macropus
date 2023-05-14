@@ -1,9 +1,8 @@
-﻿using Macropus.Project;
-using Macropus.Project.Impl;
+﻿using Macropus.Project.Impl;
 using Macropus.Project.Raw;
 using Xunit.Abstractions;
 
-namespace Tests.Utils.Tests;
+namespace Macropus.Project.Tests;
 
 public abstract class TestsWithProject : TestsWithProjectsStorage
 {

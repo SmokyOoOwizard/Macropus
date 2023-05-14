@@ -1,6 +1,6 @@
 ﻿using YamlDotNet.Serialization;
 
-namespace Macropus.Project.Impl;
+namespace Macropus.Project.Raw.Impl;
 
 public class ProjectInformationInternal : IProjectInformationInternal
 {

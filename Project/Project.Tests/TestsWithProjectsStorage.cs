@@ -1,19 +1,26 @@
 ﻿using Autofac;
-using Macropus.Project;
+using Macropus.Database;
+using Macropus.FileSystem;
+using Macropus.FileSystem.Interfaces;
 using Macropus.Project.Storage.Impl;
+using Tests.Utils;
 using Xunit.Abstractions;
 
-namespace Tests.Utils.Tests;
+namespace Macropus.Project.Tests;
 
-public abstract class TestsWithProjectsStorage : TestsWithFileSystemProvider
+public abstract class TestsWithProjectsStorage : TestsWithFiles
 {
 	public ProjectsStorageMaster ProjectStorage { get; private set; }
+	public IFileSystemService FileSystem { get; private set; }
 
 	public TestsWithProjectsStorage(ITestOutputHelper output) : base(output) { }
 
 	public override async Task InitializeAsync()
 	{
 		await base.InitializeAsync();
+
+		FileSystem = await Container.Resolve<IFileSystemServiceFactory>()
+			.Create(ExecutePath, Path.Combine(ExecutePath, "fs.db"));
 
 		ProjectStorage = Container.Resolve<ProjectsStorageMaster>();
 
@@ -26,6 +33,14 @@ public abstract class TestsWithProjectsStorage : TestsWithFileSystemProvider
 	{
 		base.Configure(builder);
 
+		builder.RegisterModule<DatabasesContainerBuilder>();
+		builder.RegisterModule<FileSystemContainerBuilder>();
 		builder.RegisterModule<ProjectContainerBuilder>();
+	}
+
+	public override async Task DisposeAsync()
+	{
+		await FileSystem.DisposeAsync();
+		await base.DisposeAsync();
 	}
 }

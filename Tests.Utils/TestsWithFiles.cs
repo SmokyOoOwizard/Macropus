@@ -1,7 +1,6 @@
-﻿using System.Reflection;
-using Xunit.Abstractions;
+﻿using Xunit.Abstractions;
 
-namespace Tests.Utils.Tests;
+namespace Tests.Utils;
 
 public abstract class TestsWithFiles : TestsWrapper
 {

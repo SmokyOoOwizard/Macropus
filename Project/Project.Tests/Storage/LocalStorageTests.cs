@@ -1,9 +1,7 @@
 using Macropus.Project.Impl;
-using Macropus.Project.Storage.Impl;
-using Tests.Utils.Tests;
 using Xunit.Abstractions;
 
-namespace Tests.Project.Storage;
+namespace Macropus.Project.Tests.Storage;
 
 public class LocalStorageTests : TestsWithProjectsStorage
 {
