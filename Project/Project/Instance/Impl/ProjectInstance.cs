@@ -11,7 +11,7 @@ internal sealed class ProjectInstance : IProjectInstance, IMakeRef<IProjectInsta
 
 	private readonly ILifetimeScope scope;
 	private readonly IRawProject rawProject;
-	private readonly IOdinContext odinContext;
+	private IOdinContext? odinContext;
 
 	private bool disposed;
 
@@ -20,19 +20,21 @@ internal sealed class ProjectInstance : IProjectInstance, IMakeRef<IProjectInsta
 		this.scope = scope;
 		this.rawProject = rawProject;
 
-		var odinBuilder = Odin.Odin.CreateContextBuilder();
-		odinContext = odinBuilder.Build();
 	}
 
 	public async Task InitializeAsync(CancellationToken ctx = default)
 	{
+		var odinBuilder = Odin.Odin.CreateContextBuilder(scope);
+		odinContext = odinBuilder.Build();
+
 		await odinContext.InitAsync(ctx);
 		await odinContext.StartAsync(ctx);
 	}
 
 	private async Task TerminateAsync()
 	{
-		await odinContext.StopAsync();
+		if (odinContext != null)
+			await odinContext.StopAsync();
 	}
 
 	public void Dispose()

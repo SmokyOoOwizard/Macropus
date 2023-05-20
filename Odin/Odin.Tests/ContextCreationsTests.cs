@@ -1,3 +1,4 @@
+using Autofac;
 using Odin.Context;
 
 namespace Odin.Tests;
@@ -7,7 +8,9 @@ public class ContextCreationsTests
 	[Fact]
 	public async void CreateEmptyContext()
 	{
-		var contextBuilder = Odin.CreateContextBuilder();
+		var container = new ContainerBuilder().Build();
+
+		var contextBuilder = Odin.CreateContextBuilder(container.Resolve<ILifetimeScope>());
 		Assert.NotNull(contextBuilder);
 
 		var context = contextBuilder.Build();
