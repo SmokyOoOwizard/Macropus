@@ -54,7 +54,7 @@ public class ProjectService : IProjectService, IDisposable
 
 			projects.TryAdd(projectId, project);
 
-			_ = project.InitializeAsync();
+			await project.InitializeAsync(cancellationToken);
 			
 			if (project is IMakeRef<IProjectInstance> refProject)
 			{
