@@ -7,5 +7,5 @@ public interface IInitializableAsync<in T>
 
 public interface IInitializableAsync
 {
-	Task InitializeAsync(CancellationToken cancellationToken = default);
+	Task InitializeAsync(CancellationToken ctx = default);
 }
