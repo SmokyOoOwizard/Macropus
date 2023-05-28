@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Macropus.ECS.Entity;
 
-namespace Macropus.ECS.Entity.Group;
+namespace Macropus.ECS.Context.Group;
 
 public interface IEntityGroup
 {

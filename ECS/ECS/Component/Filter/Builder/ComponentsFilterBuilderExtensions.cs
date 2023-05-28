@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Macropus.ECS.Component.Filter;
+﻿namespace Macropus.ECS.Component.Filter.Builder;
 
 public static class ComponentsFilterBuilderExtensions
 {

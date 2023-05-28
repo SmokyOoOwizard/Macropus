@@ -1,4 +1,4 @@
-﻿namespace Macropus.ECS.Component.Trigger;
+﻿namespace Macropus.ECS.Component.Trigger.Builder;
 
 public static class ComponentsTriggerBuilderExtensions
 {

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
+using LinqKit;
 using Macropus.ECS.Component.Storage;
 using Macropus.ECS.Systems.Exceptions;
-using LinqKit;
 
-namespace Macropus.ECS.Component.Trigger;
+namespace Macropus.ECS.Component.Trigger.Builder;
 
 public readonly struct ComponentsTriggerBuilder
 {

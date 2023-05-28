@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Macropus.ECS.Entity;
 
-namespace Macropus.ECS.Entity.Group;
+namespace Macropus.ECS.Context.Group.Impl;
 
 public class EntityGroup : IEntityGroup
 {

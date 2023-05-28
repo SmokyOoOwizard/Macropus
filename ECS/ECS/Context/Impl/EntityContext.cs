@@ -1,10 +1,12 @@
 ﻿using Macropus.ECS.Component.Filter;
 using Macropus.ECS.Component.Storage;
 using Macropus.ECS.Component.Storage.Impl;
+using Macropus.ECS.Context.Group;
+using Macropus.ECS.Context.Group.Impl;
+using Macropus.ECS.Entity;
 using Macropus.ECS.Entity.Collector;
-using Macropus.ECS.Entity.Group;
 
-namespace Macropus.ECS.Entity.Context;
+namespace Macropus.ECS.Context.Impl;
 
 public class EntityContext : IEntityContext
 {

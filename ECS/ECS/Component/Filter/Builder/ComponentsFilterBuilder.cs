@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Macropus.ECS.Component.Storage;
 using Macropus.ECS.Systems.Exceptions;
 
-namespace Macropus.ECS.Component.Filter;
+namespace Macropus.ECS.Component.Filter.Builder;
 
 public readonly struct ComponentsFilterBuilder
 {

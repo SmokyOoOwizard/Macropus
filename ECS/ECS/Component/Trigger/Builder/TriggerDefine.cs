@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Macropus.ECS.Component.Trigger;
+﻿namespace Macropus.ECS.Component.Trigger.Builder;
 
 public readonly struct TriggerDefine
 {

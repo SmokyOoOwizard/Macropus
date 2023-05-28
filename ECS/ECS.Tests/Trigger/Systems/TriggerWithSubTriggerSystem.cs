@@ -1,5 +1,6 @@
 ﻿using ECS.Tests.Trigger.Components;
 using Macropus.ECS.Component.Trigger;
+using Macropus.ECS.Component.Trigger.Builder;
 using Macropus.ECS.Entity;
 using Macropus.ECS.Systems;
 

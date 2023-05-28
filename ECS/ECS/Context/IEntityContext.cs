@@ -1,9 +1,9 @@
 ﻿using Macropus.ECS.Component.Filter;
 using Macropus.ECS.Component.Storage;
+using Macropus.ECS.Context.Group;
 using Macropus.ECS.Entity.Collector;
-using Macropus.ECS.Entity.Group;
 
-namespace Macropus.ECS.Entity.Context;
+namespace Macropus.ECS.Context;
 
 public interface IEntityContext : IDisposable
 {

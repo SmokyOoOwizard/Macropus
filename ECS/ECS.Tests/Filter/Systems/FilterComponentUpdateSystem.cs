@@ -1,6 +1,7 @@
 ﻿using ECS.Tests.Filter.Components;
 using Macropus.ECS.Component.Filter;
-using Macropus.ECS.Entity.Context;
+using Macropus.ECS.Component.Filter.Builder;
+using Macropus.ECS.Context;
 using Macropus.ECS.Systems;
 
 namespace ECS.Tests.Filter.Systems;
