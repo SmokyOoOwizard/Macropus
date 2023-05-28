@@ -442,6 +442,13 @@
           "Microsoft.Data.Sqlite.Core": "[6.0.9, )"
         }
       },
+      "ecs.schema": {
+        "type": "Project",
+        "dependencies": {
+          "CoolStuff": "[1.0.0, )",
+          "Extensions": "[1.0.0, )"
+        }
+      },
       "extensions": {
         "type": "Project",
         "dependencies": {
@@ -453,14 +460,6 @@
       },
       "linq": {
         "type": "Project"
-      },
-      "schema": {
-        "type": "Project",
-        "dependencies": {
-          "CoolStuff": "[1.0.0, )",
-          "Extensions": "[1.0.0, )",
-          "Linq": "[1.0.0, )"
-        }
       }
     }
   }

@@ -1,10 +1,10 @@
 ﻿using System.Data;
+using ECS.Schema;
 using ECS.Serialize.Deserialize.State;
 using ECS.Serialize.Deserialize.State.Impl;
 using Macropus.CoolStuff;
 using Macropus.Database.Adapter;
 using Macropus.ECS.Component;
-using Macropus.Schema;
 
 namespace ECS.Serialize.Deserialize;
 

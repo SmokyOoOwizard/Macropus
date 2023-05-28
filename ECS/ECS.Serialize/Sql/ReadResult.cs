@@ -1,6 +1,6 @@
-﻿using Macropus.CoolStuff;
+﻿using ECS.Schema;
+using Macropus.CoolStuff;
 using Macropus.CoolStuff.Collections.Pool;
-using Macropus.Schema;
 
 namespace ECS.Serialize.Sql;
 

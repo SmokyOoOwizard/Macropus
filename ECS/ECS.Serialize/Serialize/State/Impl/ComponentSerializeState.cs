@@ -1,6 +1,6 @@
 ﻿using System.Collections;
+using ECS.Schema;
 using Macropus.CoolStuff.Collections.Pool;
-using Macropus.Schema;
 
 namespace ECS.Serialize.Serialize.State.Impl;
 

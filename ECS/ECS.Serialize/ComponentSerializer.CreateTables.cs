@@ -1,8 +1,8 @@
 ﻿using System.Text;
+using ECS.Schema;
 using ECS.Serialize.Extensions;
 using Macropus.Database.Adapter;
 using Macropus.Database.Extensions;
-using Macropus.Schema;
 
 namespace ECS.Serialize;
 

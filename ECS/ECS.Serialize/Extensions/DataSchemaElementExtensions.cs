@@ -1,6 +1,6 @@
 ﻿using System.Text;
-using Macropus.Schema;
-using Macropus.Schema.Extensions;
+using ECS.Schema;
+using ECS.Schema.Extensions;
 
 namespace ECS.Serialize.Extensions;
 

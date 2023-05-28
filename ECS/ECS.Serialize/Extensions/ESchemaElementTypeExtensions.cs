@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using Macropus.Schema;
+using ECS.Schema;
 
 namespace ECS.Serialize.Extensions;
 

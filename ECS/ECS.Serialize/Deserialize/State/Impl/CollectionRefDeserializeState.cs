@@ -1,7 +1,7 @@
 ﻿using System.Data;
+using ECS.Schema;
 using Macropus.CoolStuff.Collections.Pool;
 using Macropus.Linq;
-using Macropus.Schema;
 
 // ReSharper disable ParameterHidesMember
 

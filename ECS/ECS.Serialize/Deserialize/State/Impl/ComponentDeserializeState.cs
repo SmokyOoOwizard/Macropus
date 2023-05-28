@@ -1,9 +1,9 @@
 ﻿using System.Data;
+using ECS.Schema;
 using ECS.Serialize.Sql;
 using Macropus.CoolStuff.Collections.Pool;
 using Macropus.Database.Adapter;
 using Macropus.Linq;
-using Macropus.Schema;
 using Microsoft.Data.Sqlite;
 
 // ReSharper disable ParameterHidesMember

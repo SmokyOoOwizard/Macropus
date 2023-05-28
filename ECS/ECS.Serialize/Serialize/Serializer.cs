@@ -1,10 +1,10 @@
 ﻿using System.Data;
+using ECS.Schema;
 using ECS.Serialize.Serialize.State;
 using ECS.Serialize.Serialize.State.Impl;
 using ECS.Serialize.Sql;
 using Macropus.CoolStuff;
 using Macropus.ECS.Component;
-using Macropus.Schema;
 
 namespace ECS.Serialize.Serialize;
 

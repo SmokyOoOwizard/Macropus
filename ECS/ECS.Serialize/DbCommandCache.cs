@@ -1,7 +1,7 @@
 ﻿using System.Data;
+using ECS.Schema;
 using ECS.Serialize.Extensions;
 using Macropus.CoolStuff.Collections.Pool;
-using Macropus.Schema;
 using Microsoft.Data.Sqlite;
 
 namespace ECS.Serialize;

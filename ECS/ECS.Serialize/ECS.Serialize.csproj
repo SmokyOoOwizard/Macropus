@@ -15,7 +15,7 @@
       <ProjectReference Include="..\..\CoolStuff\CoolStuff\CoolStuff.csproj" />
       <ProjectReference Include="..\..\CoolStuff\Linq\Linq.csproj" />
       <ProjectReference Include="..\..\Database\Database\Database.csproj" />
-      <ProjectReference Include="..\..\Schema\Schema.csproj" />
+      <ProjectReference Include="..\ECS.Schema\ECS.Schema.csproj" />
       <ProjectReference Include="..\ECS\ECS.csproj" />
     </ItemGroup>
 

@@ -1,9 +1,9 @@
 ﻿using System.Data;
+using ECS.Schema;
 using ECS.Serialize.Deserialize;
 using ECS.Serialize.Serialize;
 using Macropus.CoolStuff.Collections.Pool;
 using Macropus.ECS.Component;
-using Macropus.Schema;
 
 namespace ECS.Serialize;
 
