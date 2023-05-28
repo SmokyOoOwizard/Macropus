@@ -4,7 +4,7 @@ using Xunit.Abstractions;
 
 #pragma warning disable CS8618
 
-namespace Tests.Utils.Tests;
+namespace Database.Tests.Utils;
 
 public abstract class TestsWithDatabasesProvider : TestsWithFileSystemProvider
 {
