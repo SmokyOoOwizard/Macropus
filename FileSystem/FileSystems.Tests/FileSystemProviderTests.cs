@@ -1,10 +1,10 @@
-﻿using Macropus.Extensions;
+﻿using FileSystems.Tests.Utils;
+using Macropus.Extensions;
 using Tests.Utils;
 using Tests.Utils.Random;
-using Tests.Utils.Tests;
 using Xunit.Abstractions;
 
-namespace Tests.FileSystem;
+namespace FileSystems.Tests;
 
 public class FileSystemProviderTests : TestsWithFileSystemProvider
 {

@@ -1,10 +1,10 @@
-﻿using Macropus.Database;
+﻿using Database.Tests.Utils;
+using Macropus.Database;
 using Macropus.Database.Adapter;
 using Tests.Utils.Random;
-using Tests.Utils.Tests;
 using Xunit.Abstractions;
 
-namespace Tests.Database;
+namespace Database.Tests;
 
 public class DatabasesProviderTests : TestsWithDatabasesProvider
 {

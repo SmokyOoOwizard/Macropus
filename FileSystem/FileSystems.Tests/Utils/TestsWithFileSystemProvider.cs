@@ -2,11 +2,12 @@
 using Macropus.Database;
 using Macropus.FileSystem;
 using Macropus.FileSystem.Interfaces;
+using Tests.Utils;
 using Xunit.Abstractions;
 
 #pragma warning disable CS8618
 
-namespace Tests.Utils.Tests;
+namespace FileSystems.Tests.Utils;
 
 public abstract class TestsWithFileSystemProvider : TestsWithFiles
 {
