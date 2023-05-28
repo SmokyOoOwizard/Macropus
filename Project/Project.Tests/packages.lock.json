@@ -1855,6 +1855,7 @@
         "dependencies": {
           "Autofac.Extras.Moq": "[6.1.0, )",
           "Delogger": "[1.0.1, )",
+          "Microsoft.Data.Sqlite.Core": "[6.0.9, )",
           "xunit.extensibility.core": "[2.4.2, )"
         }
       }
