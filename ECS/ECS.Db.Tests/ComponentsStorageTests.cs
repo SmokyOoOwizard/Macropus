@@ -28,7 +28,7 @@ public class ComponentsStorageTests : TestsWithDatabase
 		Assert.True(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
 		Assert.False(storageInDb.HasComponent<DataSchemaSubSchemaComponent2>(guid));
 	}
-	
+
 	[Fact]
 	public async Task GetComponent()
 	{
@@ -41,7 +41,7 @@ public class ComponentsStorageTests : TestsWithDatabase
 		var guid = Guid.NewGuid();
 
 		var oldComponent = DataSchemaRandomUtils.GetRandomDataSchemaTestTypeComponent();
-		
+
 		await serializer.SerializeAsync(schema, guid, oldComponent);
 
 		var storageInDb = new ComponentsStorageInDb(DbConnection);
@@ -50,5 +50,32 @@ public class ComponentsStorageTests : TestsWithDatabase
 		var newComponent = storageInDb.GetComponent<DataSchemaTestTypeComponent>(guid);
 
 		DataSchemaUtils.CheckDeserializedComponent(newComponent, oldComponent);
+	}
+
+	[Fact]
+	public async Task RemoveComponent()
+	{
+		var builder = new DataSchemaBuilder();
+		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
+
+		using var serializer = new ComponentSerializer(DbConnection);
+		await serializer.CreateTablesBySchema(schema);
+
+		var guid = Guid.NewGuid();
+
+		var oldComponent = DataSchemaRandomUtils.GetRandomDataSchemaTestTypeComponent();
+
+		await serializer.SerializeAsync(schema, guid, oldComponent);
+
+		var storageInDb = new ComponentsStorageInDb(DbConnection);
+		Assert.True(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
+
+		var newComponent = storageInDb.GetComponent<DataSchemaTestTypeComponent>(guid);
+
+		DataSchemaUtils.CheckDeserializedComponent(newComponent, oldComponent);
+
+		storageInDb.RemoveComponent<DataSchemaTestTypeComponent>(guid);
+
+		Assert.False(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
 	}
 }

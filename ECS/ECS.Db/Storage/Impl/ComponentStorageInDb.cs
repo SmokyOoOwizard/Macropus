@@ -19,7 +19,7 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 	private readonly DataConnection dbConnection;
 	private readonly ComponentSerializer componentSerializer;
-	
+
 	private readonly Dictionary<Type, DataSchema> schemas = new();
 	private readonly DataSchemaBuilder schemaBuilder = new();
 
@@ -51,7 +51,7 @@ public class ComponentsStorageInDb : IComponentsStorage
 	public T GetComponent<T>(Guid entityId) where T : struct, IComponent
 	{
 		var componentType = typeof(T);
-		if(!schemas.TryGetValue(componentType, out var schema))
+		if (!schemas.TryGetValue(componentType, out var schema))
 		{
 			schema = schemaBuilder.CreateSchema<T>();
 			schemas[componentType] = schema;
@@ -61,7 +61,7 @@ public class ComponentsStorageInDb : IComponentsStorage
 			.ConfigureAwait(false)
 			.GetAwaiter()
 			.GetResult();
-		
+
 		if (!result.HasValue)
 			throw new Exception(); // TODO
 
@@ -95,7 +95,31 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 	public void RemoveComponent<T>(Guid entityId) where T : struct, IComponent
 	{
-		throw new NotImplementedException();
+		var entityIdStr = ComponentFormatUtils.FormatGuid(entityId);
+		var cmpName = typeof(T).FullName;
+		var tableName = ComponentFormatUtils.NormalizeName(cmpName);
+
+		var ids = dbConnection
+			.GetTable<EntitiesComponentsTable>()
+			.TableName("EntitiesComponents")
+			.Where(e => e.ComponentName == cmpName && e.EntityId == entityIdStr)
+			.Select(c => new { c.ComponentId, c.Id })
+			.FirstOrDefault();
+
+		if (ids == null)
+			return;
+		
+		dbConnection
+			.GetTable<ComponentTableBase>()
+			.TableName(tableName)
+			.Where(e => e.Id == ids.ComponentId)
+			.Delete();
+		
+		dbConnection
+			.GetTable<EntitiesComponentsTable>()
+			.TableName("EntitiesComponents")
+			.Where(e => e.Id == ids.Id)
+			.Delete();
 	}
 
 	public void Apply(IReadOnlyComponentsStorage changes)
