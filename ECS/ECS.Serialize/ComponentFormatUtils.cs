@@ -6,4 +6,9 @@ public static class ComponentFormatUtils
 	{
 		return componentName?.Replace('.', '|');
 	}
+
+	public static string? FormatGuid(Guid? guid)
+	{
+		return guid?.ToString("N");
+	}
 }
