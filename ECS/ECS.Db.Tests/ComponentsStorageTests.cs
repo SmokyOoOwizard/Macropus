@@ -3,6 +3,7 @@ using ECS.Db.Tests.Utils;
 using ECS.Schema;
 using ECS.Serialize;
 using ECS.Tests.Schema;
+using LinqToDB.Data;
 using Tests.Utils;
 using Xunit.Abstractions;
 
@@ -10,7 +11,11 @@ namespace ECS.Db.Tests;
 
 public class ComponentsStorageTests : TestsWithDatabase
 {
-	public ComponentsStorageTests(ITestOutputHelper output) : base(output) { }
+	public ComponentsStorageTests(ITestOutputHelper output) : base(output)
+	{
+		DataConnection.TurnTraceSwitchOn();
+		DataConnection.WriteTraceLine = (s1, s2, _) => Console.WriteLine(s1);
+	}
 
 	[Fact]
 	public async Task HasComponent()

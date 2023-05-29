@@ -26,6 +26,7 @@ public class ComponentsStorageInDb : IComponentsStorage
 	public ComponentsStorageInDb(IDbConnection dbConnection)
 	{
 		this.dbConnection = SQLiteTools.CreateDataConnection((DbConnection)dbConnection);
+		
 		componentSerializer = new ComponentSerializer(dbConnection);
 	}
 
@@ -108,13 +109,13 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 		if (ids == null)
 			return;
-		
+
 		dbConnection
 			.GetTable<ComponentTableBase>()
 			.TableName(tableName)
 			.Where(e => e.Id == ids.ComponentId)
 			.Delete();
-		
+
 		dbConnection
 			.GetTable<EntitiesComponentsTable>()
 			.TableName("EntitiesComponents")
@@ -124,6 +125,48 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 	public void Apply(IReadOnlyComponentsStorage changes)
 	{
+		var components = changes.GetComponents();
+		foreach (var component in components)
+		{
+			var cmpName = component.ComponentName;
+			var tableName = ComponentFormatUtils.NormalizeName(cmpName);
+
+			var toRemove = new HashSet<string>();
+
+			foreach (var componentChanges in component)
+			{
+				if (componentChanges.Value == null)
+					toRemove.Add(ComponentFormatUtils.FormatGuid(componentChanges.Key) ?? "");
+
+				// TODO changes
+			}
+
+			{ // Remove components
+				var toRemoveIds = dbConnection
+					.GetTable<EntitiesComponentsTable>()
+					.TableName("EntitiesComponents")
+					.Where(e => e.ComponentName == cmpName && toRemove.Contains(e.EntityId))
+					.Join(dbConnection.GetTable<ComponentTableBase>().TableName(tableName), e => e.ComponentId,
+						e => e.Id,
+						(e, c) => c)
+					.Select(e => e.Id)
+					.ToHashSet();
+
+
+				dbConnection
+					.GetTable<ComponentTableBase>()
+					.TableName(tableName)
+					.Where(e => toRemoveIds.Contains(e.Id))
+					.Delete();
+
+				dbConnection
+					.GetTable<EntitiesComponentsTable>()
+					.TableName("EntitiesComponents")
+					.Where(e => toRemoveIds.Contains(e.ComponentId))
+					.Delete();
+			}
+		}
+
 		throw new NotImplementedException();
 	}
 
