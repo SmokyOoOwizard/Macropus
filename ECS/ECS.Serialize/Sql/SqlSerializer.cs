@@ -27,7 +27,7 @@ class SqlSerializer : IClearable
 		if (values == null)
 			throw new Exception();
 
-		var tableName = target.Schema.SchemaOf.FullName;
+		var tableName = ComponentFormatUtils.NormalizeName(target.Schema.SchemaOf.FullName);
 		var fields = target.Schema.Elements;
 		
 		if (tableName == null)
@@ -84,7 +84,7 @@ class SqlSerializer : IClearable
 			// TODO
 			throw new Exception();
 
-		var tableName = target.Schema.SchemaOf.FullName;
+		var tableName = ComponentFormatUtils.NormalizeName(target.Schema.SchemaOf.FullName);
 		var fields = target.Schema.Elements;
 
 		if (tableName == null)

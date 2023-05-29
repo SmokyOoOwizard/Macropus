@@ -8,7 +8,7 @@ namespace ECS.Serialize;
 
 public partial class ComponentSerializer
 {
-	public const string ENTITIES_COMPONENTS_TABLE_NAME = "EntitesComponents";
+	public const string ENTITIES_COMPONENTS_TABLE_NAME = "EntitiesComponents";
 
 	public async Task CreateTablesBySchema(DataSchema schema)
 	{
@@ -56,8 +56,8 @@ public partial class ComponentSerializer
 		if (!simpleFields.Any())
 			// TODO schema must have fields
 			throw new Exception();
-		
-		var tableName = schema.SchemaOf.FullName;
+
+		var tableName = ComponentFormatUtils.NormalizeName(schema.SchemaOf.FullName);
 
 		if (string.IsNullOrWhiteSpace(tableName))
 			throw new ArgumentNullException(nameof(schema.SchemaOf));
