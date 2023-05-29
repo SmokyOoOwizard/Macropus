@@ -23,6 +23,8 @@ public static class DbCommandCache
 			Exists[dbConnection] = existsCmd = new();
 		}
 
+		tableName = ComponentFormatUtils.NormalizeName(tableName);
+
 		var cmdName = "GET_" + tableName + "_" + count;
 
 		if (!existsCmd.TryGetValue(cmdName, out var cmd))

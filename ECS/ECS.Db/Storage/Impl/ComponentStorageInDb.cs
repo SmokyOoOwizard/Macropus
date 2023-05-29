@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.Common;
-using ECS.Models;
+using ECS.Db.Models;
+using ECS.Schema;
 using ECS.Serialize;
 using LinqToDB;
 using LinqToDB.Data;
@@ -9,22 +10,28 @@ using Macropus.ECS.Component;
 using Macropus.ECS.Component.Filter;
 using Macropus.ECS.Component.Storage;
 
-namespace ECS.Component.Storage.Impl;
+namespace ECS.Db.Storage.Impl;
 
 public class ComponentsStorageInDb : IComponentsStorage
 {
-	private readonly DataConnection dbConnection;
 	public uint ComponentsCount { get; }
 	public uint EntitiesCount { get; }
+
+	private readonly DataConnection dbConnection;
+	private readonly ComponentSerializer componentSerializer;
+	
+	private readonly Dictionary<Type, DataSchema> schemas = new();
+	private readonly DataSchemaBuilder schemaBuilder = new();
 
 	public ComponentsStorageInDb(IDbConnection dbConnection)
 	{
 		this.dbConnection = SQLiteTools.CreateDataConnection((DbConnection)dbConnection);
+		componentSerializer = new ComponentSerializer(dbConnection);
 	}
 
 	public bool HasComponent<T>(Guid entityId) where T : struct, IComponent
 	{
-		var cmpName = ComponentFormatUtils.NormalizeName(typeof(T).FullName);
+		var cmpName = typeof(T).FullName;
 		if (string.IsNullOrWhiteSpace(cmpName))
 			throw new Exception(); // TODO
 
@@ -37,12 +44,28 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 		return dbConnection
 			.GetTable<EntitiesComponentsTable>()
+			.TableName("EntitiesComponents")
 			.Any(e => e.ComponentName == name && e.EntityId == entityIdStr);
 	}
 
 	public T GetComponent<T>(Guid entityId) where T : struct, IComponent
 	{
-		throw new NotImplementedException();
+		var componentType = typeof(T);
+		if(!schemas.TryGetValue(componentType, out var schema))
+		{
+			schema = schemaBuilder.CreateSchema<T>();
+			schemas[componentType] = schema;
+		}
+
+		var result = componentSerializer.DeserializeAsync<T>(schema, entityId)
+			.ConfigureAwait(false)
+			.GetAwaiter()
+			.GetResult();
+		
+		if (!result.HasValue)
+			throw new Exception(); // TODO
+
+		return result.Value;
 	}
 
 	public IComponent GetComponent(Guid entityId, string name)

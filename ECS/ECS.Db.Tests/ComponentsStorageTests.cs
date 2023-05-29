@@ -1,4 +1,5 @@
-using ECS.Component.Storage.Impl;
+using ECS.Db.Storage.Impl;
+using ECS.Db.Tests.Utils;
 using ECS.Schema;
 using ECS.Serialize;
 using ECS.Tests.Schema;
@@ -26,5 +27,28 @@ public class ComponentsStorageTests : TestsWithDatabase
 		var storageInDb = new ComponentsStorageInDb(DbConnection);
 		Assert.True(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
 		Assert.False(storageInDb.HasComponent<DataSchemaSubSchemaComponent2>(guid));
+	}
+	
+	[Fact]
+	public async Task GetComponent()
+	{
+		var builder = new DataSchemaBuilder();
+		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
+
+		using var serializer = new ComponentSerializer(DbConnection);
+		await serializer.CreateTablesBySchema(schema);
+
+		var guid = Guid.NewGuid();
+
+		var oldComponent = DataSchemaRandomUtils.GetRandomDataSchemaTestTypeComponent();
+		
+		await serializer.SerializeAsync(schema, guid, oldComponent);
+
+		var storageInDb = new ComponentsStorageInDb(DbConnection);
+		Assert.True(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
+
+		var newComponent = storageInDb.GetComponent<DataSchemaTestTypeComponent>(guid);
+
+		DataSchemaUtils.CheckDeserializedComponent(newComponent, oldComponent);
 	}
 }

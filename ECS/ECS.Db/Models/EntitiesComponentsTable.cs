@@ -1,8 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿namespace ECS.Db.Models;
 
-namespace ECS.Models;
-
-[Table("EntitiesComponents")]
 internal class EntitiesComponentsTable
 {
 	public int Id { get; set; }
