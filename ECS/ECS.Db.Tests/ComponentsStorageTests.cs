@@ -14,7 +14,7 @@ public class ComponentsStorageTests : TestsWithDatabase
 	public ComponentsStorageTests(ITestOutputHelper output) : base(output)
 	{
 		DataConnection.TurnTraceSwitchOn();
-		DataConnection.WriteTraceLine = (s1, s2, _) => Console.WriteLine(s1);
+		DataConnection.WriteTraceLine = (s1, _, _) => Console.WriteLine(s1);
 	}
 
 	[Fact]
@@ -35,6 +35,30 @@ public class ComponentsStorageTests : TestsWithDatabase
 	}
 
 	[Fact]
+	public async Task ReplaceComponent()
+	{
+		var builder = new DataSchemaBuilder();
+		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
+
+		using var serializer = new ComponentSerializer(DbConnection);
+		await serializer.CreateTablesBySchema(schema);
+		
+		var storageInDb = new ComponentsStorageInDb(DbConnection);
+		
+		var guid = Guid.NewGuid();
+		Assert.False(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
+
+		var oldComponent = DataSchemaRandomUtils.GetRandomDataSchemaTestTypeComponent();
+		storageInDb.ReplaceComponent(guid, oldComponent);
+
+		Assert.True(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
+
+		var newComponent = storageInDb.GetComponent<DataSchemaTestTypeComponent>(guid);
+
+		DataSchemaUtils.CheckDeserializedComponent(newComponent, oldComponent);
+	}
+
+	[Fact]
 	public async Task GetComponent()
 	{
 		var builder = new DataSchemaBuilder();
@@ -42,11 +66,10 @@ public class ComponentsStorageTests : TestsWithDatabase
 
 		using var serializer = new ComponentSerializer(DbConnection);
 		await serializer.CreateTablesBySchema(schema);
-
-		var guid = Guid.NewGuid();
-
+		
 		var oldComponent = DataSchemaRandomUtils.GetRandomDataSchemaTestTypeComponent();
 
+		var guid = Guid.NewGuid();
 		await serializer.SerializeAsync(schema, guid, oldComponent);
 
 		var storageInDb = new ComponentsStorageInDb(DbConnection);
@@ -65,11 +88,10 @@ public class ComponentsStorageTests : TestsWithDatabase
 
 		using var serializer = new ComponentSerializer(DbConnection);
 		await serializer.CreateTablesBySchema(schema);
-
-		var guid = Guid.NewGuid();
-
+		
 		var oldComponent = DataSchemaRandomUtils.GetRandomDataSchemaTestTypeComponent();
 
+		var guid = Guid.NewGuid();
 		await serializer.SerializeAsync(schema, guid, oldComponent);
 
 		var storageInDb = new ComponentsStorageInDb(DbConnection);

@@ -39,6 +39,7 @@ public class ComponentsStorageInDb : IComponentsStorage
 		return HasComponent(entityId, cmpName);
 	}
 
+	// TODO optimize
 	public bool HasComponent(Guid entityId, string name)
 	{
 		var entityIdStr = ComponentFormatUtils.FormatGuid(entityId);
@@ -49,6 +50,7 @@ public class ComponentsStorageInDb : IComponentsStorage
 			.Any(e => e.ComponentName == name && e.EntityId == entityIdStr);
 	}
 
+	// TODO optimize
 	public T GetComponent<T>(Guid entityId) where T : struct, IComponent
 	{
 		var componentType = typeof(T);
@@ -89,11 +91,22 @@ public class ComponentsStorageInDb : IComponentsStorage
 		throw new NotImplementedException();
 	}
 
+	// TODO optimize
 	public void ReplaceComponent<T>(Guid entityId, T component) where T : struct, IComponent
 	{
-		throw new NotImplementedException();
+		var componentType = typeof(T);
+		if (!schemas.TryGetValue(componentType, out var schema))
+		{
+			schema = schemaBuilder.CreateSchema<T>();
+			schemas[componentType] = schema;
+		}
+		
+		RemoveComponent<T>(entityId);
+
+		componentSerializer.SerializeAsync(schema, entityId, component).GetAwaiter().GetResult();
 	}
 
+	// TODO optimize
 	public void RemoveComponent<T>(Guid entityId) where T : struct, IComponent
 	{
 		var entityIdStr = ComponentFormatUtils.FormatGuid(entityId);
@@ -123,6 +136,7 @@ public class ComponentsStorageInDb : IComponentsStorage
 			.Delete();
 	}
 
+	// TODO optimize
 	public void Apply(IReadOnlyComponentsStorage changes)
 	{
 		var components = changes.GetComponents();
