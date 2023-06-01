@@ -7,6 +7,7 @@ using Macropus.ECS.Component;
 
 namespace ECS.Serialize;
 
+// TODO save components in flat mode. one table per one component type. sub structures ( collections, structures, etc... ) save in json?
 public partial class ComponentSerializer : IDisposable
 {
 	private readonly IDbConnection dbConnection;

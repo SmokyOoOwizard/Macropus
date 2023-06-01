@@ -12,6 +12,7 @@ using Macropus.ECS.Component.Storage;
 
 namespace ECS.Db.Storage.Impl;
 
+// TODO db leak. after component delete action in db stay sub structures
 public class ComponentsStorageInDb : IComponentsStorage
 {
 	public uint ComponentsCount { get; }
@@ -25,6 +26,7 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 	public ComponentsStorageInDb(IDbConnection dbConnection)
 	{
+		// TODO pass data connection directly?
 		this.dbConnection = SQLiteTools.CreateDataConnection((DbConnection)dbConnection);
 
 		componentSerializer = new ComponentSerializer(dbConnection);

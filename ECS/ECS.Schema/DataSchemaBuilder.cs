@@ -3,6 +3,7 @@ using Macropus.CoolStuff.Collections;
 
 namespace ECS.Schema;
 
+// TODO add scheme storage. reduce number of copies
 public sealed class DataSchemaBuilder
 {
 	private readonly Map<Type, uint> alreadyExistsSchemas = new();
