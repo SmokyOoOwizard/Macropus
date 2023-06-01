@@ -11,8 +11,8 @@ public partial class ComponentSerializer : IDisposable
 {
 	private readonly IDbConnection dbConnection;
 
-	private readonly Pool<Serializer> serilizers = new();
-	private readonly Pool<Deserializer> deserilizers = new();
+	private readonly Pool<Serializer> serializers = new();
+	private readonly Pool<Deserializer> deserializers = new();
 
 	public ComponentSerializer(IDbConnection dbConnection)
 	{
@@ -24,10 +24,9 @@ public partial class ComponentSerializer : IDisposable
 	public async Task SerializeAsync(DataSchema schema, Guid entityId, IComponent component)
 	{
 		if (schema.Elements.Count == 0 || schema.SubSchemas.Any(s => s.Value.Elements.Count == 0))
-			// TODO
-			throw new Exception();
+			throw new Exception(); // TODO
 
-		var serializer = serilizers.Take();
+		var serializer = serializers.Take();
 
 		try
 		{
@@ -35,7 +34,7 @@ public partial class ComponentSerializer : IDisposable
 		}
 		finally
 		{
-			serilizers.Release(serializer);
+			serializers.Release(serializer);
 		}
 	}
 
@@ -48,14 +47,13 @@ public partial class ComponentSerializer : IDisposable
 
 		return (T?)await DeserializeAsync(schema, entityId);
 	}
-	
+
 	public async Task<IComponent?> DeserializeAsync(DataSchema schema, Guid entityId)
 	{
 		if (schema.Elements.Count == 0 || schema.SubSchemas.Any(s => s.Value.Elements.Count == 0))
-			// TODO
-			throw new Exception();
+			throw new Exception(); // TODO
 
-		var deserializer = deserilizers.Take();
+		var deserializer = deserializers.Take();
 
 		try
 		{
@@ -63,7 +61,7 @@ public partial class ComponentSerializer : IDisposable
 		}
 		finally
 		{
-			deserilizers.Release(deserializer);
+			deserializers.Release(deserializer);
 		}
 	}
 
