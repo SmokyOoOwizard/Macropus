@@ -26,7 +26,7 @@ public class ComponentsStorageInDb : IComponentsStorage
 	public ComponentsStorageInDb(IDbConnection dbConnection)
 	{
 		this.dbConnection = SQLiteTools.CreateDataConnection((DbConnection)dbConnection);
-		
+
 		componentSerializer = new ComponentSerializer(dbConnection);
 	}
 
@@ -73,7 +73,19 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 	public IComponent GetComponent(Guid entityId, string name)
 	{
-		throw new NotImplementedException();
+		var schema = schemas.FirstOrDefault(s => s.Key.FullName == name).Value;
+		if (schema == null)
+			throw new Exception(); // TODO
+			
+		var result = componentSerializer.DeserializeAsync(schema, entityId)
+			.ConfigureAwait(false)
+			.GetAwaiter()
+			.GetResult();
+
+		if (result == null)
+			throw new Exception(); // TODO
+
+		return result;
 	}
 
 	public IEnumerable<Guid> GetEntities()
@@ -100,8 +112,22 @@ public class ComponentsStorageInDb : IComponentsStorage
 			schema = schemaBuilder.CreateSchema<T>();
 			schemas[componentType] = schema;
 		}
-		
+
 		RemoveComponent<T>(entityId);
+
+		componentSerializer.SerializeAsync(schema, entityId, component).GetAwaiter().GetResult();
+	}
+
+	public void ReplaceComponent(Guid entityId, IComponent component)
+	{
+		var componentType = component.GetType();
+		if (!schemas.TryGetValue(componentType, out var schema))
+		{
+			schema = schemaBuilder.CreateSchema(componentType);
+			schemas[componentType] = schema;
+		}
+
+		RemoveComponent(entityId, componentType);
 
 		componentSerializer.SerializeAsync(schema, entityId, component).GetAwaiter().GetResult();
 	}
@@ -109,8 +135,13 @@ public class ComponentsStorageInDb : IComponentsStorage
 	// TODO optimize
 	public void RemoveComponent<T>(Guid entityId) where T : struct, IComponent
 	{
+		RemoveComponent(entityId, typeof(T));
+	}
+
+	public void RemoveComponent(Guid entityId, Type cmpType)
+	{
 		var entityIdStr = ComponentFormatUtils.FormatGuid(entityId);
-		var cmpName = typeof(T).FullName;
+		var cmpName = cmpType.FullName;
 		var tableName = ComponentFormatUtils.NormalizeName(cmpName);
 
 		var ids = dbConnection
@@ -139,23 +170,20 @@ public class ComponentsStorageInDb : IComponentsStorage
 	// TODO optimize
 	public void Apply(IReadOnlyComponentsStorage changes)
 	{
-		var components = changes.GetComponents();
-		foreach (var component in components)
+		var storages = changes.GetComponents();
+		foreach (var storage in storages)
 		{
-			var cmpName = component.ComponentName;
+			var cmpName = storage.ComponentName;
 			var tableName = ComponentFormatUtils.NormalizeName(cmpName);
 
-			var toRemove = new HashSet<string>();
+			var toRemove = storage.Select(c => ComponentFormatUtils.FormatGuid(c.Key) ?? "").ToHashSet();
 
-			foreach (var componentChanges in component)
+			var toAdd = storage.Where(c => c.Value != null).ToList();
+
+			
+			// TODO holy shit.....
 			{
-				if (componentChanges.Value == null)
-					toRemove.Add(ComponentFormatUtils.FormatGuid(componentChanges.Key) ?? "");
-
-				// TODO changes
-			}
-
-			{ // Remove components
+				// Remove components
 				var toRemoveIds = dbConnection
 					.GetTable<EntitiesComponentsTable>()
 					.TableName("EntitiesComponents")
@@ -179,9 +207,14 @@ public class ComponentsStorageInDb : IComponentsStorage
 					.Where(e => toRemoveIds.Contains(e.ComponentId))
 					.Delete();
 			}
-		}
 
-		throw new NotImplementedException();
+			{
+				foreach (var (id, component) in toAdd)
+				{
+					ReplaceComponent(id, component!);
+				}
+			}
+		}
 	}
 
 	public void Clear() { }

@@ -14,10 +14,9 @@ class Deserializer : IClearable
 
 	private readonly Stack<IDeserializeState> deserializeStack = new();
 
-	public async Task<T?> DeserializeAsync<T>(IDbConnection dbConnection, DataSchema schema, Guid entityId)
-		where T : struct, IComponent
+	public async Task<IComponent?> DeserializeAsync(IDbConnection dbConnection, DataSchema schema, Guid entityId)
 	{
-		T rootComponent = default;
+		IComponent? rootComponent = default;
 
 		var componentName = schema.SchemaOf.FullName;
 		if (componentName == null)
@@ -61,7 +60,7 @@ class Deserializer : IClearable
 					if (deserializeStack.Count > 1)
 						throw new Exception();
 
-					rootComponent = (T)(cds.Create() ?? default(T));
+					rootComponent = cds.Create() as IComponent;
 
 					target.Clear();
 					break;

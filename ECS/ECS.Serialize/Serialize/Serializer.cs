@@ -16,8 +16,7 @@ class Serializer : IClearable
 	private readonly SqlSerializer serializer = new();
 
 
-	public async Task SerializeAsync<T>(IDbConnection dbConnection, DataSchema schema, Guid entityId, T component)
-		where T : struct, IComponent
+	public async Task SerializeAsync(IDbConnection dbConnection, DataSchema schema, Guid entityId, IComponent component)
 	{
 		using var transaction = dbConnection.BeginTransaction();
 		try
