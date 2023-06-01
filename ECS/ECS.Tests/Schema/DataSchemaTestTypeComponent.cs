@@ -8,7 +8,12 @@ public struct DataSchemaSubSchemaComponent
 	public DataSchemaSubSchemaComponent2 InnerStructure;
 }
 
-public struct DataSchemaSubSchemaComponent2 : IComponent
+public struct DataSchemaSubSchemaComponent2
+{
+	public string Name;
+}
+
+public struct DataSchemaTestTypeComponent2 : IComponent
 {
 	public string Name;
 }

@@ -16,6 +16,30 @@ public class ComponentsStorageTests : TestsWithDatabase
 		DataConnection.TurnTraceSwitchOn();
 		DataConnection.WriteTraceLine = (s1, _, _) => Console.WriteLine(s1);
 	}
+	
+	[Fact]
+	public async Task GetGroup()
+	{
+		var builder = new DataSchemaBuilder();
+		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
+		var schema2 = builder.CreateSchema<DataSchemaTestTypeComponent2>();
+
+		using var serializer = new ComponentSerializer(DbConnection);
+		await serializer.CreateTablesBySchema(schema);
+		await serializer.CreateTablesBySchema(schema2);
+
+		var guid = Guid.NewGuid();
+		await serializer.SerializeAsync(schema, guid, new DataSchemaTestTypeComponent());
+		await serializer.SerializeAsync(schema2, guid, new DataSchemaTestTypeComponent2());
+
+		var storageInDb = new ComponentsStorageInDb(DbConnection);
+
+		var entities = storageInDb.GetEntities();
+		
+		Assert.NotEmpty(entities);
+		Assert.Equal(1, entities.Count());
+		Assert.Equal(guid, entities.First());
+	}
 
 	[Fact]
 	public async Task HasComponent()
@@ -31,7 +55,7 @@ public class ComponentsStorageTests : TestsWithDatabase
 
 		var storageInDb = new ComponentsStorageInDb(DbConnection);
 		Assert.True(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
-		Assert.False(storageInDb.HasComponent<DataSchemaSubSchemaComponent2>(guid));
+		Assert.False(storageInDb.HasComponent<DataSchemaTestTypeComponent2>(guid));
 	}
 
 	[Fact]

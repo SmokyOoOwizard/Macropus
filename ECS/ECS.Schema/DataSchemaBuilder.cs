@@ -82,7 +82,7 @@ public sealed class DataSchemaBuilder
 
 	private void CreateSubSchemasElements()
 	{
-		do
+		while (toCreateSchemas.Count > 0)
 		{
 			var firstPair = toCreateSchemas.FirstOrDefault();
 
@@ -92,7 +92,7 @@ public sealed class DataSchemaBuilder
 			subSchemas.Add(new KeyValuePair<Type, DataSchemaElement[]>(firstPair.Key, subSchema));
 
 			toCreateSchemas.Remove(firstPair.Key);
-		} while (toCreateSchemas.Count > 0);
+		} 
 	}
 
 	private void CreateSubSchemas()

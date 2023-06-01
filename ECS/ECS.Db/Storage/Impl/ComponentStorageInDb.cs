@@ -90,9 +90,14 @@ public class ComponentsStorageInDb : IComponentsStorage
 		return result;
 	}
 
+	// TODO optimize
 	public IEnumerable<Guid> GetEntities()
 	{
-		throw new NotImplementedException();
+		return dbConnection.GetTable<EntitiesComponentsTable>()
+			.TableName("EntitiesComponents")
+			.Select(c => c.EntityId)
+			.Select(c=>Guid.Parse(c))
+			.ToHashSet();
 	}
 
 	public IEnumerable<Guid> GetEntities(ComponentsFilter filter)
@@ -219,7 +224,10 @@ public class ComponentsStorageInDb : IComponentsStorage
 		}
 	}
 
-	public void Clear() { }
+	public void Clear()
+	{
+		// TODO
+	}
 
 	public void Dispose()
 	{
