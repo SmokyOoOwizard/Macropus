@@ -1,6 +1,7 @@
 ﻿using Macropus.ECS.Component.Filter;
 using Macropus.ECS.Component.Storage;
 using Macropus.ECS.Component.Storage.Impl;
+using Macropus.ECS.Component.Storage.Impl.Changes;
 using Macropus.ECS.Context.Group;
 using Macropus.ECS.Context.Group.Impl;
 using Macropus.ECS.Entity;
@@ -52,7 +53,7 @@ public class EntityContext : IEntityContext
 	public void RemoveCollector(IEntityCollector collector)
 		=> collectors.Remove(collector);
 
-	public void ApplyChanges(IReadOnlyComponentsStorage buffer)
+	public void ApplyChanges(IReadOnlyComponentsChangesStorage buffer)
 	{
 		changes.Apply(buffer);
 	}

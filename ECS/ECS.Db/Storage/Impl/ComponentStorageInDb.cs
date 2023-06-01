@@ -105,11 +105,6 @@ public class ComponentsStorageInDb : IComponentsStorage
 		throw new NotImplementedException();
 	}
 
-	public IEnumerable<IReadOnlyComponentStorage> GetComponents()
-	{
-		throw new NotImplementedException();
-	}
-
 	// TODO optimize
 	public void ReplaceComponent<T>(Guid entityId, T component) where T : struct, IComponent
 	{
@@ -175,7 +170,7 @@ public class ComponentsStorageInDb : IComponentsStorage
 	}
 
 	// TODO optimize
-	public void Apply(IReadOnlyComponentsStorage changes)
+	public void Apply(IReadOnlyComponentsChangesStorage changes)
 	{
 		var storages = changes.GetComponents();
 		foreach (var storage in storages)

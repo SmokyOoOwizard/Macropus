@@ -1,6 +1,6 @@
 ﻿using Macropus.ECS.Component.Exceptions;
 
-namespace Macropus.ECS.Component.Storage.Impl;
+namespace Macropus.ECS.Component.Storage.Impl.Changes;
 
 public class ComponentChangesStorageInMemory<T> : ComponentStorageInMemory where T : struct, IComponent
 {

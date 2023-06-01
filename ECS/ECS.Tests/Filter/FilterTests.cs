@@ -2,6 +2,7 @@
 using ECS.Tests.Filter.Components;
 using ECS.Tests.Filter.Systems;
 using Macropus.ECS.Component.Storage.Impl;
+using Macropus.ECS.Component.Storage.Impl.Changes;
 using Macropus.ECS.Systems;
 using Xunit.Abstractions;
 
@@ -31,7 +32,7 @@ public class FilterTests : TestsWithSystems
 
 	private void Fill()
 	{
-		var buffer = new ComponentsStorageInMemory();
+		var buffer = new ComponentsChangesStorageInMemory();
 
 		var counter = 0;
 

@@ -3,7 +3,7 @@ using Macropus.ECS.Component.Exceptions;
 using Macropus.ECS.Component.Filter;
 using Macropus.Linq;
 
-namespace Macropus.ECS.Component.Storage.Impl;
+namespace Macropus.ECS.Component.Storage.Impl.Changes;
 
 public class ComponentsChangesStorageInMemory : IComponentsChangesStorage
 {
@@ -114,7 +114,7 @@ public class ComponentsChangesStorageInMemory : IComponentsChangesStorage
 		existsEntities.Add(entityId);
 	}
 
-	public void Apply(IReadOnlyComponentsStorage changes)
+	public void Apply(IReadOnlyComponentsChangesStorage changes)
 	{
 		foreach (var components in changes.GetComponents())
 		{

@@ -87,7 +87,7 @@ public class ComponentsStorageInMemory : IComponentsStorage
 		existsEntities.Add(entityId);
 	}
 
-	public void Apply(IReadOnlyComponentsStorage changes)
+	public void Apply(IReadOnlyComponentsChangesStorage changes)
 	{
 		foreach (var components in changes.GetComponents())
 		{
@@ -116,11 +116,6 @@ public class ComponentsStorageInMemory : IComponentsStorage
 			if (filter.Filter(entity, this))
 				yield return entity;
 		}
-	}
-
-	public IEnumerable<IReadOnlyComponentStorage> GetComponents()
-	{
-		return storage.Values;
 	}
 
 	public void Clear()

@@ -4,4 +4,6 @@ public interface IReadOnlyComponentsChangesStorage : IReadOnlyComponentsStorage
 {
 	bool HadComponent(Guid entityId, string name);
 	bool HadComponent<T>(Guid entityId) where T : struct, IComponent;
+	
+	IEnumerable<IReadOnlyComponentStorage> GetComponents();
 }
