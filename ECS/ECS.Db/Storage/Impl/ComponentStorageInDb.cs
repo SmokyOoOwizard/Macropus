@@ -78,7 +78,7 @@ public class ComponentsStorageInDb : IComponentsStorage
 		var schema = schemas.FirstOrDefault(s => s.Key.FullName == name).Value;
 		if (schema == null)
 			throw new Exception(); // TODO
-			
+
 		var result = componentSerializer.DeserializeAsync(schema, entityId)
 			.ConfigureAwait(false)
 			.GetAwaiter()
@@ -96,7 +96,7 @@ public class ComponentsStorageInDb : IComponentsStorage
 		return dbConnection.GetTable<EntitiesComponentsTable>()
 			.TableName("EntitiesComponents")
 			.Select(c => c.EntityId)
-			.Select(c=>Guid.Parse(c))
+			.Select(c => Guid.Parse(c))
 			.ToHashSet();
 	}
 
@@ -182,7 +182,7 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 			var toAdd = storage.Where(c => c.Value != null).ToList();
 
-			
+
 			// TODO holy shit.....
 			{
 				// Remove components
@@ -196,7 +196,6 @@ public class ComponentsStorageInDb : IComponentsStorage
 					.Select(e => e.Id)
 					.ToHashSet();
 
-
 				dbConnection
 					.GetTable<ComponentTableBase>()
 					.TableName(tableName)
@@ -206,10 +205,9 @@ public class ComponentsStorageInDb : IComponentsStorage
 				dbConnection
 					.GetTable<EntitiesComponentsTable>()
 					.TableName("EntitiesComponents")
-					.Where(e => toRemoveIds.Contains(e.ComponentId))
+					.Where(e => e.ComponentName == cmpName && toRemoveIds.Contains(e.ComponentId))
 					.Delete();
 			}
-
 			{
 				foreach (var (id, component) in toAdd)
 				{

@@ -4,6 +4,7 @@ using ECS.Schema;
 using ECS.Serialize;
 using ECS.Tests.Schema;
 using LinqToDB.Data;
+using Macropus.ECS.Component.Storage.Impl.Changes;
 using Tests.Utils;
 using Xunit.Abstractions;
 
@@ -129,4 +130,38 @@ public class ComponentsStorageTests : TestsWithDatabase
 
 		Assert.False(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
 	}
+	
+	[Fact]
+	public async Task ApplyChanges()
+	{
+		var builder = new DataSchemaBuilder();
+		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
+		var schema2 = builder.CreateSchema<DataSchemaTestTypeComponent2>();
+
+		using var serializer = new ComponentSerializer(DbConnection);
+		await serializer.CreateTablesBySchema(schema);
+		await serializer.CreateTablesBySchema(schema2);
+
+		var guid = Guid.NewGuid();
+		
+		var storageInDb = new ComponentsStorageInDb(DbConnection);
+		storageInDb.ReplaceComponent(guid, new DataSchemaTestTypeComponent2());
+		
+		Assert.False(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
+		Assert.True(storageInDb.HasComponent<DataSchemaTestTypeComponent2>(guid));
+		
+		var changes = new ComponentsChangesStorageInMemory();
+		
+		var oldComponent = DataSchemaRandomUtils.GetRandomDataSchemaTestTypeComponent();
+		changes.ReplaceComponent(guid, oldComponent);
+		changes.RemoveComponent<DataSchemaTestTypeComponent2>(guid);
+		storageInDb.Apply(changes);
+
+		Assert.True(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
+		Assert.False(storageInDb.HasComponent<DataSchemaTestTypeComponent2>(guid));
+
+		var newComponent = storageInDb.GetComponent<DataSchemaTestTypeComponent>(guid);
+		DataSchemaUtils.CheckDeserializedComponent(newComponent, oldComponent);
+	}
+
 }
