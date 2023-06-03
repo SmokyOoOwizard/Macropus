@@ -2,27 +2,21 @@
 using System.Text;
 using ECS.Schema;
 using ECS.Serialize.Extensions;
-using ECS.Serialize.Models;
-using Macropus.CoolStuff;
 using Macropus.Database.Adapter;
 using Microsoft.Data.Sqlite;
 using SpanJson;
 
-namespace ECS.Serialize.Sql;
+namespace ECS.Serialize.Serialize;
 
-class SqlSerializer : IClearable
+internal class SqlSerializer
 {
-	private readonly StringBuilder sqlBuilder = new();
-
 	public async Task<int> InsertComponent(IDbConnection dbConnection, DataSchema schema, object obj)
 	{
-
 		var tableName = ComponentFormatUtils.NormalizeName(schema.SchemaOf.FullName);
 		var fields = schema.Elements;
 
 		if (tableName == null)
-			// TODO
-			throw new Exception();
+			throw new Exception(); // TODO
 
 		var cmd = DbCommandCache.GetInsertCmd(dbConnection, tableName, fields);
 
@@ -61,31 +55,5 @@ class SqlSerializer : IClearable
 			cmd.Parameters.Add(new SqliteParameter($"@{prefix}{element.Info.FieldName}",
 				valueToInsert ?? DBNull.Value));
 		}
-	}
-
-	public async Task AddEntityComponent(
-		IDbConnection dbConnection,
-		long componentId,
-		string componentName,
-		Guid entityId
-	)
-	{
-		sqlBuilder.Clear();
-		sqlBuilder.Append(
-			$"INSERT INTO '{EntitiesComponentsTable.TABLE_NAME}' (ComponentId, ComponentName, EntityId) VALUES(");
-		sqlBuilder.Append($"{componentId}, ");
-		sqlBuilder.Append($"'{componentName}', ");
-		sqlBuilder.Append($"\'{entityId:N}\'");
-		sqlBuilder.Append(");");
-
-		var cmd = dbConnection.CreateCommand();
-		cmd.CommandText = sqlBuilder.ToString();
-
-		await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
-	}
-
-	public void Clear()
-	{
-		sqlBuilder.Clear();
 	}
 }

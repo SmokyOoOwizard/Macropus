@@ -1,41 +1,40 @@
-﻿using System.Data;
-using ECS.Schema;
-using ECS.Serialize.Sql;
-using Macropus.CoolStuff;
-using Macropus.ECS.Component;
+﻿using ECS.Schema;
+using ECS.Serialize.Models;
+using LinqToDB;
+using LinqToDB.Data;
 
 namespace ECS.Serialize.Serialize;
 
-class Serializer : IClearable
+internal class Serializer
 {
 	private readonly SqlSerializer serializer = new();
 
-	public async Task SerializeAsync(IDbConnection dbConnection, DataSchema schema, Guid entityId, IComponent component)
+	public async Task SerializeAsync(DataConnection dataConnection, DataSchema schema, Guid entityId, object component)
 	{
-		using var transaction = dbConnection.BeginTransaction();
+		await using var transaction = await dataConnection.BeginTransactionAsync();
 		try
 		{
-			var componentId = await serializer.InsertComponent(dbConnection, schema, component);
+			var componentId = await serializer.InsertComponent(dataConnection.Connection, schema, component);
 
 			var componentName = schema.SchemaOf.FullName;
-			await serializer.AddEntityComponent(dbConnection, componentId, componentName!, entityId)
-				.ConfigureAwait(false);
+			await dataConnection.GetTable<EntitiesComponentsTable>()
+				.InsertAsync(() => new EntitiesComponentsTable()
+				{
+					ComponentId = componentId,
+					ComponentName = componentName,
+					EntityId = entityId.ToString("N")
+				});
 
-			transaction.Commit();
+			await transaction.CommitAsync();
 		}
 		catch
 		{
-			transaction.Rollback();
+			await transaction.RollbackAsync();
 			throw;
 		}
 		finally
 		{
-			DbCommandCache.Clear(dbConnection);
+			DbCommandCache.Clear(dataConnection.Connection);
 		}
-	}
-
-	public void Clear()
-	{
-		serializer.Clear();
 	}
 }

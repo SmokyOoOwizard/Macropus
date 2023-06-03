@@ -7,12 +7,11 @@ using Macropus.ECS.Component;
 
 namespace ECS.Serialize;
 
-// TODO save components in flat mode. one table per one component type. sub structures ( collections, structures, etc... ) save in json?
 public partial class ComponentSerializer : IDisposable
 {
 	private readonly DataConnection dataConnection;
 
-	private readonly Pool<Serializer> serializers = new();
+	private readonly Serializer serializer = new();
 	private readonly Pool<Deserializer> deserializers = new();
 
 	public ComponentSerializer(DataConnection dataConnection)
@@ -25,16 +24,7 @@ public partial class ComponentSerializer : IDisposable
 		if (schema.Elements.Count == 0 || schema.SubSchemas.Any(s => s.Value.Elements.Count == 0))
 			throw new Exception(); // TODO
 
-		var serializer = serializers.Take();
-
-		try
-		{
-			await serializer.SerializeAsync(dataConnection.Connection, schema, entityId, component);
-		}
-		finally
-		{
-			serializers.Release(serializer);
-		}
+		await serializer.SerializeAsync(dataConnection, schema, entityId, component);
 	}
 
 	public async Task<T?> DeserializeAsync<T>(DataSchema schema, Guid entityId) where T : struct, IComponent
