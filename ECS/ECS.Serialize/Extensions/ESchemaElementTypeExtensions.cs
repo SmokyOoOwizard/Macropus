@@ -9,12 +9,12 @@ public static class ESchemaElementTypeExtensions
 	{
 		return type switch
 		{
-			ESchemaElementType.Int8 => reader.GetInt64(i),
-			ESchemaElementType.UInt8 => reader.GetInt64(i),
+			ESchemaElementType.Int8 => (sbyte)reader.GetInt64(i),
+			ESchemaElementType.UInt8 => (byte)reader.GetInt64(i),
 			ESchemaElementType.Int16 => reader.GetInt16(i),
-			ESchemaElementType.UInt16 => reader.GetInt64(i),
+			ESchemaElementType.UInt16 => (UInt16)reader.GetInt64(i),
 			ESchemaElementType.Int32 => reader.GetInt32(i),
-			ESchemaElementType.UInt32 => reader.GetInt64(i),
+			ESchemaElementType.UInt32 => (UInt32)reader.GetInt64(i),
 			ESchemaElementType.Int64 => Int64.Parse(reader.GetString(i)),
 			ESchemaElementType.UInt64 => UInt64.Parse(reader.GetString(i)),
 			ESchemaElementType.Int128 => Int128.Parse(reader.GetString(i)),
