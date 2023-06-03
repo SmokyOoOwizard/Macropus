@@ -13,7 +13,6 @@ class StatePool
 	public readonly Pool<CollectionRefDeserializeState> RefCollectionDeserializeStatePool = Pool<CollectionRefDeserializeState>.Instance;
 
 	public readonly Pool<ComponentSerializeState> ComponentSerializeStatePool = Pool<ComponentSerializeState>.Instance;
-	public readonly Pool<ParallelSerializeState> ParallelSerializeStatePool = Pool<ParallelSerializeState>.Instance;
 
 	public void Release(IState state)
 	{
@@ -31,9 +30,6 @@ class StatePool
 			
 			case ComponentSerializeState css:
 				ComponentSerializeStatePool.Release(css);
-				break;
-			case ParallelSerializeState pss:
-				ParallelSerializeStatePool.Release(pss);
 				break;
 		}
 	}

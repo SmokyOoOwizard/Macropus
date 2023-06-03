@@ -587,6 +587,11 @@
         "resolved": "4.4.0",
         "contentHash": "YhEdSQUsTx+C8m8Bw7ar5/VesXvCFMItyZF7G1AUY+OM0VPZUOeAVpJ4Wl6fydBGUYZxojTDR3I6Bj/+BPkJNA=="
       },
+      "SpanJson": {
+        "type": "Transitive",
+        "resolved": "4.0.0",
+        "contentHash": "ppFa532nDkbxYghTOA+CLVfXL3Huzb/NGlY+WMdzJWRF6WNMhXf9gQVM+7XvUrVGK7fg1pBL9q4ruo7aKH7hxg=="
+      },
       "SQLitePCLRaw.bundle_e_sqlite3": {
         "type": "Transitive",
         "resolved": "2.0.6",
@@ -1710,6 +1715,7 @@
           "ECS.Schema": "[1.0.0, )",
           "Linq": "[1.0.0, )",
           "Microsoft.Data.Sqlite.Core": "[6.0.9, )",
+          "SpanJson": "[4.0.0, )",
           "linq2db": "[5.2.1, )"
         }
       },

@@ -10,6 +10,7 @@
     <ItemGroup>
         <PackageReference Include="linq2db" Version="5.2.1" />
         <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.9" />
+        <PackageReference Include="SpanJson" Version="4.0.0" />
     </ItemGroup>
 
     <ItemGroup>

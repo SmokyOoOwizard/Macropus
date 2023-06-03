@@ -17,6 +17,12 @@
           "SQLitePCLRaw.core": "2.0.6"
         }
       },
+      "SpanJson": {
+        "type": "Direct",
+        "requested": "[4.0.0, )",
+        "resolved": "4.0.0",
+        "contentHash": "ppFa532nDkbxYghTOA+CLVfXL3Huzb/NGlY+WMdzJWRF6WNMhXf9gQVM+7XvUrVGK7fg1pBL9q4ruo7aKH7hxg=="
+      },
       "AnyOf": {
         "type": "Transitive",
         "resolved": "0.3.0",
@@ -419,47 +425,47 @@
       "coolstuff": {
         "type": "Project",
         "dependencies": {
-          "AsyncKeyedLock": "[6.2.1, )"
+          "AsyncKeyedLock": "6.2.1"
         }
       },
       "database": {
         "type": "Project",
         "dependencies": {
-          "Autofac": "[6.4.0, )",
-          "Database.Interfaces": "[1.0.0, )",
-          "Delogger": "[1.0.1, )",
-          "FileSystem.Interfaces": "[1.0.0, )",
-          "Microsoft.EntityFrameworkCore": "[6.0.9, )",
-          "Microsoft.EntityFrameworkCore.Sqlite": "[6.0.9, )",
-          "System.Reactive": "[5.0.0, )",
-          "linq2db": "[5.2.1, )"
+          "Autofac": "6.4.0",
+          "Database.Interfaces": "1.0.0",
+          "Delogger": "1.0.1",
+          "FileSystem.Interfaces": "1.0.0",
+          "Microsoft.EntityFrameworkCore": "6.0.9",
+          "Microsoft.EntityFrameworkCore.Sqlite": "6.0.9",
+          "System.Reactive": "5.0.0",
+          "linq2db": "5.2.1"
         }
       },
       "database.interfaces": {
         "type": "Project",
         "dependencies": {
-          "FileSystem.Interfaces": "[1.0.0, )"
+          "FileSystem.Interfaces": "1.0.0"
         }
       },
       "ecs": {
         "type": "Project",
         "dependencies": {
-          "Linq": "[1.0.0, )",
-          "LinqKit": "[1.2.4, )",
-          "Microsoft.Data.Sqlite.Core": "[6.0.9, )"
+          "Linq": "1.0.0",
+          "LinqKit": "1.2.4",
+          "Microsoft.Data.Sqlite.Core": "6.0.9"
         }
       },
       "ecs.schema": {
         "type": "Project",
         "dependencies": {
-          "CoolStuff": "[1.0.0, )",
-          "Extensions": "[1.0.0, )"
+          "CoolStuff": "1.0.0",
+          "Extensions": "1.0.0"
         }
       },
       "extensions": {
         "type": "Project",
         "dependencies": {
-          "AnyOf": "[0.3.0, )"
+          "AnyOf": "0.3.0"
         }
       },
       "filesystem.interfaces": {

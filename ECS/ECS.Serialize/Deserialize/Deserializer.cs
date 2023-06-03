@@ -36,25 +36,11 @@ class Deserializer : IClearable
 		{
 			var target = deserializeStack.Peek();
 			await target.Read(dbConnection);
-			if (target.HasRefs())
-			{
-				deserializeStack.Push(target.PopSomeRefs());
-				continue;
-			}
 
 			deserializeStack.Pop();
 
 			switch (target)
 			{
-				case ITargetDeserializeState tds:
-				{
-					var parent = deserializeStack.Peek();
-
-					var obj = tds.Create();
-
-					parent.AddRef(tds.Target, obj);
-					break;
-				}
 				case ComponentDeserializeState cds:
 				{
 					if (deserializeStack.Count > 1)

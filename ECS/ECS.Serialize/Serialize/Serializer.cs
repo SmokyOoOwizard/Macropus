@@ -40,9 +40,6 @@ class Serializer : IClearable
 						componentId = tmp.Value;
 						break;
 					}
-					case ParallelSerializeState pss:
-						await ProcessParallelSS(dbConnection, pss).ConfigureAwait(false);
-						break;
 				}
 			} while (serializeStack.Count > 0);
 
@@ -64,82 +61,19 @@ class Serializer : IClearable
 	}
 
 	// ReSharper disable once InconsistentNaming
-	private async Task ProcessParallelSS(IDbConnection dbConnection, ParallelSerializeState pss)
-	{
-		var r = await serializer.InsertComponent(dbConnection, pss, 50).ConfigureAwait(false);
-		serializeStack.Pop();
-		if (pss.ParentRef != null && serializeStack.Count > 0)
-		{
-			var parent = serializeStack.Peek();
-			// ReSharper disable once InconsistentNaming
-			if (parent is not ComponentSerializeState parentCSS)
-				throw new Exception();
-
-			parentCSS.AddRangeProcessed(pss.ParentRef.Value, r);
-		}
-
-		StatePool.Release(pss);
-	}
-
-	// ReSharper disable once InconsistentNaming
 	private async Task<long?> ProcessComponentSS(
 		IDbConnection dbConnection,
 		DataSchema schema,
 		ComponentSerializeState css
 	)
 	{
-		var unprocessedNullable = css.TryGetUnprocessed();
-		if (unprocessedNullable != null)
-		{
-			ProcessUnprocessedComponentSS(schema, css, unprocessedNullable.Value);
-			return null;
-		}
-
 		serializeStack.Pop();
 
 		var componentId = await serializer.InsertComponent(dbConnection, css);
-		if (css.ParentRef != null && serializeStack.Count > 0)
-		{
-			var parent = serializeStack.Peek();
-			// ReSharper disable once InconsistentNaming
-			if (parent is not ComponentSerializeState parentCSS)
-				throw new Exception();
-
-			parentCSS.AddProcessed(css.ParentRef.Value, componentId);
-		}
 
 		StatePool.Release(css);
 
 		return componentId;
-	}
-
-	// ReSharper disable once InconsistentNaming
-	private void ProcessUnprocessedComponentSS(
-		DataSchema schema,
-		ComponentSerializeState css,
-		KeyValuePair<DataSchemaElement, Queue<object?>> unprocessed
-	)
-	{
-		if (!unprocessed.Key.Info.SubSchemaId.HasValue)
-			// TODO
-			throw new Exception();
-
-		var refSchema = schema.SubSchemas[unprocessed.Key.Info.SubSchemaId.Value];
-		if (refSchema.SubSchemas.Count == 0)
-		{
-			serializeStack.Push(StatePool.ParallelSerializeStatePool.Take()
-				.Init(refSchema, unprocessed.Value, unprocessed.Key));
-			return;
-		}
-
-		var newTarget = unprocessed.Value.Dequeue();
-		if (newTarget == null)
-		{
-			css.AddProcessed(unprocessed.Key, null);
-			return;
-		}
-
-		serializeStack.Push(StatePool.ComponentSerializeStatePool.Take().Init(refSchema, newTarget, unprocessed.Key));
 	}
 
 	public void Clear()

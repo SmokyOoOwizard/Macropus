@@ -1,16 +1,17 @@
 ﻿using System.Data;
-using System.Text.Json.Nodes;
+using System.Text;
 using ECS.Schema;
 using ECS.Schema.Extensions;
 using ECS.Serialize.Extensions;
 using Macropus.CoolStuff.Collections.Pool;
+using SpanJson;
 
 namespace ECS.Serialize.Sql;
 
 static class SqlComponentReader
 {
-	private static readonly Pool<ReadResult> ReadPool = Pool<ReadResult>.Instance; 
-	
+	private static readonly Pool<ReadResult> ReadPool = Pool<ReadResult>.Instance;
+
 	// ReSharper disable once CognitiveComplexity
 	public static ReadResult ReadComponent(
 		IDataReader reader,
@@ -23,92 +24,29 @@ static class SqlComponentReader
 		{
 			var element = schema.Elements[i];
 
-			if (element.Info.CollectionType is ECollectionType.Array)
+			if (reader.IsDBNull(i))
 			{
-				if (element.Info.Type.IsSimpleType())
-					ReadSimpleArray(ref result, reader, i, element);
-				else
-					ReadComplexArray(ref result, reader, i, element);
+				result.SimpleValues[element] = null;
+				continue;
+			}
+
+			if (element.Info.CollectionType is ECollectionType.Array || element.Info.Type is ESchemaElementType.ComplexType)
+			{
+				var json = reader.GetString(i);
+				var rawJson = Encoding.UTF8.GetBytes(json);
+
+				var obj = JsonSerializer.NonGeneric.Utf8.Deserialize(rawJson, element.FieldInfo.FieldType);
+				result.SimpleValues[element] = obj;
 
 				continue;
 			}
 
 			if (element.Info.Type.IsSimpleType())
 			{
-				if (reader.IsDBNull(i))
-					result.SimpleValues[element] = null;
-				else
-					result.SimpleValues[element] = element.Info.Type.Read(reader, i);
-				
-				continue;
+				result.SimpleValues[element] = element.Info.Type.Read(reader, i);
 			}
-
-			if (reader.IsDBNull(i))
-				result.ComplexRefs[element] = null;
-			else
-				result.ComplexRefs[element] = reader.GetInt64(i);
 		}
 
 		return result;
-	}
-
-	private static void ReadSimpleArray(
-		ref ReadResult result,
-		IDataReader reader,
-		int i,
-		DataSchemaElement element
-	)
-	{
-		if (reader.IsDBNull(i))
-		{
-			result.SimpleValues[element] = null;
-			return;
-		}
-
-		var rawArray = reader.GetString(i);
-		var jsonArray = JsonNode.Parse(rawArray)!.AsArray();
-
-		var fieldType = element.FieldInfo.FieldType.GetElementType();
-		if (fieldType == null)
-			// TODO
-			throw new Exception();
-
-		var array = Array.CreateInstance(fieldType, jsonArray.Count);
-
-		for (var j = 0; j < array.Length; j++)
-			array.SetValue(element.Info.Parse(jsonArray[j]?.ToString()), j);
-
-		result.SimpleValues[element] = array;
-	}
-
-	private static void ReadComplexArray(
-		ref ReadResult result,
-		IDataReader reader,
-		int i,
-		DataSchemaElement element
-	)
-	{
-		if (reader.IsDBNull(i))
-		{
-			result.ComplexCollectionsRefs[element] = null;
-			return;
-		}
-
-		var rawArray = reader.GetString(i);
-		var jsonArray = JsonNode.Parse(rawArray)!.AsArray();
-
-		var ids = new List<long?>();
-
-		foreach (var arrayElement in jsonArray)
-		{
-			var rawElement = arrayElement?.ToString();
-
-			if (string.IsNullOrWhiteSpace(rawElement))
-				ids.Add(null);
-			else
-				ids.Add(long.Parse(rawElement));
-		}
-
-		result.ComplexCollectionsRefs[element] = ids;
 	}
 }

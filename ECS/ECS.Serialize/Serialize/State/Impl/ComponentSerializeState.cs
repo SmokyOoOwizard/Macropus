@@ -7,9 +7,7 @@ namespace ECS.Serialize.Serialize.State.Impl;
 class ComponentSerializeState : ISerializeState
 {
 	private static readonly QueuePool<object?> NullableObjectQueuePool = QueuePool<object?>.Instance;
-	private static readonly ListPool<long?> NullableIdsListPool = ListPool<long?>.Instance;
 
-	private readonly Dictionary<DataSchemaElement, List<long?>?> complexRefs = new();
 	private readonly Stack<KeyValuePair<DataSchemaElement, Queue<object?>>> unprocessedComplexFields = new();
 
 	public DataSchema? Schema;
@@ -44,7 +42,6 @@ class ComponentSerializeState : ISerializeState
 			{
 				NullableObjectQueuePool.Release(queue);
 
-				complexRefs.Add(element, elementValue == null ? null : new List<long?>());
 			}
 			else
 				unprocessedComplexFields.Push(new(element, queue));
@@ -64,56 +61,6 @@ class ComponentSerializeState : ISerializeState
 		return this;
 	}
 
-	public KeyValuePair<DataSchemaElement, Queue<object?>>? TryGetUnprocessed()
-	{
-		if (unprocessedComplexFields.Count == 0)
-			return default;
-
-		while (unprocessedComplexFields.Count > 0)
-		{
-			var target = unprocessedComplexFields.Peek();
-
-			if (target.Value.Count == 0)
-			{
-				unprocessedComplexFields.Pop();
-
-				NullableObjectQueuePool.Release(target.Value);
-				continue;
-			}
-
-			return target;
-		}
-
-		return default;
-	}
-
-	public void AddProcessed(DataSchemaElement target, long? componentId)
-	{
-		if (!complexRefs.TryGetValue(target, out var list) || list == null)
-		{
-			list = NullableIdsListPool.Take();
-			complexRefs[target] = list;
-		}
-
-		list.Add(componentId);
-	}
-
-	public void AddRangeProcessed(DataSchemaElement target, long?[] componentsIds)
-	{
-		if (!complexRefs.TryGetValue(target, out var list) || list == null)
-		{
-			list = NullableIdsListPool.Take();
-			complexRefs[target] = list;
-		}
-
-		list.AddRange(componentsIds);
-	}
-
-	public List<long?>? GetProcessed(DataSchemaElement target)
-	{
-		return complexRefs[target];
-	}
-
 	public void Clear()
 	{
 		Schema = null;
@@ -126,13 +73,5 @@ class ComponentSerializeState : ISerializeState
 		}
 
 		unprocessedComplexFields.Clear();
-
-		foreach (var (_, value) in complexRefs)
-		{
-			if (value != null)
-				NullableIdsListPool.Release(value);
-		}
-
-		complexRefs.Clear();
 	}
 }

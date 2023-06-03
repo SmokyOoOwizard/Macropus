@@ -78,7 +78,7 @@ public static class ESchemaElementTypeExtensions
 				return "TEXT";
 
 			case ESchemaElementType.ComplexType:
-				return "INT";
+				return "TEXT";
 		}
 
 		throw new ArgumentException($"{nameof(type)} - {type}");
