@@ -14,15 +14,29 @@ namespace ECS.Db.Storage.Impl;
 public class ComponentsStorageInDb : IComponentsStorage
 {
 	// TODO optimize
-	public uint ComponentsCount => (uint)dataConnection.GetTable<EntitiesComponentsTable>()
-		.TableName("EntitiesComponents")
-		.Count();
+	public uint ComponentsCount
+	{
+		get
+		{
+			componentSerializer.TryInitialize().GetAwaiter().GetResult();
+			return (uint)dataConnection
+				.GetTable<EntitiesComponentsTable>()
+				.Count();
+		}
+	}
 
 	// TODO optimize
-	public uint EntitiesCount => (uint)dataConnection.GetTable<EntitiesComponentsTable>()
-		.TableName("EntitiesComponents")
-		.GroupBy(c => c.EntityId, c => c.ComponentName)
-		.Count();
+	public uint EntitiesCount
+	{
+		get
+		{
+			componentSerializer.TryInitialize().GetAwaiter().GetResult();
+			return (uint)dataConnection
+				.GetTable<EntitiesComponentsTable>()
+				.GroupBy(c => c.EntityId, c => c.ComponentName)
+				.Count();
+		}
+	}
 
 	private readonly DataConnection dataConnection;
 	private readonly ComponentSerializer componentSerializer;
@@ -55,7 +69,6 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 		return dataConnection
 			.GetTable<EntitiesComponentsTable>()
-			.TableName("EntitiesComponents")
 			.Any(e => e.ComponentName == name && e.EntityId == entityIdStr);
 	}
 
@@ -103,7 +116,6 @@ public class ComponentsStorageInDb : IComponentsStorage
 		componentSerializer.TryInitialize().GetAwaiter().GetResult();
 
 		return dataConnection.GetTable<EntitiesComponentsTable>()
-			.TableName("EntitiesComponents")
 			.Select(c => c.EntityId)
 			.Select(c => Guid.Parse(c))
 			.ToHashSet();
@@ -115,7 +127,6 @@ public class ComponentsStorageInDb : IComponentsStorage
 		componentSerializer.TryInitialize().GetAwaiter().GetResult();
 
 		var entities = dataConnection.GetTable<EntitiesComponentsTable>()
-			.TableName("EntitiesComponents")
 			.GroupBy(c => c.EntityId, c => c.ComponentName)
 			.Select(c => new
 			{
@@ -175,7 +186,6 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 		var ids = dataConnection
 			.GetTable<EntitiesComponentsTable>()
-			.TableName("EntitiesComponents")
 			.Where(e => e.ComponentName == cmpName && e.EntityId == entityIdStr)
 			.Select(c => new { c.ComponentId, c.Id })
 			.FirstOrDefault();
@@ -191,7 +201,6 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 		dataConnection
 			.GetTable<EntitiesComponentsTable>()
-			.TableName("EntitiesComponents")
 			.Where(e => e.Id == ids.Id)
 			.Delete();
 	}
@@ -217,7 +226,6 @@ public class ComponentsStorageInDb : IComponentsStorage
 				// Remove components
 				var toRemoveIds = dataConnection
 					.GetTable<EntitiesComponentsTable>()
-					.TableName("EntitiesComponents")
 					.Where(e => e.ComponentName == cmpName && toRemove.Contains(e.EntityId))
 					.Select(e => e.Id)
 					.ToHashSet();
@@ -232,7 +240,6 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 					dataConnection
 						.GetTable<EntitiesComponentsTable>()
-						.TableName("EntitiesComponents")
 						.Where(e => e.ComponentName == cmpName && toRemoveIds.Contains(e.ComponentId))
 						.Delete();
 				}
@@ -248,7 +255,29 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 	public void Clear()
 	{
-		// TODO
+		var transaction = dataConnection.BeginTransaction();
+		try
+		{
+			var tables = dataConnection
+				.GetTable<EntitiesComponentsTable>()
+				.GroupBy(e => e.ComponentName)
+				.Select(e => e.Key)
+				.ToHashSet();
+
+			foreach (var table in tables)
+			{
+				dataConnection.DropTable<ComponentTableBase>(ComponentFormatUtils.NormalizeName(table));
+			}
+
+			dataConnection.DropTable<EntitiesComponentsTable>();
+
+			transaction.Commit();
+		}
+		catch
+		{
+			transaction.Rollback();
+			throw;
+		}
 	}
 
 	public void Dispose()

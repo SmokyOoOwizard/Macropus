@@ -48,7 +48,6 @@ public static class ESchemaElementTypeExtensions
 			ESchemaElementType.Guid => "TEXT COLLATE NOCASE",
 			ESchemaElementType.String => "TEXT",
 			ESchemaElementType.ComplexType => "TEXT",
-			ESchemaElementType.INVALID => throw new ArgumentOutOfRangeException(nameof(type), type, null),
 			_ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
 		};
 	}
