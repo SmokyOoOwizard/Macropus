@@ -49,7 +49,7 @@ internal static class Deserializer
 		if (componentName == null)
 			throw new Exception();
 
-		var entityIdString = entityId.ToString("N");
+		var entityIdString = ComponentFormatUtils.FormatGuid(entityId);
 
 		var entity = await dataConnection
 			.GetTable<EntitiesComponentsTable>()

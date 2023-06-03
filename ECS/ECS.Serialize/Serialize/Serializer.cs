@@ -23,7 +23,7 @@ internal static class Serializer
 				{
 					ComponentId = componentId,
 					ComponentName = componentName,
-					EntityId = entityId.ToString("N")
+					EntityId = ComponentFormatUtils.FormatGuid(entityId)
 				});
 
 			await transaction.CommitAsync();
