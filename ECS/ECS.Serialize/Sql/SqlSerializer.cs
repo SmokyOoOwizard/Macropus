@@ -1,10 +1,8 @@
 ﻿using System.Data;
 using System.Text;
-using AnyOfTypes;
 using ECS.Schema;
 using ECS.Serialize.Extensions;
 using ECS.Serialize.Models;
-using ECS.Serialize.Serialize.State.Impl;
 using Macropus.CoolStuff;
 using Macropus.Database.Adapter;
 using Microsoft.Data.Sqlite;
@@ -16,14 +14,11 @@ class SqlSerializer : IClearable
 {
 	private readonly StringBuilder sqlBuilder = new();
 
-	public async Task<int> InsertComponent(IDbConnection dbConnection, ComponentSerializeState target)
+	public async Task<int> InsertComponent(IDbConnection dbConnection, DataSchema schema, object obj)
 	{
-		if (target.Schema == null)
-			// TODO
-			throw new Exception();
 
-		var tableName = ComponentFormatUtils.NormalizeName(target.Schema.SchemaOf.FullName);
-		var fields = target.Schema.Elements;
+		var tableName = ComponentFormatUtils.NormalizeName(schema.SchemaOf.FullName);
+		var fields = schema.Elements;
 
 		if (tableName == null)
 			// TODO
@@ -31,7 +26,7 @@ class SqlSerializer : IClearable
 
 		var cmd = DbCommandCache.GetInsertCmd(dbConnection, tableName, fields);
 
-		FillCmd(cmd, fields, target, "0_");
+		FillCmd(cmd, fields, obj, "0_");
 
 		using var reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false);
 
@@ -43,13 +38,13 @@ class SqlSerializer : IClearable
 	private void FillCmd(
 		IDbCommand cmd,
 		IReadOnlyCollection<DataSchemaElement> fields,
-		AnyOf<object, ComponentSerializeState> value,
+		object value,
 		string prefix = ""
 	)
 	{
 		foreach (var element in fields)
 		{
-			var fieldValue = element.FieldInfo.GetValue(value.IsFirst ? value.First : value.Second.Value);
+			var fieldValue = element.FieldInfo.GetValue(value);
 
 			object? valueToInsert = null;
 			if (element.Info.CollectionType is ECollectionType.Array || element.Info.Type is ESchemaElementType.ComplexType)

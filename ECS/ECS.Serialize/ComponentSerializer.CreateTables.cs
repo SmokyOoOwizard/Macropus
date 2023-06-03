@@ -11,18 +11,13 @@ public partial class ComponentSerializer
 {
 	public async Task CreateTablesBySchema(DataSchema schema)
 	{
-		var subSchemas = schema.SubSchemas.Select(kv => kv.Value).Where(s => s != schema);
-
 		await using var transaction = await dataConnection.BeginTransactionAsync();
 		try
 		{
 			if (!await dataConnection.TableAlreadyExists(EntitiesComponentsTable.TABLE_NAME))
 				await CreateEntitiesComponentsTable();
 
-
 			await CreateTableBySchema(schema);
-			foreach (var subSchema in subSchemas)
-				await CreateTableBySchema(subSchema);
 
 			await transaction.CommitAsync();
 		}
@@ -41,9 +36,6 @@ public partial class ComponentSerializer
 	private async Task CreateTableBySchema(DataSchema schema)
 	{
 		var simpleFields = schema.Elements;
-		if (!simpleFields.Any())
-			// TODO schema must have fields
-			throw new Exception();
 
 		var tableName = ComponentFormatUtils.NormalizeName(schema.SchemaOf.FullName);
 
@@ -56,8 +48,13 @@ public partial class ComponentSerializer
 
 		var sqlBuilder = new StringBuilder();
 		sqlBuilder.Append($"CREATE TABLE '{tableName}' (");
-		sqlBuilder.Append("Id INTEGER PRIMARY KEY, ");
-		sqlBuilder.Append(string.Join(',', simpleFields.ToSql()));
+		sqlBuilder.Append("Id INTEGER PRIMARY KEY");
+		if (simpleFields.Any())
+		{
+			sqlBuilder.Append(", ");
+			sqlBuilder.Append(string.Join(',', simpleFields.ToSql()));
+		}
+
 		sqlBuilder.Append(");");
 
 		var cmd = dataConnection.CreateCommand();

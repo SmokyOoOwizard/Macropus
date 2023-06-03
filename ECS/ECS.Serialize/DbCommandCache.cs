@@ -24,7 +24,7 @@ public static class DbCommandCache
 			Exists[dbConnection] = existsCmd = new();
 		}
 
-		tableName = ComponentFormatUtils.NormalizeName(tableName);
+		tableName = ComponentFormatUtils.NormalizeName(tableName) ?? throw new InvalidOperationException();
 
 		var cmdName = "GET_" + tableName + "_" + count;
 
@@ -61,9 +61,9 @@ public static class DbCommandCache
 			Exists[dbConnection] = existsCmd = new();
 		}
 
-		const string cmdName = "GetComponentId_" + EntitiesComponentsTable.TABLE_NAME;
+		const string CMD_NAME = "GetComponentId_" + EntitiesComponentsTable.TABLE_NAME;
 
-		if (!existsCmd.TryGetValue(cmdName, out var cmd))
+		if (!existsCmd.TryGetValue(CMD_NAME, out var cmd))
 		{
 			cmd = dbConnection.CreateCommand();
 
@@ -75,7 +75,7 @@ public static class DbCommandCache
 
 			SbPool.Release(sqlBuilder);
 
-			existsCmd[cmdName] = cmd;
+			existsCmd[CMD_NAME] = cmd;
 		}
 
 		cmd.Parameters.Clear();

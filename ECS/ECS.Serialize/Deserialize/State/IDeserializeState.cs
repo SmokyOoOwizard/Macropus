@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using ECS.Schema;
 
 namespace ECS.Serialize.Deserialize.State;
 
