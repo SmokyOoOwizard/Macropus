@@ -3,22 +3,15 @@ using System.Text;
 using ECS.Schema;
 using ECS.Schema.Extensions;
 using ECS.Serialize.Extensions;
-using Macropus.CoolStuff.Collections.Pool;
 using SpanJson;
 
-namespace ECS.Serialize.Sql;
+namespace ECS.Serialize.Deserialize;
 
-static class SqlComponentReader
+internal static class SqlComponentReader
 {
-	private static readonly Pool<ReadResult> ReadPool = Pool<ReadResult>.Instance;
-
-	// ReSharper disable once CognitiveComplexity
-	public static ReadResult ReadComponent(
-		IDataReader reader,
-		DataSchema schema
-	)
+	public static Dictionary<DataSchemaElement, object?> ReadComponent(IDataReader reader, DataSchema schema)
 	{
-		var result = ReadPool.Take().Init();
+		var result = new Dictionary<DataSchemaElement, object?>();
 
 		for (var i = 0; i < schema.Elements.Count; i++)
 		{
@@ -26,7 +19,7 @@ static class SqlComponentReader
 
 			if (reader.IsDBNull(i))
 			{
-				result.SimpleValues[element] = null;
+				result[element] = null;
 				continue;
 			}
 
@@ -36,14 +29,14 @@ static class SqlComponentReader
 				var rawJson = Encoding.UTF8.GetBytes(json);
 
 				var obj = JsonSerializer.NonGeneric.Utf8.Deserialize(rawJson, element.FieldInfo.FieldType);
-				result.SimpleValues[element] = obj;
+				result[element] = obj;
 
 				continue;
 			}
 
 			if (element.Info.Type.IsSimpleType())
 			{
-				result.SimpleValues[element] = element.Info.Type.Read(reader, i);
+				result[element] = element.Info.Type.Read(reader, i);
 			}
 		}
 

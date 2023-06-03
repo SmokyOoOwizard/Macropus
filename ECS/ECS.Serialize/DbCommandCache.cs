@@ -1,9 +1,7 @@
 ﻿using System.Data;
 using ECS.Schema;
 using ECS.Serialize.Extensions;
-using ECS.Serialize.Models;
 using Macropus.CoolStuff.Collections.Pool;
-using Microsoft.Data.Sqlite;
 
 namespace ECS.Serialize;
 
@@ -54,37 +52,6 @@ public static class DbCommandCache
 		return cmd;
 	}
 
-	public static IDbCommand GetComponentIdCmd(IDbConnection dbConnection, Guid entityId, string componentName)
-	{
-		if (!Exists.TryGetValue(dbConnection, out var existsCmd))
-		{
-			Exists[dbConnection] = existsCmd = new();
-		}
-
-		const string CMD_NAME = "GetComponentId_" + EntitiesComponentsTable.TABLE_NAME;
-
-		if (!existsCmd.TryGetValue(CMD_NAME, out var cmd))
-		{
-			cmd = dbConnection.CreateCommand();
-
-			var sqlBuilder = SbPool.Take();
-			sqlBuilder.Append(
-				$"SELECT (ComponentId) FROM '{EntitiesComponentsTable.TABLE_NAME}' WHERE EntityId = @entityId AND ComponentName = @componentName;");
-
-			cmd.CommandText = sqlBuilder.ToString();
-
-			SbPool.Release(sqlBuilder);
-
-			existsCmd[CMD_NAME] = cmd;
-		}
-
-		cmd.Parameters.Clear();
-		cmd.Parameters.Add(new SqliteParameter("@entityId", entityId.ToString("N")));
-		cmd.Parameters.Add(new SqliteParameter("@componentName", componentName));
-
-		return cmd;
-	}
-	
 	public static IDbCommand GetInsertCmd(
 		IDbConnection dbConnection,
 		string tableName,
