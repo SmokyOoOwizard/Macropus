@@ -18,8 +18,14 @@ public partial class ComponentSerializer : IDisposable
 		this.dataConnection = dataConnection;
 	}
 
+	public Task TryInitialize()
+	{
+		return CreateEntitiesComponentsTable();
+	}
+
 	public async Task SerializeAsync(DataSchema schema, Guid entityId, IComponent component)
 	{
+		await CreateTablesBySchema(schema);
 		await serializer.SerializeAsync(dataConnection, schema, entityId, component);
 	}
 
@@ -33,9 +39,10 @@ public partial class ComponentSerializer : IDisposable
 		return (T?)await DeserializeAsync(schema, entityId);
 	}
 
-	public Task<IComponent?> DeserializeAsync(DataSchema schema, Guid entityId)
+	public async Task<IComponent?> DeserializeAsync(DataSchema schema, Guid entityId)
 	{
-		return deserializer.DeserializeAsync(dataConnection, schema, entityId);
+		await TryInitialize();
+		return await deserializer.DeserializeAsync(dataConnection, schema, entityId);
 	}
 
 	public void Dispose()

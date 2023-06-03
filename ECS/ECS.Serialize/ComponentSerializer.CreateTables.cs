@@ -9,13 +9,12 @@ namespace ECS.Serialize;
 
 public partial class ComponentSerializer
 {
-	public async Task CreateTablesBySchema(DataSchema schema)
+	private async Task CreateTablesBySchema(DataSchema schema)
 	{
 		await using var transaction = await dataConnection.BeginTransactionAsync();
 		try
 		{
-			if (!await dataConnection.TableAlreadyExists(EntitiesComponentsTable.TABLE_NAME))
-				await CreateEntitiesComponentsTable();
+			await CreateEntitiesComponentsTable();
 
 			await CreateTableBySchema(schema);
 
@@ -30,21 +29,21 @@ public partial class ComponentSerializer
 
 	private async Task CreateEntitiesComponentsTable()
 	{
-		await dataConnection.CreateTableAsync<EntitiesComponentsTable>(EntitiesComponentsTable.TABLE_NAME);
+		if (!await dataConnection.TableAlreadyExists(EntitiesComponentsTable.TABLE_NAME))
+			await dataConnection.CreateTableAsync<EntitiesComponentsTable>(EntitiesComponentsTable.TABLE_NAME);
 	}
 
 	private async Task CreateTableBySchema(DataSchema schema)
 	{
-		var simpleFields = schema.Elements;
-
 		var tableName = ComponentFormatUtils.NormalizeName(schema.SchemaOf.FullName);
-
 		if (string.IsNullOrWhiteSpace(tableName))
 			throw new ArgumentNullException(nameof(schema.SchemaOf));
 
 		if (await dataConnection.TableAlreadyExists(tableName))
 			// TODO check table
 			return;
+		
+		var simpleFields = schema.Elements;
 
 		var sqlBuilder = new StringBuilder();
 		sqlBuilder.Append($"CREATE TABLE '{tableName}' (");

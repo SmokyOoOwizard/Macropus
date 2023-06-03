@@ -32,7 +32,6 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 	public ComponentsStorageInDb(DataConnection dataConnection)
 	{
-		// TODO pass data connection directly?
 		this.dataConnection = dataConnection;
 
 		componentSerializer = new ComponentSerializer(dataConnection);
@@ -50,6 +49,8 @@ public class ComponentsStorageInDb : IComponentsStorage
 	// TODO optimize
 	public bool HasComponent(Guid entityId, string name)
 	{
+		componentSerializer.TryInitialize().GetAwaiter().GetResult();
+
 		var entityIdStr = ComponentFormatUtils.FormatGuid(entityId);
 
 		return dataConnection
@@ -99,6 +100,8 @@ public class ComponentsStorageInDb : IComponentsStorage
 	// TODO optimize
 	public IEnumerable<Guid> GetEntities()
 	{
+		componentSerializer.TryInitialize().GetAwaiter().GetResult();
+
 		return dataConnection.GetTable<EntitiesComponentsTable>()
 			.TableName("EntitiesComponents")
 			.Select(c => c.EntityId)
@@ -109,6 +112,8 @@ public class ComponentsStorageInDb : IComponentsStorage
 	// TODO optimize
 	public IEnumerable<Guid> GetEntities(ComponentsFilter filter)
 	{
+		componentSerializer.TryInitialize().GetAwaiter().GetResult();
+
 		var entities = dataConnection.GetTable<EntitiesComponentsTable>()
 			.TableName("EntitiesComponents")
 			.GroupBy(c => c.EntityId, c => c.ComponentName)
@@ -162,6 +167,8 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 	public void RemoveComponent(Guid entityId, Type cmpType)
 	{
+		componentSerializer.TryInitialize().GetAwaiter().GetResult();
+
 		var entityIdStr = ComponentFormatUtils.FormatGuid(entityId);
 		var cmpName = cmpType.FullName;
 		var tableName = ComponentFormatUtils.NormalizeName(cmpName);
@@ -192,6 +199,8 @@ public class ComponentsStorageInDb : IComponentsStorage
 	// TODO optimize
 	public void Apply(IReadOnlyComponentsChangesStorage changes)
 	{
+		componentSerializer.TryInitialize().GetAwaiter().GetResult();
+
 		var storages = changes.GetComponents();
 		foreach (var storage in storages)
 		{
@@ -210,23 +219,23 @@ public class ComponentsStorageInDb : IComponentsStorage
 					.GetTable<EntitiesComponentsTable>()
 					.TableName("EntitiesComponents")
 					.Where(e => e.ComponentName == cmpName && toRemove.Contains(e.EntityId))
-					.Join(dataConnection.GetTable<ComponentTableBase>().TableName(tableName), e => e.ComponentId,
-						e => e.Id,
-						(e, c) => c)
 					.Select(e => e.Id)
 					.ToHashSet();
 
-				dataConnection
-					.GetTable<ComponentTableBase>()
-					.TableName(tableName)
-					.Where(e => toRemoveIds.Contains(e.Id))
-					.Delete();
+				if (toRemoveIds.Count > 0)
+				{
+					dataConnection
+						.GetTable<ComponentTableBase>()
+						.TableName(tableName)
+						.Where(e => toRemoveIds.Contains(e.Id))
+						.Delete();
 
-				dataConnection
-					.GetTable<EntitiesComponentsTable>()
-					.TableName("EntitiesComponents")
-					.Where(e => e.ComponentName == cmpName && toRemoveIds.Contains(e.ComponentId))
-					.Delete();
+					dataConnection
+						.GetTable<EntitiesComponentsTable>()
+						.TableName("EntitiesComponents")
+						.Where(e => e.ComponentName == cmpName && toRemoveIds.Contains(e.ComponentId))
+						.Delete();
+				}
 			}
 			{
 				foreach (var (id, component) in toAdd)
