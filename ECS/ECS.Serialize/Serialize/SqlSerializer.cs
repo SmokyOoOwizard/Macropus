@@ -8,9 +8,9 @@ using SpanJson;
 
 namespace ECS.Serialize.Serialize;
 
-internal class SqlSerializer
+internal static class SqlSerializer
 {
-	public async Task<int> InsertComponent(IDbConnection dbConnection, DataSchema schema, object obj)
+	public static async Task<int> InsertComponent(IDbConnection dbConnection, DataSchema schema, object obj)
 	{
 		var tableName = ComponentFormatUtils.NormalizeName(schema.SchemaOf.FullName);
 		var fields = schema.Elements;
@@ -29,12 +29,7 @@ internal class SqlSerializer
 		return reader.GetInt32(0);
 	}
 
-	private void FillCmd(
-		IDbCommand cmd,
-		IReadOnlyCollection<DataSchemaElement> fields,
-		object value,
-		string prefix = ""
-	)
+	private static void FillCmd(IDbCommand cmd, IEnumerable<DataSchemaElement> fields, object value, string prefix = "")
 	{
 		foreach (var element in fields)
 		{

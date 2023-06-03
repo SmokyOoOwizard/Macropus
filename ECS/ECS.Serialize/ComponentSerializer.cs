@@ -10,9 +10,6 @@ public partial class ComponentSerializer : IDisposable
 {
 	private readonly DataConnection dataConnection;
 
-	private readonly Serializer serializer = new();
-	private readonly Deserializer deserializer = new();
-
 	public ComponentSerializer(DataConnection dataConnection)
 	{
 		this.dataConnection = dataConnection;
@@ -26,7 +23,7 @@ public partial class ComponentSerializer : IDisposable
 	public async Task SerializeAsync(DataSchema schema, Guid entityId, IComponent component)
 	{
 		await CreateTablesBySchema(schema);
-		await serializer.SerializeAsync(dataConnection, schema, entityId, component);
+		await Serializer.SerializeAsync(dataConnection, schema, entityId, component);
 	}
 
 	public async Task<T?> DeserializeAsync<T>(DataSchema schema, Guid entityId) where T : struct, IComponent
@@ -42,7 +39,7 @@ public partial class ComponentSerializer : IDisposable
 	public async Task<IComponent?> DeserializeAsync(DataSchema schema, Guid entityId)
 	{
 		await TryInitialize();
-		return await deserializer.DeserializeAsync(dataConnection, schema, entityId);
+		return await Deserializer.DeserializeAsync(dataConnection, schema, entityId);
 	}
 
 	public void Dispose()

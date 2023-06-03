@@ -5,20 +5,21 @@ using LinqToDB.Data;
 
 namespace ECS.Serialize.Serialize;
 
-internal class Serializer
+internal static class Serializer
 {
-	private readonly SqlSerializer serializer = new();
-
-	public async Task SerializeAsync(DataConnection dataConnection, DataSchema schema, Guid entityId, object component)
+	public static async Task SerializeAsync(DataConnection dataConnection, DataSchema schema, Guid entityId, object component)
 	{
 		await using var transaction = await dataConnection.BeginTransactionAsync();
 		try
 		{
-			var componentId = await serializer.InsertComponent(dataConnection.Connection, schema, component);
+			var componentId = await SqlSerializer.InsertComponent(dataConnection.Connection, schema, component);
 
 			var componentName = schema.SchemaOf.FullName;
+			if (componentName == null)
+				throw new Exception(); // TODO
+			
 			await dataConnection.GetTable<EntitiesComponentsTable>()
-				.InsertAsync(() => new EntitiesComponentsTable()
+				.InsertAsync(() => new()
 				{
 					ComponentId = componentId,
 					ComponentName = componentName,

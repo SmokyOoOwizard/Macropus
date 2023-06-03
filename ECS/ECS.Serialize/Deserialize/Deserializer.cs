@@ -8,9 +8,9 @@ using Microsoft.Data.Sqlite;
 
 namespace ECS.Serialize.Deserialize;
 
-internal class Deserializer
+internal static class Deserializer
 {
-	public async Task<IComponent?> DeserializeAsync(DataConnection dataConnection, DataSchema schema, Guid entityId)
+	public static async Task<IComponent?> DeserializeAsync(DataConnection dataConnection, DataSchema schema, Guid entityId)
 	{
 		var tableName = schema.SchemaOf.FullName;
 		if (tableName == null)
@@ -43,7 +43,7 @@ internal class Deserializer
 		}
 	}
 
-	private async Task<int> GetValue(DataConnection dataConnection, DataSchema schema, Guid entityId)
+	private static async Task<int> GetValue(DataConnection dataConnection, DataSchema schema, Guid entityId)
 	{
 		var componentName = schema.SchemaOf.FullName;
 		if (componentName == null)

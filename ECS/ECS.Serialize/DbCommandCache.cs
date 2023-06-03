@@ -13,7 +13,7 @@ public static class DbCommandCache
 	public static IDbCommand GetReadCmd(
 		IDbConnection dbConnection,
 		string tableName,
-		IReadOnlyCollection<DataSchemaElement> fields,
+		IEnumerable<DataSchemaElement> fields,
 		int count = 1
 	)
 	{
@@ -35,7 +35,7 @@ public static class DbCommandCache
 			sqlBuilder.Append(string.Join(',', fields.Select(e => e.Info.ToSqlName())));
 			sqlBuilder.Append($" FROM '{tableName}' WHERE Id in (@id");
 
-			for (int i = 1; i < count; i++)
+			for (var i = 1; i < count; i++)
 				sqlBuilder.Append($", @id{i}");
 
 			sqlBuilder.Append(");");
@@ -104,9 +104,9 @@ public static class DbCommandCache
 
 	public static void Clear(IDbConnection dbConnection)
 	{
-		if (Exists.TryGetValue(dbConnection, out var cmds))
+		if (Exists.TryGetValue(dbConnection, out var dbCommands))
 		{
-			foreach (var (_, cmd) in cmds)
+			foreach (var (_, cmd) in dbCommands)
 				cmd.Dispose();
 		}
 

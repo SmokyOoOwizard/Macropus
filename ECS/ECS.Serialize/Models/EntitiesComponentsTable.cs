@@ -1,4 +1,7 @@
 ﻿using LinqToDB.Mapping;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable PropertyCanBeMadeInitOnly.Global
+#pragma warning disable CS8618
 
 namespace ECS.Serialize.Models;
 
