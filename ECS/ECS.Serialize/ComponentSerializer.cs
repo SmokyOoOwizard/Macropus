@@ -1,7 +1,7 @@
-﻿using System.Data;
-using ECS.Schema;
+﻿using ECS.Schema;
 using ECS.Serialize.Deserialize;
 using ECS.Serialize.Serialize;
+using LinqToDB.Data;
 using Macropus.CoolStuff.Collections.Pool;
 using Macropus.ECS.Component;
 
@@ -10,16 +10,14 @@ namespace ECS.Serialize;
 // TODO save components in flat mode. one table per one component type. sub structures ( collections, structures, etc... ) save in json?
 public partial class ComponentSerializer : IDisposable
 {
-	private readonly IDbConnection dbConnection;
+	private readonly DataConnection dataConnection;
 
 	private readonly Pool<Serializer> serializers = new();
 	private readonly Pool<Deserializer> deserializers = new();
 
-	public ComponentSerializer(IDbConnection dbConnection)
+	public ComponentSerializer(DataConnection dataConnection)
 	{
-		this.dbConnection = dbConnection;
-
-		dbConnection.Open();
+		this.dataConnection = dataConnection;
 	}
 
 	public async Task SerializeAsync(DataSchema schema, Guid entityId, IComponent component)
@@ -31,7 +29,7 @@ public partial class ComponentSerializer : IDisposable
 
 		try
 		{
-			await serializer.SerializeAsync(dbConnection, schema, entityId, component);
+			await serializer.SerializeAsync(dataConnection.Connection, schema, entityId, component);
 		}
 		finally
 		{
@@ -58,7 +56,7 @@ public partial class ComponentSerializer : IDisposable
 
 		try
 		{
-			return await deserializer.DeserializeAsync(dbConnection, schema, entityId);
+			return await deserializer.DeserializeAsync(dataConnection.Connection, schema, entityId);
 		}
 		finally
 		{
@@ -68,6 +66,6 @@ public partial class ComponentSerializer : IDisposable
 
 	public void Dispose()
 	{
-		dbConnection.Dispose();
+		dataConnection.Dispose();
 	}
 }

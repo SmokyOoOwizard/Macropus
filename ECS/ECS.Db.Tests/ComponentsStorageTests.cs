@@ -26,7 +26,7 @@ public class ComponentsStorageTests : TestsWithDatabase
 		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
 		var schema2 = builder.CreateSchema<DataSchemaTestTypeComponent2>();
 
-		using var serializer = new ComponentSerializer(DbConnection);
+		using var serializer = new ComponentSerializer(DataConnection);
 		await serializer.CreateTablesBySchema(schema);
 		await serializer.CreateTablesBySchema(schema2);
 
@@ -34,7 +34,7 @@ public class ComponentsStorageTests : TestsWithDatabase
 		await serializer.SerializeAsync(schema, guid, new DataSchemaTestTypeComponent());
 		await serializer.SerializeAsync(schema2, guid, new DataSchemaTestTypeComponent2());
 
-		var storageInDb = new ComponentsStorageInDb(DbConnection);
+		var storageInDb = new ComponentsStorageInDb(DataConnection);
 
 		var entities = storageInDb.GetEntities().ToArray();
 		
@@ -50,7 +50,7 @@ public class ComponentsStorageTests : TestsWithDatabase
 		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
 		var schema2 = builder.CreateSchema<DataSchemaTestTypeComponent2>();
 
-		using var serializer = new ComponentSerializer(DbConnection);
+		using var serializer = new ComponentSerializer(DataConnection);
 		await serializer.CreateTablesBySchema(schema);
 		await serializer.CreateTablesBySchema(schema2);
 
@@ -59,7 +59,7 @@ public class ComponentsStorageTests : TestsWithDatabase
 		var secondGuid = Guid.NewGuid();
 		await serializer.SerializeAsync(schema2, secondGuid, new DataSchemaTestTypeComponent2());
 
-		var storageInDb = new ComponentsStorageInDb(DbConnection);
+		var storageInDb = new ComponentsStorageInDb(DataConnection);
 
 		var filter = ComponentsFilter.AllOf(typeof(DataSchemaTestTypeComponent)).Build();
 		var entities = storageInDb.GetEntities(filter).ToArray();
@@ -75,13 +75,13 @@ public class ComponentsStorageTests : TestsWithDatabase
 		var builder = new DataSchemaBuilder();
 		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
 
-		using var serializer = new ComponentSerializer(DbConnection);
+		using var serializer = new ComponentSerializer(DataConnection);
 		await serializer.CreateTablesBySchema(schema);
 
 		var guid = Guid.NewGuid();
 		await serializer.SerializeAsync(schema, guid, new DataSchemaTestTypeComponent());
 
-		var storageInDb = new ComponentsStorageInDb(DbConnection);
+		var storageInDb = new ComponentsStorageInDb(DataConnection);
 		Assert.True(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
 		Assert.False(storageInDb.HasComponent<DataSchemaTestTypeComponent2>(guid));
 	}
@@ -92,10 +92,10 @@ public class ComponentsStorageTests : TestsWithDatabase
 		var builder = new DataSchemaBuilder();
 		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
 
-		using var serializer = new ComponentSerializer(DbConnection);
+		using var serializer = new ComponentSerializer(DataConnection);
 		await serializer.CreateTablesBySchema(schema);
 		
-		var storageInDb = new ComponentsStorageInDb(DbConnection);
+		var storageInDb = new ComponentsStorageInDb(DataConnection);
 		
 		var guid = Guid.NewGuid();
 		Assert.False(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
@@ -116,7 +116,7 @@ public class ComponentsStorageTests : TestsWithDatabase
 		var builder = new DataSchemaBuilder();
 		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
 
-		using var serializer = new ComponentSerializer(DbConnection);
+		using var serializer = new ComponentSerializer(DataConnection);
 		await serializer.CreateTablesBySchema(schema);
 		
 		var oldComponent = DataSchemaRandomUtils.GetRandomDataSchemaTestTypeComponent();
@@ -124,7 +124,7 @@ public class ComponentsStorageTests : TestsWithDatabase
 		var guid = Guid.NewGuid();
 		await serializer.SerializeAsync(schema, guid, oldComponent);
 
-		var storageInDb = new ComponentsStorageInDb(DbConnection);
+		var storageInDb = new ComponentsStorageInDb(DataConnection);
 		Assert.True(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
 
 		var newComponent = storageInDb.GetComponent<DataSchemaTestTypeComponent>(guid);
@@ -138,7 +138,7 @@ public class ComponentsStorageTests : TestsWithDatabase
 		var builder = new DataSchemaBuilder();
 		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
 
-		using var serializer = new ComponentSerializer(DbConnection);
+		using var serializer = new ComponentSerializer(DataConnection);
 		await serializer.CreateTablesBySchema(schema);
 		
 		var oldComponent = DataSchemaRandomUtils.GetRandomDataSchemaTestTypeComponent();
@@ -146,7 +146,7 @@ public class ComponentsStorageTests : TestsWithDatabase
 		var guid = Guid.NewGuid();
 		await serializer.SerializeAsync(schema, guid, oldComponent);
 
-		var storageInDb = new ComponentsStorageInDb(DbConnection);
+		var storageInDb = new ComponentsStorageInDb(DataConnection);
 		Assert.True(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));
 
 		var newComponent = storageInDb.GetComponent<DataSchemaTestTypeComponent>(guid);
@@ -165,13 +165,13 @@ public class ComponentsStorageTests : TestsWithDatabase
 		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
 		var schema2 = builder.CreateSchema<DataSchemaTestTypeComponent2>();
 
-		using var serializer = new ComponentSerializer(DbConnection);
+		using var serializer = new ComponentSerializer(DataConnection);
 		await serializer.CreateTablesBySchema(schema);
 		await serializer.CreateTablesBySchema(schema2);
 
 		var guid = Guid.NewGuid();
 		
-		var storageInDb = new ComponentsStorageInDb(DbConnection);
+		var storageInDb = new ComponentsStorageInDb(DataConnection);
 		storageInDb.ReplaceComponent(guid, new DataSchemaTestTypeComponent2());
 		
 		Assert.False(storageInDb.HasComponent<DataSchemaTestTypeComponent>(guid));

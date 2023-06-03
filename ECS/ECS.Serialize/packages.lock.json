@@ -2,6 +2,12 @@
   "version": 1,
   "dependencies": {
     "net7.0": {
+      "linq2db": {
+        "type": "Direct",
+        "requested": "[5.2.1, )",
+        "resolved": "5.2.1",
+        "contentHash": "OOBM8s39zhbZAgqFnl2KGxT5RqBDw21X69U528qV2PgQispaA3f+or0ILrLEgnNIJuB4EBgaw8gC6ttSHn4X0Q=="
+      },
       "Microsoft.Data.Sqlite.Core": {
         "type": "Direct",
         "requested": "[6.0.9, )",
@@ -425,7 +431,8 @@
           "FileSystem.Interfaces": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore": "[6.0.9, )",
           "Microsoft.EntityFrameworkCore.Sqlite": "[6.0.9, )",
-          "System.Reactive": "[5.0.0, )"
+          "System.Reactive": "[5.0.0, )",
+          "linq2db": "[5.2.1, )"
         }
       },
       "database.interfaces": {

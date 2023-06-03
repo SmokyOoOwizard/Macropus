@@ -110,6 +110,11 @@
           "System.Data.SqlClient": "4.7.0"
         }
       },
+      "linq2db": {
+        "type": "Transitive",
+        "resolved": "5.2.1",
+        "contentHash": "OOBM8s39zhbZAgqFnl2KGxT5RqBDw21X69U528qV2PgQispaA3f+or0ILrLEgnNIJuB4EBgaw8gC6ttSHn4X0Q=="
+      },
       "LinqKit": {
         "type": "Transitive",
         "resolved": "1.2.4",
@@ -1671,7 +1676,8 @@
           "FileSystem.Interfaces": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore": "[6.0.9, )",
           "Microsoft.EntityFrameworkCore.Sqlite": "[6.0.9, )",
-          "System.Reactive": "[5.0.0, )"
+          "System.Reactive": "[5.0.0, )",
+          "linq2db": "[5.2.1, )"
         }
       },
       "database.interfaces": {
@@ -1703,7 +1709,8 @@
           "ECS": "[1.0.0, )",
           "ECS.Schema": "[1.0.0, )",
           "Linq": "[1.0.0, )",
-          "Microsoft.Data.Sqlite.Core": "[6.0.9, )"
+          "Microsoft.Data.Sqlite.Core": "[6.0.9, )",
+          "linq2db": "[5.2.1, )"
         }
       },
       "extensions": {
@@ -1724,6 +1731,7 @@
           "Autofac.Extras.Moq": "[6.1.0, )",
           "Delogger": "[1.0.1, )",
           "Microsoft.Data.Sqlite.Core": "[6.0.9, )",
+          "linq2db": "[5.2.1, )",
           "xunit.extensibility.core": "[2.4.2, )"
         }
       }

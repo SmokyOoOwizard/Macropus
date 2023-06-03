@@ -15,7 +15,7 @@ public class DatabaseTests : TestsWithDatabase
 		var builder = new DataSchemaBuilder();
 		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
 
-		using var serializer = new ComponentSerializer(DbConnection);
+		using var serializer = new ComponentSerializer(DataConnection);
 		await serializer.CreateTablesBySchema(schema);
 	}
 
@@ -25,7 +25,7 @@ public class DatabaseTests : TestsWithDatabase
 		var builder = new DataSchemaBuilder();
 		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
 
-		using var serializer = new ComponentSerializer(DbConnection);
+		using var serializer = new ComponentSerializer(DataConnection);
 
 		await serializer.CreateTablesBySchema(schema);
 		await serializer.CreateTablesBySchema(schema);

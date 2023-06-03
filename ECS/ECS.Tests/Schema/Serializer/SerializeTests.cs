@@ -17,7 +17,7 @@ public class SerializeTests : TestsWithDatabase
 		var builder = new DataSchemaBuilder();
 		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
 
-		using var serializer = new ComponentSerializer(DbConnection);
+		using var serializer = new ComponentSerializer(DataConnection);
 		await serializer.CreateTablesBySchema(schema);
 
 		var components = new List<DataSchemaTestTypeComponent>();

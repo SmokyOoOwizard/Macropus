@@ -1,7 +1,8 @@
 ﻿using System.Text;
 using ECS.Schema;
 using ECS.Serialize.Extensions;
-using Macropus.Database.Adapter;
+using ECS.Serialize.Models;
+using LinqToDB;
 using Macropus.Database.Extensions;
 
 namespace ECS.Serialize;
@@ -14,10 +15,10 @@ public partial class ComponentSerializer
 	{
 		var subSchemas = schema.SubSchemas.Select(kv => kv.Value).Where(s => s != schema);
 
-		using var transaction = dbConnection.BeginTransaction();
+		await using var transaction = await dataConnection.BeginTransactionAsync();
 		try
 		{
-			if (!await dbConnection.TableAlreadyExists(ENTITIES_COMPONENTS_TABLE_NAME))
+			if (!await dataConnection.TableAlreadyExists(ENTITIES_COMPONENTS_TABLE_NAME))
 				await CreateEntitiesComponentsTable();
 
 
@@ -25,29 +26,18 @@ public partial class ComponentSerializer
 			foreach (var subSchema in subSchemas)
 				await CreateTableBySchema(subSchema);
 
-			transaction.Commit();
+			await transaction.CommitAsync();
 		}
 		catch
 		{
-			transaction.Rollback();
+			await transaction.RollbackAsync();
 			throw;
 		}
 	}
 
 	private async Task CreateEntitiesComponentsTable()
 	{
-		var sqlBuilder = new StringBuilder();
-		sqlBuilder.Append($"CREATE TABLE '{ENTITIES_COMPONENTS_TABLE_NAME}' (");
-		sqlBuilder.Append("Id INTEGER PRIMARY KEY, ");
-		sqlBuilder.Append("ComponentId INTEGER NOT NULL, ");
-		sqlBuilder.Append("ComponentName TEXT NOT NULL, ");
-		sqlBuilder.Append("EntityId TEXT NOT NULL COLLATE NOCASE");
-		sqlBuilder.Append(");");
-
-		var cmd = dbConnection.CreateCommand();
-		cmd.CommandText = sqlBuilder.ToString();
-
-		await cmd.ExecuteNonQueryAsync();
+		await dataConnection.CreateTableAsync<EntitiesComponentsTable>(EntitiesComponentsTable.TABLE_NAME);
 	}
 
 	private async Task CreateTableBySchema(DataSchema schema)
@@ -62,7 +52,7 @@ public partial class ComponentSerializer
 		if (string.IsNullOrWhiteSpace(tableName))
 			throw new ArgumentNullException(nameof(schema.SchemaOf));
 
-		if (await dbConnection.TableAlreadyExists(tableName))
+		if (await dataConnection.TableAlreadyExists(tableName))
 			// TODO check table
 			return;
 
@@ -72,7 +62,7 @@ public partial class ComponentSerializer
 		sqlBuilder.Append(string.Join(',', simpleFields.ToSql()));
 		sqlBuilder.Append(");");
 
-		var cmd = dbConnection.CreateCommand();
+		var cmd = dataConnection.CreateCommand();
 		cmd.CommandText = sqlBuilder.ToString();
 
 		await cmd.ExecuteNonQueryAsync();

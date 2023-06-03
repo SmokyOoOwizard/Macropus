@@ -12,6 +12,7 @@
     <ItemGroup>
       <PackageReference Include="Autofac" Version="6.4.0" />
       <PackageReference Include="Delogger" Version="1.0.1" />
+      <PackageReference Include="linq2db" Version="5.2.1" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.9" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.9" />
       <PackageReference Include="System.Reactive" Version="5.0.0" />

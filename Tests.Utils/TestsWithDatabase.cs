@@ -1,4 +1,7 @@
 ﻿using System.Data;
+using System.Data.Common;
+using LinqToDB.Data;
+using LinqToDB.DataProvider.SQLite;
 using Microsoft.Data.Sqlite;
 using Xunit.Abstractions;
 
@@ -9,6 +12,8 @@ namespace Tests.Utils;
 public abstract class TestsWithDatabase : TestsWithFiles
 {
 	public IDbConnection DbConnection { get; private set; }
+	public DataConnection DataConnection { get; private set; }
+	
 	public TestsWithDatabase(ITestOutputHelper output) : base(output) { }
 
 	public override async Task InitializeAsync()
@@ -17,6 +22,8 @@ public abstract class TestsWithDatabase : TestsWithFiles
 		
 		DbConnection = new SqliteConnection($"Data Source={Path.Combine(ExecutePath, "Test.db")}");
 		DbConnection.Open();
+
+		DataConnection = SQLiteTools.CreateDataConnection((DbConnection)DbConnection);
 		
 		var cmd = DbConnection.CreateCommand();
 		cmd.CommandText = "PRAGMA journal_mode = WAL";
