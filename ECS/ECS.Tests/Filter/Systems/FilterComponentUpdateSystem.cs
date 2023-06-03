@@ -35,10 +35,10 @@ public class FilterComponentUpdateSystem : ISystem, IUpdateSystem
 			if (entity.HasComponent<EmptyTestComponent2>()
 			    && entity.HasComponent<EmptyTestComponent4>()
 			    && entity.HasComponent<EmptyTestComponent7>())
-				return;
+				continue;
 
 			if (entity.HasComponent<EmptyTestComponent10>() && !entity.HasComponent<EmptyTestComponent6>())
-				return;
+				continue;
 
 			throw new Exception();
 		}

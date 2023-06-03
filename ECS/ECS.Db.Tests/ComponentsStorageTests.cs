@@ -4,6 +4,7 @@ using ECS.Schema;
 using ECS.Serialize;
 using ECS.Tests.Schema;
 using LinqToDB.Data;
+using Macropus.ECS.Component.Filter;
 using Macropus.ECS.Component.Storage.Impl.Changes;
 using Tests.Utils;
 using Xunit.Abstractions;
@@ -35,11 +36,37 @@ public class ComponentsStorageTests : TestsWithDatabase
 
 		var storageInDb = new ComponentsStorageInDb(DbConnection);
 
-		var entities = storageInDb.GetEntities();
+		var entities = storageInDb.GetEntities().ToArray();
 		
 		Assert.NotEmpty(entities);
 		Assert.Equal(1, entities.Count());
 		Assert.Equal(guid, entities.First());
+	}
+	
+	[Fact]
+	public async Task GetGroupWithFilter()
+	{
+		var builder = new DataSchemaBuilder();
+		var schema = builder.CreateSchema<DataSchemaTestTypeComponent>();
+		var schema2 = builder.CreateSchema<DataSchemaTestTypeComponent2>();
+
+		using var serializer = new ComponentSerializer(DbConnection);
+		await serializer.CreateTablesBySchema(schema);
+		await serializer.CreateTablesBySchema(schema2);
+
+		var firstGuid = Guid.NewGuid();
+		await serializer.SerializeAsync(schema, firstGuid, new DataSchemaTestTypeComponent());
+		var secondGuid = Guid.NewGuid();
+		await serializer.SerializeAsync(schema2, secondGuid, new DataSchemaTestTypeComponent2());
+
+		var storageInDb = new ComponentsStorageInDb(DbConnection);
+
+		var filter = ComponentsFilter.AllOf(typeof(DataSchemaTestTypeComponent)).Build();
+		var entities = storageInDb.GetEntities(filter).ToArray();
+		
+		Assert.NotEmpty(entities);
+		Assert.Equal(1, entities.Count());
+		Assert.Equal(firstGuid, entities.First());
 	}
 
 	[Fact]

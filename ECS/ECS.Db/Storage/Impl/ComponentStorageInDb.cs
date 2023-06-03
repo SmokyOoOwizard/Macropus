@@ -100,9 +100,23 @@ public class ComponentsStorageInDb : IComponentsStorage
 			.ToHashSet();
 	}
 
+	// TODO optimize
 	public IEnumerable<Guid> GetEntities(ComponentsFilter filter)
 	{
-		throw new NotImplementedException();
+		var entities = dbConnection.GetTable<EntitiesComponentsTable>()
+			.TableName("EntitiesComponents")
+			.GroupBy(c => c.EntityId, c => c.ComponentName)
+			.Select(c => new
+			{
+				Id = Guid.Parse(c.Key),
+				Components = c.ToHashSet()
+			})
+			.ToHashSet();
+
+
+		return entities
+			.Where(c => filter.Filter(c.Components))
+			.Select(c => c.Id);
 	}
 
 	// TODO optimize
