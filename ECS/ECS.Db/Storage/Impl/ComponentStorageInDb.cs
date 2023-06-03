@@ -15,8 +15,16 @@ namespace ECS.Db.Storage.Impl;
 // TODO db leak. after component delete action in db stay sub structures
 public class ComponentsStorageInDb : IComponentsStorage
 {
-	public uint ComponentsCount { get; }
-	public uint EntitiesCount { get; }
+	// TODO optimize
+	public uint ComponentsCount => (uint)dbConnection.GetTable<EntitiesComponentsTable>()
+		.TableName("EntitiesComponents")
+		.Count();
+
+	// TODO optimize
+	public uint EntitiesCount => (uint)dbConnection.GetTable<EntitiesComponentsTable>()
+		.TableName("EntitiesComponents")
+		.GroupBy(c => c.EntityId, c => c.ComponentName)
+		.Count();
 
 	private readonly DataConnection dbConnection;
 	private readonly ComponentSerializer componentSerializer;
