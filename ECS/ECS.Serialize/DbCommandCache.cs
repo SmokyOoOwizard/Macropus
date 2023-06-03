@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using ECS.Schema;
 using ECS.Serialize.Extensions;
+using ECS.Serialize.Models;
 using Macropus.CoolStuff.Collections.Pool;
 using Microsoft.Data.Sqlite;
 
@@ -60,7 +61,7 @@ public static class DbCommandCache
 			Exists[dbConnection] = existsCmd = new();
 		}
 
-		const string cmdName = "GetComponentId_" + ComponentSerializer.ENTITIES_COMPONENTS_TABLE_NAME;
+		const string cmdName = "GetComponentId_" + EntitiesComponentsTable.TABLE_NAME;
 
 		if (!existsCmd.TryGetValue(cmdName, out var cmd))
 		{
@@ -68,7 +69,7 @@ public static class DbCommandCache
 
 			var sqlBuilder = SbPool.Take();
 			sqlBuilder.Append(
-				$"SELECT (ComponentId) FROM '{ComponentSerializer.ENTITIES_COMPONENTS_TABLE_NAME}' WHERE EntityId = @entityId AND ComponentName = @componentName;");
+				$"SELECT (ComponentId) FROM '{EntitiesComponentsTable.TABLE_NAME}' WHERE EntityId = @entityId AND ComponentName = @componentName;");
 
 			cmd.CommandText = sqlBuilder.ToString();
 

@@ -4,6 +4,7 @@ using System.Text;
 using AnyOfTypes;
 using ECS.Schema;
 using ECS.Serialize.Extensions;
+using ECS.Serialize.Models;
 using ECS.Serialize.Serialize.State;
 using ECS.Serialize.Serialize.State.Impl;
 using Macropus.CoolStuff;
@@ -189,7 +190,7 @@ class SqlSerializer : IClearable
 	{
 		sqlBuilder.Clear();
 		sqlBuilder.Append(
-			$"INSERT INTO '{ComponentSerializer.ENTITIES_COMPONENTS_TABLE_NAME}' (ComponentId, ComponentName, EntityId) VALUES(");
+			$"INSERT INTO '{EntitiesComponentsTable.TABLE_NAME}' (ComponentId, ComponentName, EntityId) VALUES(");
 		sqlBuilder.Append($"{componentId}, ");
 		sqlBuilder.Append($"'{componentName}', ");
 		sqlBuilder.Append($"\'{entityId:N}\'");

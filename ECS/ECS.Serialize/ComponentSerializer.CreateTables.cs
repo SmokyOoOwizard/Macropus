@@ -9,8 +9,6 @@ namespace ECS.Serialize;
 
 public partial class ComponentSerializer
 {
-	public const string ENTITIES_COMPONENTS_TABLE_NAME = "EntitiesComponents";
-
 	public async Task CreateTablesBySchema(DataSchema schema)
 	{
 		var subSchemas = schema.SubSchemas.Select(kv => kv.Value).Where(s => s != schema);
@@ -18,7 +16,7 @@ public partial class ComponentSerializer
 		await using var transaction = await dataConnection.BeginTransactionAsync();
 		try
 		{
-			if (!await dataConnection.TableAlreadyExists(ENTITIES_COMPONENTS_TABLE_NAME))
+			if (!await dataConnection.TableAlreadyExists(EntitiesComponentsTable.TABLE_NAME))
 				await CreateEntitiesComponentsTable();
 
 
