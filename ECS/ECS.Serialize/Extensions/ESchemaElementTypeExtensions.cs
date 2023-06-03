@@ -7,80 +7,49 @@ public static class ESchemaElementTypeExtensions
 {
 	public static object Read(this ESchemaElementType type, IDataReader reader, int i)
 	{
-		switch (type)
+		return type switch
 		{
-			case ESchemaElementType.Int8:
-				return (sbyte)reader.GetInt64(i);
-			case ESchemaElementType.UInt8:
-				return (byte)reader.GetInt64(i);
-			case ESchemaElementType.Int16:
-				return reader.GetInt16(i);
-			case ESchemaElementType.UInt16:
-				return (UInt16)reader.GetInt64(i);
-			case ESchemaElementType.Int32:
-				return reader.GetInt32(i);
-			case ESchemaElementType.UInt32:
-				return (UInt32)reader.GetInt64(i);
-			case ESchemaElementType.Int64:
-				return Int64.Parse(reader.GetString(i));
-			case ESchemaElementType.UInt64:
-				return UInt64.Parse(reader.GetString(i));
-
-			case ESchemaElementType.Int128:
-				return Int128.Parse(reader.GetString(i));
-			case ESchemaElementType.UInt128:
-				return UInt128.Parse(reader.GetString(i));
-
-			case ESchemaElementType.Float:
-				return float.Parse(reader.GetString(i));
-			case ESchemaElementType.Double:
-				return double.Parse(reader.GetString(i));
-			case ESchemaElementType.Decimal:
-				return decimal.Parse(reader.GetString(i));
-
-			case ESchemaElementType.Guid:
-				return Guid.Parse(reader.GetString(i));
-			case ESchemaElementType.String:
-				return reader.GetString(i);
-		}
-
-		throw new ArgumentException($"{nameof(type)} - {type}");
+			ESchemaElementType.Int8 => (sbyte)reader.GetInt64(i),
+			ESchemaElementType.UInt8 => (byte)reader.GetInt64(i),
+			ESchemaElementType.Int16 => reader.GetInt16(i),
+			ESchemaElementType.UInt16 => (UInt16)reader.GetInt64(i),
+			ESchemaElementType.Int32 => reader.GetInt32(i),
+			ESchemaElementType.UInt32 => (UInt32)reader.GetInt64(i),
+			ESchemaElementType.Int64 => Int64.Parse(reader.GetString(i)),
+			ESchemaElementType.UInt64 => UInt64.Parse(reader.GetString(i)),
+			ESchemaElementType.Int128 => Int128.Parse(reader.GetString(i)),
+			ESchemaElementType.UInt128 => UInt128.Parse(reader.GetString(i)),
+			ESchemaElementType.Float => float.Parse(reader.GetString(i)),
+			ESchemaElementType.Double => double.Parse(reader.GetString(i)),
+			ESchemaElementType.Decimal => decimal.Parse(reader.GetString(i)),
+			ESchemaElementType.Guid => Guid.Parse(reader.GetString(i)),
+			ESchemaElementType.String => reader.GetString(i),
+			_ => throw new ArgumentException($"{nameof(type)} - {type}")
+		};
 	}
 
 	public static string ToSqlType(this ESchemaElementType type)
 	{
-		switch (type)
+		return type switch
 		{
-			case ESchemaElementType.Int8:
-				return "TINYINT";
-			case ESchemaElementType.UInt8:
-				return "TINYINT UNSIGNED";
-			case ESchemaElementType.Int16:
-				return "SMALLINT";
-			case ESchemaElementType.UInt16:
-				return "SMALLINT UNSIGNED";
-			case ESchemaElementType.Int32:
-				return "INT";
-			case ESchemaElementType.UInt32:
-				return "INT UNSIGNED";
-			case ESchemaElementType.Int64:
-			case ESchemaElementType.UInt64:
-			case ESchemaElementType.Int128:
-			case ESchemaElementType.UInt128:
-			case ESchemaElementType.Float:
-			case ESchemaElementType.Double:
-			case ESchemaElementType.Decimal:
-				return "TEXT";
-
-			case ESchemaElementType.Guid:
-				return "TEXT COLLATE NOCASE";
-			case ESchemaElementType.String:
-				return "TEXT";
-
-			case ESchemaElementType.ComplexType:
-				return "INT";
-		}
-
-		throw new ArgumentException($"{nameof(type)} - {type}");
+			ESchemaElementType.Int8 => "TINYINT",
+			ESchemaElementType.UInt8 => "TINYINT UNSIGNED",
+			ESchemaElementType.Int16 => "SMALLINT",
+			ESchemaElementType.UInt16 => "SMALLINT UNSIGNED",
+			ESchemaElementType.Int32 => "INT",
+			ESchemaElementType.UInt32 => "INT UNSIGNED",
+			ESchemaElementType.Int64 => "TEXT",
+			ESchemaElementType.UInt64 => "TEXT",
+			ESchemaElementType.Int128 => "TEXT",
+			ESchemaElementType.UInt128 => "TEXT",
+			ESchemaElementType.Float => "TEXT",
+			ESchemaElementType.Double => "TEXT",
+			ESchemaElementType.Decimal => "TEXT",
+			ESchemaElementType.Guid => "TEXT COLLATE NOCASE",
+			ESchemaElementType.String => "TEXT",
+			ESchemaElementType.ComplexType => "TEXT",
+			ESchemaElementType.INVALID => throw new ArgumentOutOfRangeException(nameof(type), type, null),
+			_ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+		};
 	}
 }

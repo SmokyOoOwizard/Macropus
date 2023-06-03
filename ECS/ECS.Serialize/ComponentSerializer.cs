@@ -1,42 +1,29 @@
-﻿using System.Data;
-using ECS.Schema;
+﻿using ECS.Schema;
 using ECS.Serialize.Deserialize;
 using ECS.Serialize.Serialize;
-using Macropus.CoolStuff.Collections.Pool;
+using LinqToDB.Data;
 using Macropus.ECS.Component;
 
 namespace ECS.Serialize;
 
-// TODO save components in flat mode. one table per one component type. sub structures ( collections, structures, etc... ) save in json?
 public partial class ComponentSerializer : IDisposable
 {
-	private readonly IDbConnection dbConnection;
+	private readonly DataConnection dataConnection;
 
-	private readonly Pool<Serializer> serializers = new();
-	private readonly Pool<Deserializer> deserializers = new();
-
-	public ComponentSerializer(IDbConnection dbConnection)
+	public ComponentSerializer(DataConnection dataConnection)
 	{
-		this.dbConnection = dbConnection;
+		this.dataConnection = dataConnection;
+	}
 
-		dbConnection.Open();
+	public Task TryInitialize()
+	{
+		return CreateEntitiesComponentsTable();
 	}
 
 	public async Task SerializeAsync(DataSchema schema, Guid entityId, IComponent component)
 	{
-		if (schema.Elements.Count == 0 || schema.SubSchemas.Any(s => s.Value.Elements.Count == 0))
-			throw new Exception(); // TODO
-
-		var serializer = serializers.Take();
-
-		try
-		{
-			await serializer.SerializeAsync(dbConnection, schema, entityId, component);
-		}
-		finally
-		{
-			serializers.Release(serializer);
-		}
+		await CreateTablesBySchema(schema);
+		await Serializer.SerializeAsync(dataConnection, schema, entityId, component);
 	}
 
 	public async Task<T?> DeserializeAsync<T>(DataSchema schema, Guid entityId) where T : struct, IComponent
@@ -51,23 +38,12 @@ public partial class ComponentSerializer : IDisposable
 
 	public async Task<IComponent?> DeserializeAsync(DataSchema schema, Guid entityId)
 	{
-		if (schema.Elements.Count == 0 || schema.SubSchemas.Any(s => s.Value.Elements.Count == 0))
-			throw new Exception(); // TODO
-
-		var deserializer = deserializers.Take();
-
-		try
-		{
-			return await deserializer.DeserializeAsync(dbConnection, schema, entityId);
-		}
-		finally
-		{
-			deserializers.Release(deserializer);
-		}
+		await TryInitialize();
+		return await Deserializer.DeserializeAsync(dataConnection, schema, entityId);
 	}
 
 	public void Dispose()
 	{
-		dbConnection.Dispose();
+		dataConnection.Dispose();
 	}
 }

@@ -173,6 +173,11 @@
           "System.Data.SqlClient": "4.7.0"
         }
       },
+      "linq2db": {
+        "type": "Transitive",
+        "resolved": "5.2.1",
+        "contentHash": "OOBM8s39zhbZAgqFnl2KGxT5RqBDw21X69U528qV2PgQispaA3f+or0ILrLEgnNIJuB4EBgaw8gC6ttSHn4X0Q=="
+      },
       "LinqKit": {
         "type": "Transitive",
         "resolved": "1.2.4",
@@ -800,7 +805,8 @@
           "FileSystem.Interfaces": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore": "[6.0.9, )",
           "Microsoft.EntityFrameworkCore.Sqlite": "[6.0.9, )",
-          "System.Reactive": "[5.0.0, )"
+          "System.Reactive": "[5.0.0, )",
+          "linq2db": "[5.2.1, )"
         }
       },
       "database.interfaces": {
@@ -897,14 +903,6 @@
           "Project.Shared": "[1.0.0, )",
           "System.Reactive": "[5.0.0, )",
           "YamlDotNet": "[12.0.0, )"
-        }
-      },
-      "schema": {
-        "type": "Project",
-        "dependencies": {
-          "CoolStuff": "[1.0.0, )",
-          "Extensions": "[1.0.0, )",
-          "Linq": "[1.0.0, )"
         }
       },
       "service": {

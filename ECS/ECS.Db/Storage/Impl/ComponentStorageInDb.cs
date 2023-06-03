@@ -1,11 +1,9 @@
-﻿using System.Data;
-using System.Data.Common;
-using ECS.Db.Models;
+﻿using ECS.Db.Models;
 using ECS.Schema;
 using ECS.Serialize;
+using ECS.Serialize.Models;
 using LinqToDB;
 using LinqToDB.Data;
-using LinqToDB.DataProvider.SQLite;
 using Macropus.ECS.Component;
 using Macropus.ECS.Component.Filter;
 using Macropus.ECS.Component.Storage;
@@ -16,28 +14,27 @@ namespace ECS.Db.Storage.Impl;
 public class ComponentsStorageInDb : IComponentsStorage
 {
 	// TODO optimize
-	public uint ComponentsCount => (uint)dbConnection.GetTable<EntitiesComponentsTable>()
+	public uint ComponentsCount => (uint)dataConnection.GetTable<EntitiesComponentsTable>()
 		.TableName("EntitiesComponents")
 		.Count();
 
 	// TODO optimize
-	public uint EntitiesCount => (uint)dbConnection.GetTable<EntitiesComponentsTable>()
+	public uint EntitiesCount => (uint)dataConnection.GetTable<EntitiesComponentsTable>()
 		.TableName("EntitiesComponents")
 		.GroupBy(c => c.EntityId, c => c.ComponentName)
 		.Count();
 
-	private readonly DataConnection dbConnection;
+	private readonly DataConnection dataConnection;
 	private readonly ComponentSerializer componentSerializer;
 
 	private readonly Dictionary<Type, DataSchema> schemas = new();
 	private readonly DataSchemaBuilder schemaBuilder = new();
 
-	public ComponentsStorageInDb(IDbConnection dbConnection)
+	public ComponentsStorageInDb(DataConnection dataConnection)
 	{
-		// TODO pass data connection directly?
-		this.dbConnection = SQLiteTools.CreateDataConnection((DbConnection)dbConnection);
+		this.dataConnection = dataConnection;
 
-		componentSerializer = new ComponentSerializer(dbConnection);
+		componentSerializer = new ComponentSerializer(dataConnection);
 	}
 
 	public bool HasComponent<T>(Guid entityId) where T : struct, IComponent
@@ -52,9 +49,11 @@ public class ComponentsStorageInDb : IComponentsStorage
 	// TODO optimize
 	public bool HasComponent(Guid entityId, string name)
 	{
+		componentSerializer.TryInitialize().GetAwaiter().GetResult();
+
 		var entityIdStr = ComponentFormatUtils.FormatGuid(entityId);
 
-		return dbConnection
+		return dataConnection
 			.GetTable<EntitiesComponentsTable>()
 			.TableName("EntitiesComponents")
 			.Any(e => e.ComponentName == name && e.EntityId == entityIdStr);
@@ -101,7 +100,9 @@ public class ComponentsStorageInDb : IComponentsStorage
 	// TODO optimize
 	public IEnumerable<Guid> GetEntities()
 	{
-		return dbConnection.GetTable<EntitiesComponentsTable>()
+		componentSerializer.TryInitialize().GetAwaiter().GetResult();
+
+		return dataConnection.GetTable<EntitiesComponentsTable>()
 			.TableName("EntitiesComponents")
 			.Select(c => c.EntityId)
 			.Select(c => Guid.Parse(c))
@@ -111,7 +112,9 @@ public class ComponentsStorageInDb : IComponentsStorage
 	// TODO optimize
 	public IEnumerable<Guid> GetEntities(ComponentsFilter filter)
 	{
-		var entities = dbConnection.GetTable<EntitiesComponentsTable>()
+		componentSerializer.TryInitialize().GetAwaiter().GetResult();
+
+		var entities = dataConnection.GetTable<EntitiesComponentsTable>()
 			.TableName("EntitiesComponents")
 			.GroupBy(c => c.EntityId, c => c.ComponentName)
 			.Select(c => new
@@ -164,11 +167,13 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 	public void RemoveComponent(Guid entityId, Type cmpType)
 	{
+		componentSerializer.TryInitialize().GetAwaiter().GetResult();
+
 		var entityIdStr = ComponentFormatUtils.FormatGuid(entityId);
 		var cmpName = cmpType.FullName;
 		var tableName = ComponentFormatUtils.NormalizeName(cmpName);
 
-		var ids = dbConnection
+		var ids = dataConnection
 			.GetTable<EntitiesComponentsTable>()
 			.TableName("EntitiesComponents")
 			.Where(e => e.ComponentName == cmpName && e.EntityId == entityIdStr)
@@ -178,13 +183,13 @@ public class ComponentsStorageInDb : IComponentsStorage
 		if (ids == null)
 			return;
 
-		dbConnection
+		dataConnection
 			.GetTable<ComponentTableBase>()
 			.TableName(tableName)
 			.Where(e => e.Id == ids.ComponentId)
 			.Delete();
 
-		dbConnection
+		dataConnection
 			.GetTable<EntitiesComponentsTable>()
 			.TableName("EntitiesComponents")
 			.Where(e => e.Id == ids.Id)
@@ -194,6 +199,8 @@ public class ComponentsStorageInDb : IComponentsStorage
 	// TODO optimize
 	public void Apply(IReadOnlyComponentsChangesStorage changes)
 	{
+		componentSerializer.TryInitialize().GetAwaiter().GetResult();
+
 		var storages = changes.GetComponents();
 		foreach (var storage in storages)
 		{
@@ -208,27 +215,27 @@ public class ComponentsStorageInDb : IComponentsStorage
 			// TODO holy shit.....
 			{
 				// Remove components
-				var toRemoveIds = dbConnection
+				var toRemoveIds = dataConnection
 					.GetTable<EntitiesComponentsTable>()
 					.TableName("EntitiesComponents")
 					.Where(e => e.ComponentName == cmpName && toRemove.Contains(e.EntityId))
-					.Join(dbConnection.GetTable<ComponentTableBase>().TableName(tableName), e => e.ComponentId,
-						e => e.Id,
-						(e, c) => c)
 					.Select(e => e.Id)
 					.ToHashSet();
 
-				dbConnection
-					.GetTable<ComponentTableBase>()
-					.TableName(tableName)
-					.Where(e => toRemoveIds.Contains(e.Id))
-					.Delete();
+				if (toRemoveIds.Count > 0)
+				{
+					dataConnection
+						.GetTable<ComponentTableBase>()
+						.TableName(tableName)
+						.Where(e => toRemoveIds.Contains(e.Id))
+						.Delete();
 
-				dbConnection
-					.GetTable<EntitiesComponentsTable>()
-					.TableName("EntitiesComponents")
-					.Where(e => e.ComponentName == cmpName && toRemoveIds.Contains(e.ComponentId))
-					.Delete();
+					dataConnection
+						.GetTable<EntitiesComponentsTable>()
+						.TableName("EntitiesComponents")
+						.Where(e => e.ComponentName == cmpName && toRemoveIds.Contains(e.ComponentId))
+						.Delete();
+				}
 			}
 			{
 				foreach (var (id, component) in toAdd)
@@ -246,6 +253,6 @@ public class ComponentsStorageInDb : IComponentsStorage
 
 	public void Dispose()
 	{
-		dbConnection.Dispose();
+		dataConnection.Dispose();
 	}
 }

@@ -17,6 +17,12 @@
         "resolved": "1.0.1",
         "contentHash": "BxvhCRBkpnGYikUEDiJwQgpIuGt5Ili9kyauwu8p7SrnF4XidKI+/TGeZut/CIasQOU9k4Eon0kG9urOfA7m1A=="
       },
+      "linq2db": {
+        "type": "Direct",
+        "requested": "[5.2.1, )",
+        "resolved": "5.2.1",
+        "contentHash": "OOBM8s39zhbZAgqFnl2KGxT5RqBDw21X69U528qV2PgQispaA3f+or0ILrLEgnNIJuB4EBgaw8gC6ttSHn4X0Q=="
+      },
       "Microsoft.EntityFrameworkCore": {
         "type": "Direct",
         "requested": "[6.0.9, )",
@@ -255,7 +261,7 @@
       "database.interfaces": {
         "type": "Project",
         "dependencies": {
-          "FileSystem.Interfaces": "[1.0.0, )"
+          "FileSystem.Interfaces": "1.0.0"
         }
       },
       "filesystem.interfaces": {

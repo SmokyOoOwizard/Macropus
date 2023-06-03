@@ -1,88 +1,65 @@
-﻿using System.Data;
-using ECS.Schema;
-using ECS.Serialize.Deserialize.State;
-using ECS.Serialize.Deserialize.State.Impl;
-using Macropus.CoolStuff;
+﻿using ECS.Schema;
+using ECS.Serialize.Models;
+using LinqToDB;
+using LinqToDB.Data;
 using Macropus.Database.Adapter;
 using Macropus.ECS.Component;
+using Microsoft.Data.Sqlite;
 
 namespace ECS.Serialize.Deserialize;
 
-class Deserializer : IClearable
+internal static class Deserializer
 {
-	private static readonly StatePool StatePool = StatePool.Instance;
-
-	private readonly Stack<IDeserializeState> deserializeStack = new();
-
-	public async Task<IComponent?> DeserializeAsync(IDbConnection dbConnection, DataSchema schema, Guid entityId)
+	public static async Task<IComponent?> DeserializeAsync(DataConnection dataConnection, DataSchema schema, Guid entityId)
 	{
-		IComponent? rootComponent = default;
+		var tableName = schema.SchemaOf.FullName;
+		if (tableName == null)
+			// TODO
+			throw new Exception();
 
+		try
+		{
+			var componentId = await GetValue(dataConnection, schema, entityId);
+
+			var cmd = DbCommandCache.GetReadCmd(dataConnection.Connection, tableName, schema.Elements);
+			cmd.Parameters.Add(new SqliteParameter("@id", componentId));
+
+			using var reader = await cmd.ExecuteReaderAsync();
+
+			await reader.ReadAsync();
+
+			var readResult = SqlComponentReader.ReadComponent(reader, schema);
+
+			var instance = Activator.CreateInstance(schema.SchemaOf);
+
+			foreach (var (element, value) in readResult)
+				element.FieldInfo.SetValue(instance, value);
+
+			return instance as IComponent;
+		}
+		finally
+		{
+			DbCommandCache.Clear(dataConnection.Connection);
+		}
+	}
+
+	private static async Task<int> GetValue(DataConnection dataConnection, DataSchema schema, Guid entityId)
+	{
 		var componentName = schema.SchemaOf.FullName;
 		if (componentName == null)
 			throw new Exception();
 
-		long rootComponentId;
-		var componentIdCmd = DbCommandCache.GetComponentIdCmd(dbConnection, entityId, componentName);
-		using (var componentIdReader = await componentIdCmd.ExecuteReaderAsync())
-		{
-			await componentIdReader.ReadAsync();
-			rootComponentId = componentIdReader.GetInt64(0);
-		}
+		var entityIdString = ComponentFormatUtils.FormatGuid(entityId);
 
-		deserializeStack.Push(StatePool.DeserializeStatePool.Take().Init(schema, rootComponentId));
+		var entity = await dataConnection
+			.GetTable<EntitiesComponentsTable>()
+			.Select(c => new { c.EntityId, c.ComponentId, c.ComponentName })
+			.FirstOrDefaultAsync(c => c.EntityId == entityIdString && c.ComponentName == componentName);
 
-		do
-		{
-			var target = deserializeStack.Peek();
-			await target.Read(dbConnection);
-			if (target.HasRefs())
-			{
-				deserializeStack.Push(target.PopSomeRefs());
-				continue;
-			}
+		if (entity == null)
+			throw new Exception(); // TODO
 
-			deserializeStack.Pop();
-
-			switch (target)
-			{
-				case ITargetDeserializeState tds:
-				{
-					var parent = deserializeStack.Peek();
-
-					var obj = tds.Create();
-
-					parent.AddRef(tds.Target, obj);
-					break;
-				}
-				case ComponentDeserializeState cds:
-				{
-					if (deserializeStack.Count > 1)
-						throw new Exception();
-
-					rootComponent = cds.Create() as IComponent;
-
-					target.Clear();
-					break;
-				}
-			}
-
-			StatePool.Release(target);
-		} while (deserializeStack.Count > 0);
-
-
-		DbCommandCache.Clear(dbConnection);
-
-		return rootComponent;
-	}
-
-	public void Clear()
-	{
-		foreach (var state in deserializeStack)
-		{
-			StatePool.Release(state);
-		}
-
-		deserializeStack.Clear();
+		var componentId = entity.ComponentId;
+		return componentId;
 	}
 }
