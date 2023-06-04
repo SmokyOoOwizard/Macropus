@@ -1,6 +1,7 @@
 ﻿using ECS.Tests.Filter.Components;
 using Macropus.ECS.Component.Filter;
-using Macropus.ECS.Entity.Context;
+using Macropus.ECS.Component.Filter.Builder;
+using Macropus.ECS.Context;
 using Macropus.ECS.Systems;
 
 namespace ECS.Tests.Filter.Systems;
@@ -34,10 +35,10 @@ public class FilterComponentUpdateSystem : ISystem, IUpdateSystem
 			if (entity.HasComponent<EmptyTestComponent2>()
 			    && entity.HasComponent<EmptyTestComponent4>()
 			    && entity.HasComponent<EmptyTestComponent7>())
-				return;
+				continue;
 
 			if (entity.HasComponent<EmptyTestComponent10>() && !entity.HasComponent<EmptyTestComponent6>())
-				return;
+				continue;
 
 			throw new Exception();
 		}

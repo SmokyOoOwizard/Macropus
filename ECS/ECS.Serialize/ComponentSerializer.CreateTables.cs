@@ -1,78 +1,62 @@
 ﻿using System.Text;
+using ECS.Schema;
 using ECS.Serialize.Extensions;
-using Macropus.Database.Adapter;
+using ECS.Serialize.Models;
+using LinqToDB;
 using Macropus.Database.Extensions;
-using Macropus.Schema;
 
 namespace ECS.Serialize;
 
 public partial class ComponentSerializer
 {
-	public const string ENTITIES_COMPONENTS_TABLE_NAME = "EntitesComponents";
-
-	public async Task CreateTablesBySchema(DataSchema schema)
+	private async Task CreateTablesBySchema(DataSchema schema)
 	{
-		var subSchemas = schema.SubSchemas.Select(kv => kv.Value).Where(s => s != schema);
-
-		using var transaction = dbConnection.BeginTransaction();
+		await using var transaction = await dataConnection.BeginTransactionAsync();
 		try
 		{
-			if (!await dbConnection.TableAlreadyExists(ENTITIES_COMPONENTS_TABLE_NAME))
-				await CreateEntitiesComponentsTable();
-
+			await CreateEntitiesComponentsTable();
 
 			await CreateTableBySchema(schema);
-			foreach (var subSchema in subSchemas)
-				await CreateTableBySchema(subSchema);
 
-			transaction.Commit();
+			await transaction.CommitAsync();
 		}
 		catch
 		{
-			transaction.Rollback();
+			await transaction.RollbackAsync();
 			throw;
 		}
 	}
 
 	private async Task CreateEntitiesComponentsTable()
 	{
-		var sqlBuilder = new StringBuilder();
-		sqlBuilder.Append($"CREATE TABLE '{ENTITIES_COMPONENTS_TABLE_NAME}' (");
-		sqlBuilder.Append("Id INTEGER PRIMARY KEY, ");
-		sqlBuilder.Append("ComponentId INTEGER NOT NULL, ");
-		sqlBuilder.Append("ComponentName TEXT NOT NULL, ");
-		sqlBuilder.Append("EntityId TEXT NOT NULL COLLATE NOCASE");
-		sqlBuilder.Append(");");
-
-		var cmd = dbConnection.CreateCommand();
-		cmd.CommandText = sqlBuilder.ToString();
-
-		await cmd.ExecuteNonQueryAsync();
+		if (!await dataConnection.TableAlreadyExists(EntitiesComponentsTable.TABLE_NAME))
+			await dataConnection.CreateTableAsync<EntitiesComponentsTable>(EntitiesComponentsTable.TABLE_NAME);
 	}
 
 	private async Task CreateTableBySchema(DataSchema schema)
 	{
-		var simpleFields = schema.Elements;
-		if (!simpleFields.Any())
-			// TODO schema must have fields
-			throw new Exception();
-		
-		var tableName = schema.SchemaOf.FullName;
-
+		var tableName = ComponentFormatUtils.NormalizeName(schema.SchemaOf.FullName);
 		if (string.IsNullOrWhiteSpace(tableName))
 			throw new ArgumentNullException(nameof(schema.SchemaOf));
 
-		if (await dbConnection.TableAlreadyExists(tableName))
+		if (await dataConnection.TableAlreadyExists(tableName))
 			// TODO check table
 			return;
+		
+		var simpleFields = schema.Elements;
 
 		var sqlBuilder = new StringBuilder();
 		sqlBuilder.Append($"CREATE TABLE '{tableName}' (");
-		sqlBuilder.Append("Id INTEGER PRIMARY KEY, ");
-		sqlBuilder.Append(string.Join(',', simpleFields.ToSql()));
+		sqlBuilder.Append("Id INTEGER PRIMARY KEY");
+		if (simpleFields.Any())
+		{
+			sqlBuilder.Append(", ");
+			sqlBuilder.Append(string.Join(',', simpleFields.ToSql()));
+		}
+
 		sqlBuilder.Append(");");
 
-		var cmd = dbConnection.CreateCommand();
+		var cmd = dataConnection.CreateCommand();
 		cmd.CommandText = sqlBuilder.ToString();
 
 		await cmd.ExecuteNonQueryAsync();

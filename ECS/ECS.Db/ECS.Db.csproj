@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ECS.Serialize\ECS.Serialize.csproj" />
+      <ProjectReference Include="..\ECS\ECS.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="ExpressionExtensionSQL" Version="1.2.7" />
+      <PackageReference Include="linq2db" Version="5.2.1" />
+      <PackageReference Include="linq2db.EntityFrameworkCore" Version="7.5.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.5" />
+    </ItemGroup>
+
+</Project>

@@ -1,6 +1,6 @@
 ﻿using Macropus.ECS;
 using Macropus.ECS.Component.Storage.Impl;
-using Macropus.ECS.Entity.Context;
+using Macropus.ECS.Context.Impl;
 using Macropus.ECS.Impl;
 
 namespace Odin.ECS.Impl;

@@ -3,6 +3,7 @@ using ECS.Tests.Remove.Components;
 using ECS.Tests.Remove.Systems;
 using Macropus.ECS.Component.Exceptions;
 using Macropus.ECS.Component.Storage.Impl;
+using Macropus.ECS.Component.Storage.Impl.Changes;
 using Macropus.ECS.Systems;
 using Xunit.Abstractions;
 
@@ -27,7 +28,7 @@ public class RemoveReadOnlyComponentTest : TestsWithSystems
 	{
 		var entityId = Guid.NewGuid();
 
-		var buffer = new ComponentsStorageInMemory();
+		var buffer = new ComponentsChangesStorageInMemory();
 		buffer.ReplaceComponent(entityId, new ReadOnlyComponent());
 		Context.ApplyChanges(buffer);
 		Context.SaveChanges();

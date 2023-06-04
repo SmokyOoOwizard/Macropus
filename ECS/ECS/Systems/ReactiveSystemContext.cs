@@ -1,7 +1,7 @@
 ﻿using Macropus.ECS.Component.Trigger;
+using Macropus.ECS.Context.Impl;
 using Macropus.ECS.Entity.Collector;
 using Macropus.ECS.Entity.Collector.Impl;
-using Macropus.ECS.Entity.Context;
 
 namespace Macropus.ECS.Systems;
 

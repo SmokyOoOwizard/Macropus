@@ -15,6 +15,4 @@ public interface IReadOnlyComponentsStorage : IDisposable
 
 	IEnumerable<Guid> GetEntities();
 	IEnumerable<Guid> GetEntities(ComponentsFilter filter);
-
-	IEnumerable<IReadOnlyComponentStorage> GetComponents();
 }

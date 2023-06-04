@@ -1,5 +1,5 @@
-﻿using System;
-using Macropus.ECS.Component.Storage;
+﻿using Macropus.ECS.Component.Storage;
+using Macropus.ECS.Component.Trigger.Builder;
 
 namespace Macropus.ECS.Component.Trigger;
 

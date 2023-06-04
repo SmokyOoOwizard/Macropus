@@ -1,4 +1,5 @@
-﻿using Macropus.ECS.Entity.Context;
+﻿using Macropus.ECS.Context;
+using Macropus.ECS.Context.Impl;
 using Macropus.ECS.Systems;
 
 namespace Macropus.ECS.Impl;

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Macropus.Project.Raw</RootNamespace>
+        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\CoolStuff\CoolStuff\CoolStuff.csproj" />
+      <ProjectReference Include="..\..\CoolStuff\Extensions\Extensions.csproj" />
+      <ProjectReference Include="..\..\Database\Database.Interfaces\Database.Interfaces.csproj" />
+      <ProjectReference Include="..\..\FileSystem\FileSystem.Interfaces\FileSystem.Interfaces.csproj" />
+      <ProjectReference Include="..\Project.Shared\Project.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="6.4.0" />
+      <PackageReference Include="System.Reactive" Version="5.0.0" />
+    </ItemGroup>
+
+</Project>

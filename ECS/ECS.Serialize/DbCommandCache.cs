@@ -1,8 +1,7 @@
 ﻿using System.Data;
+using ECS.Schema;
 using ECS.Serialize.Extensions;
 using Macropus.CoolStuff.Collections.Pool;
-using Macropus.Schema;
-using Microsoft.Data.Sqlite;
 
 namespace ECS.Serialize;
 
@@ -14,7 +13,7 @@ public static class DbCommandCache
 	public static IDbCommand GetReadCmd(
 		IDbConnection dbConnection,
 		string tableName,
-		IReadOnlyCollection<DataSchemaElement> fields,
+		IEnumerable<DataSchemaElement> fields,
 		int count = 1
 	)
 	{
@@ -22,6 +21,8 @@ public static class DbCommandCache
 		{
 			Exists[dbConnection] = existsCmd = new();
 		}
+
+		tableName = ComponentFormatUtils.NormalizeName(tableName) ?? throw new InvalidOperationException();
 
 		var cmdName = "GET_" + tableName + "_" + count;
 
@@ -34,7 +35,7 @@ public static class DbCommandCache
 			sqlBuilder.Append(string.Join(',', fields.Select(e => e.Info.ToSqlName())));
 			sqlBuilder.Append($" FROM '{tableName}' WHERE Id in (@id");
 
-			for (int i = 1; i < count; i++)
+			for (var i = 1; i < count; i++)
 				sqlBuilder.Append($", @id{i}");
 
 			sqlBuilder.Append(");");
@@ -51,37 +52,6 @@ public static class DbCommandCache
 		return cmd;
 	}
 
-	public static IDbCommand GetComponentIdCmd(IDbConnection dbConnection, Guid entityId, string componentName)
-	{
-		if (!Exists.TryGetValue(dbConnection, out var existsCmd))
-		{
-			Exists[dbConnection] = existsCmd = new();
-		}
-
-		const string cmdName = "GetComponentId_" + ComponentSerializer.ENTITIES_COMPONENTS_TABLE_NAME;
-
-		if (!existsCmd.TryGetValue(cmdName, out var cmd))
-		{
-			cmd = dbConnection.CreateCommand();
-
-			var sqlBuilder = SbPool.Take();
-			sqlBuilder.Append(
-				$"SELECT (ComponentId) FROM '{ComponentSerializer.ENTITIES_COMPONENTS_TABLE_NAME}' WHERE EntityId = @entityId AND ComponentName = @componentName;");
-
-			cmd.CommandText = sqlBuilder.ToString();
-
-			SbPool.Release(sqlBuilder);
-
-			existsCmd[cmdName] = cmd;
-		}
-
-		cmd.Parameters.Clear();
-		cmd.Parameters.Add(new SqliteParameter("@entityId", entityId.ToString("N")));
-		cmd.Parameters.Add(new SqliteParameter("@componentName", componentName));
-
-		return cmd;
-	}
-	
 	public static IDbCommand GetInsertCmd(
 		IDbConnection dbConnection,
 		string tableName,
@@ -134,9 +104,9 @@ public static class DbCommandCache
 
 	public static void Clear(IDbConnection dbConnection)
 	{
-		if (Exists.TryGetValue(dbConnection, out var cmds))
+		if (Exists.TryGetValue(dbConnection, out var dbCommands))
 		{
-			foreach (var (_, cmd) in cmds)
+			foreach (var (_, cmd) in dbCommands)
 				cmd.Dispose();
 		}
 

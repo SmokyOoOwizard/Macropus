@@ -82,6 +82,8 @@ internal sealed class OdinContext : IOdinContext
 
 	public void Dispose()
 	{
+		if (Status == EContextStatus.Dispose)
+			return;
 		Status = EContextStatus.Dispose;
 
 		contextThread.Dispose();
@@ -90,6 +92,8 @@ internal sealed class OdinContext : IOdinContext
 
 	public async ValueTask DisposeAsync()
 	{
+		if (Status == EContextStatus.Dispose)
+			return;
 		Status = EContextStatus.Dispose;
 
 		contextThread.Dispose();

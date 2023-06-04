@@ -2,7 +2,7 @@
 using Macropus.ECS;
 using Macropus.ECS.Component.Storage;
 using Macropus.ECS.Component.Storage.Impl;
-using Macropus.ECS.Entity.Context;
+using Macropus.ECS.Context.Impl;
 using Macropus.ECS.Impl;
 using Tests.Utils;
 using Xunit.Abstractions;

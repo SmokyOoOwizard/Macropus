@@ -3,6 +3,7 @@ using ECS.Tests.Filter.Components;
 using ECS.Tests.Remove.Systems;
 using Macropus.ECS.Component.Filter;
 using Macropus.ECS.Component.Storage.Impl;
+using Macropus.ECS.Component.Storage.Impl.Changes;
 using Macropus.ECS.Systems;
 using Xunit.Abstractions;
 
@@ -27,7 +28,7 @@ public class RemoveComponentTests : TestsWithSystems
 	{
 		var entityId = Guid.NewGuid();
 
-		var buffer = new ComponentsStorageInMemory();
+		var buffer = new ComponentsChangesStorageInMemory();
 		buffer.ReplaceComponent(entityId, new EmptyTestComponent1());
 		Context.ApplyChanges(buffer);
 		Context.SaveChanges();
@@ -46,7 +47,7 @@ public class RemoveComponentTests : TestsWithSystems
 	{
 		var entityId = Guid.NewGuid();
 
-		var buffer = new ComponentsStorageInMemory();
+		var buffer = new ComponentsChangesStorageInMemory();
 		buffer.ReplaceComponent(entityId, new EmptyTestComponent2());
 		Context.ApplyChanges(buffer);
 		Context.SaveChanges();

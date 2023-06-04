@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net7.0": {
+      "AsyncKeyedLock": {
+        "type": "Direct",
+        "requested": "[6.2.1, )",
+        "resolved": "6.2.1",
+        "contentHash": "WUvN3Q7aL3wARMcVi/KYTHjOC+0Ld+/ikKU6UGr4aOl7TuK1I2MNKeUkmfr7y4S3UNjQbpzNQCV2OcJq1S/yXg=="
+      },
+      "Autofac": {
+        "type": "Direct",
+        "requested": "[6.4.0, )",
+        "resolved": "6.4.0",
+        "contentHash": "tkFxl6wAPuwVhrlN8wuNADnd+k2tv4ReP7ZZSL0vjfcN0RcfC9v25ogxK6b03HC7D4NwWjSLf1G/zTG8Bw43wQ==",
+        "dependencies": {
+          "System.Diagnostics.DiagnosticSource": "4.7.1"
+        }
+      },
+      "Delogger": {
+        "type": "Direct",
+        "requested": "[1.0.1, )",
+        "resolved": "1.0.1",
+        "contentHash": "BxvhCRBkpnGYikUEDiJwQgpIuGt5Ili9kyauwu8p7SrnF4XidKI+/TGeZut/CIasQOU9k4Eon0kG9urOfA7m1A=="
+      },
+      "System.Reactive": {
+        "type": "Direct",
+        "requested": "[5.0.0, )",
+        "resolved": "5.0.0",
+        "contentHash": "erBZjkQHWL9jpasCE/0qKAryzVBJFxGHVBAvgRN1bzM0q2s1S4oYREEEL0Vb+1kA/6BKb5FjUZMp5VXmy+gzkQ=="
+      },
+      "YamlDotNet": {
+        "type": "Direct",
+        "requested": "[12.0.0, )",
+        "resolved": "12.0.0",
+        "contentHash": "sMp20zI63j7xVoor98vGeDxteLeyuAlM330L7XbXxMMPjLdP1mwoK/5Nn/8Vldc9hUMN5otkg88bVLEtQnPdaw=="
+      },
+      "AnyOf": {
+        "type": "Transitive",
+        "resolved": "0.3.0",
+        "contentHash": "2jerEsjkCQ8o8w6CZRch3GnrdEw0fIDzMcalMx+JYfr0A+JtZwIhknlZ3xs+xdXHbTzRhi/7zpc3A1lawCUvTg=="
+      },
+      "System.Diagnostics.DiagnosticSource": {
+        "type": "Transitive",
+        "resolved": "4.7.1",
+        "contentHash": "j81Lovt90PDAq8kLpaJfJKV/rWdWuEk6jfV+MBkee33vzYLEUsy4gXK8laa9V2nZlLM9VM9yA/OOQxxPEJKAMw=="
+      },
+      "coolstuff": {
+        "type": "Project",
+        "dependencies": {
+          "AsyncKeyedLock": "[6.2.1, )"
+        }
+      },
+      "database.interfaces": {
+        "type": "Project",
+        "dependencies": {
+          "FileSystem.Interfaces": "[1.0.0, )"
+        }
+      },
+      "extensions": {
+        "type": "Project",
+        "dependencies": {
+          "AnyOf": "[0.3.0, )"
+        }
+      },
+      "filesystem.interfaces": {
+        "type": "Project"
+      },
+      "linq": {
+        "type": "Project"
+      },
+      "project.raw": {
+        "type": "Project",
+        "dependencies": {
+          "Autofac": "[6.4.0, )",
+          "CoolStuff": "[1.0.0, )",
+          "Database.Interfaces": "[1.0.0, )",
+          "Extensions": "[1.0.0, )",
+          "FileSystem.Interfaces": "[1.0.0, )",
+          "Project.Shared": "[1.0.0, )",
+          "System.Reactive": "[5.0.0, )"
+        }
+      },
+      "project.shared": {
+        "type": "Project",
+        "dependencies": {
+          "YamlDotNet": "[12.0.0, )"
+        }
+      }
+    }
+  }
+}

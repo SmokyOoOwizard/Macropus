@@ -23,6 +23,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Tests.Utils\Tests.Utils.csproj" />
+      <ProjectReference Include="..\ECS.Schema\ECS.Schema.csproj" />
+      <ProjectReference Include="..\ECS.Serialize\ECS.Serialize.csproj" />
       <ProjectReference Include="..\ECS\ECS.csproj" />
     </ItemGroup>
 

@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using Delogger.Scope;
+using Macropus.Project;
 using Macropus.Project.Connection;
+using Macropus.Project.Impl;
 using Macropus.Project.Storage;
 using Macropus.Project.Storage.Impl;
 using Macropus.Service;
