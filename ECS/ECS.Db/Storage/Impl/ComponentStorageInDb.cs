@@ -10,7 +10,6 @@ using Macropus.ECS.Component.Storage;
 
 namespace ECS.Db.Storage.Impl;
 
-// TODO db leak. after component delete action in db stay sub structures
 public class ComponentsStorageInDb : IComponentsStorage
 {
 	// TODO optimize
