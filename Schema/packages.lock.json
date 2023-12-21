@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net7.0": {
+      "AnyOf": {
+        "type": "Transitive",
+        "resolved": "0.3.0",
+        "contentHash": "2jerEsjkCQ8o8w6CZRch3GnrdEw0fIDzMcalMx+JYfr0A+JtZwIhknlZ3xs+xdXHbTzRhi/7zpc3A1lawCUvTg=="
+      },
+      "AsyncKeyedLock": {
+        "type": "Transitive",
+        "resolved": "6.2.4",
+        "contentHash": "FJXKvDffAbgu60XMNREx40DYJoL0FPD1XzKto4gTkLWhNkT5G59XnugNGtUWSqcUBuUDStVO8W8ifRl5CPuYrg=="
+      },
+      "coolstuff": {
+        "type": "Project",
+        "dependencies": {
+          "AsyncKeyedLock": "[6.2.4, )"
+        }
+      },
+      "extensions": {
+        "type": "Project",
+        "dependencies": {
+          "AnyOf": "[0.3.0, )"
+        }
+      },
+      "linq": {
+        "type": "Project"
+      }
+    }
+  }
+}
