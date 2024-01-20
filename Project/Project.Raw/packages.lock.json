@@ -24,8 +24,8 @@
       },
       "AsyncKeyedLock": {
         "type": "Transitive",
-        "resolved": "6.2.1",
-        "contentHash": "WUvN3Q7aL3wARMcVi/KYTHjOC+0Ld+/ikKU6UGr4aOl7TuK1I2MNKeUkmfr7y4S3UNjQbpzNQCV2OcJq1S/yXg=="
+        "resolved": "6.3.3",
+        "contentHash": "uPX+UGl88YMd1bmwAeh9B9DN54GWIRNCcm0Q+4qYrr2NTia3Y9wezZ+meZjCJCTWTay9tF8zjcIycahHVf5oEA=="
       },
       "System.Diagnostics.DiagnosticSource": {
         "type": "Transitive",
@@ -40,19 +40,19 @@
       "coolstuff": {
         "type": "Project",
         "dependencies": {
-          "AsyncKeyedLock": "6.2.1"
+          "AsyncKeyedLock": "[6.3.3, )"
         }
       },
       "database.interfaces": {
         "type": "Project",
         "dependencies": {
-          "FileSystem.Interfaces": "1.0.0"
+          "FileSystem.Interfaces": "[1.0.0, )"
         }
       },
       "extensions": {
         "type": "Project",
         "dependencies": {
-          "AnyOf": "0.3.0"
+          "AnyOf": "[0.3.0, )"
         }
       },
       "filesystem.interfaces": {
@@ -61,7 +61,7 @@
       "project.shared": {
         "type": "Project",
         "dependencies": {
-          "YamlDotNet": "12.0.0"
+          "YamlDotNet": "[12.0.0, )"
         }
       }
     }

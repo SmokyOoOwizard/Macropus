@@ -8,7 +8,11 @@ namespace Macropus.Project.Raw.Impl;
 public class RawProjectService : IRawProjectService
 {
 	private readonly ConcurrentDictionary<Guid, IRawProject> projects = new();
-	private readonly AsyncKeyedLocker<Guid> keyedLock = new();
+	private readonly AsyncKeyedLocker<Guid> keyedLock = new(o =>
+	{
+		o.PoolSize = 20;
+		o.PoolInitialFill = 1;
+	});
 
 	private readonly RawProjectFactory rawProjectFactory;
 
