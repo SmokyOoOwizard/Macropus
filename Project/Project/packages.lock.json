@@ -36,8 +36,8 @@
       },
       "AsyncKeyedLock": {
         "type": "Transitive",
-        "resolved": "6.2.1",
-        "contentHash": "WUvN3Q7aL3wARMcVi/KYTHjOC+0Ld+/ikKU6UGr4aOl7TuK1I2MNKeUkmfr7y4S3UNjQbpzNQCV2OcJq1S/yXg=="
+        "resolved": "6.3.4",
+        "contentHash": "+0YPXvamnopzHSgBpv0vg+9/NJH+6jm1ZODuMMs7p43yH7hA/NxNi+/U7T7eazZqW+V+0ZsbreYruhu6i7N4PA=="
       },
       "EntityFramework": {
         "type": "Transitive",
@@ -300,7 +300,7 @@
       "coolstuff": {
         "type": "Project",
         "dependencies": {
-          "AsyncKeyedLock": "[6.2.1, )"
+          "AsyncKeyedLock": "[6.3.4, )"
         }
       },
       "database.interfaces": {
@@ -358,7 +358,7 @@
       "project.storage": {
         "type": "Project",
         "dependencies": {
-          "AsyncKeyedLock": "[6.2.1, )",
+          "AsyncKeyedLock": "[6.3.4, )",
           "Autofac": "[6.4.0, )",
           "CoolStuff": "[1.0.0, )",
           "Database.Interfaces": "[1.0.0, )",

@@ -9,7 +9,11 @@ namespace Macropus.Project.Instance.Impl;
 public class ProjectService : IProjectService, IDisposable
 {
 	private readonly ConcurrentDictionary<Guid, IProjectInstance> projects = new();
-	private readonly AsyncKeyedLocker<Guid> keyedLock = new();
+	private readonly AsyncKeyedLocker<Guid> keyedLock = new(o =>
+	{
+		o.PoolSize = 20;
+		o.PoolInitialFill = 1;
+	});
 
 	private readonly ILifetimeScope scope;
 	private readonly ProjectsStorageMaster projectsStorage;
